@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact — Luca Hauspie</title>
+  <meta name="description" content="Get in touch with Luca Hauspie — internships, freelance and collaborations.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script>setTimeout(function(){if(!window.__siteBooted){var t=document.querySelector('.transition');t&&t.remove();}},5000);</script>
+</head>
+<body data-page="contact" class="contact">
+
+  <main>
+    <section class="page-hero contact-hero" data-header="light">
+      <div class="status mono" data-reveal="fade"><span class="status__dot"></span><span data-availability></span></div>
+      <h1 class="display contact-hero__title" data-fit="1" data-reveal="chars">
+        <span class="line"><span class="line__in" data-split>Say hi!</span></span>
+      </h1>
+      <button type="button" class="copy-email" data-reveal="fade" data-cursor="Copy">
+        <span class="copy-email__addr" data-email></span>
+        <span class="copy-email__hint mono">(Click to copy)</span>
+      </button>
+    </section>
+
+    <section class="socials-big" data-header="light" data-reveal="stagger"></section>
+
+    <section class="form-wrap" data-header="light">
+      <p class="mono">(Or drop a message)</p>
+      <form class="form mono" novalidate>
+        <label>(Your name)<input type="text" name="name" placeholder="Jane Doe" required autocomplete="name"></label>
+        <label>(Your email)<input type="email" name="email" placeholder="jane@studio.com" required autocomplete="email"></label>
+        <div>
+          <p style="margin-bottom:10px">(What's it about?)</p>
+          <div class="chips">
+            <label><input type="radio" name="topic" value="Internship" checked><span>Internship</span></label>
+            <label><input type="radio" name="topic" value="Freelance"><span>Freelance</span></label>
+            <label><input type="radio" name="topic" value="Collaboration"><span>Collab</span></label>
+            <label><input type="radio" name="topic" value="Just saying hi"><span>Just hi</span></label>
+          </div>
+        </div>
+        <label>(Message)<textarea name="message" rows="3" placeholder="Tell me about your project…" required></textarea></label>
+        <button class="pill" type="submit" data-magnetic>Send message <span>→</span></button>
+      </form>
+    </section>
+  </main>
+
+  <div data-footer="mini"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js" defer></script>
+  <script src="js/data.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/contact.js" defer></script>
+</body>
+</html>

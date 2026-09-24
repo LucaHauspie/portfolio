@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200">
+  <rect width="1600" height="1200" fill="#F2EFE9"/>
+  <g fill="#0E0E0E">
+    <circle cx="1120" cy="620" r="420"/>
+  </g>
+  <g fill="none" stroke="#F2EFE9" stroke-width="3" opacity=".5">
+    <circle cx="1120" cy="620" r="380"/><circle cx="1120" cy="620" r="330"/><circle cx="1120" cy="620" r="280"/><circle cx="1120" cy="620" r="230"/>
+  </g>
+  <circle cx="1120" cy="620" r="120" fill="#E2401C"/>
+  <circle cx="1120" cy="620" r="14" fill="#F2EFE9"/>
+  <g font-family="Arial Black, Helvetica Neue, Arial, sans-serif" font-weight="900" fill="#0E0E0E">
+    <text x="60" y="560" font-size="360" letter-spacing="-20">JUKE</text>
+  </g>
+  <g font-family="Arial Black, Helvetica Neue, Arial, sans-serif" font-weight="900" fill="#E2401C">
+    <text x="66" y="680" font-size="92" letter-spacing="-4">KICKSTARTER</text>
+  </g>
+  <g font-family="Courier New, monospace" font-size="28" fill="#0E0E0E">
+    <text x="60" y="80">(02) JUKE KICKSTARTER</text>
+    <text x="1540" y="80" text-anchor="end">BACK THIS PROJECT</text>
+    <text x="60" y="1150">PLACEHOLDER — REPLACE WITH YOUR COVER</text>
+  </g>
+</svg>

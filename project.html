@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project — Luca Hauspie</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script>setTimeout(function(){if(!window.__siteBooted){var t=document.querySelector('.transition');t&&t.remove();}},5000);</script>
+</head>
+<body data-page="project" class="project">
+
+  <!-- Content is rendered from js/data.js by js/project.js (project.html?p=<slug>) -->
+  <main>
+    <section class="page-hero project-hero">
+      <p class="mono project-hero__kicker" data-reveal="fade"></p>
+      <h1 class="display project-hero__title" data-fit="1" data-fit-vh="0.6" data-reveal="chars"></h1>
+      <div class="page-hero__row mono" data-reveal="stagger"></div>
+    </section>
+
+    <section class="project-cover">
+      <div class="project-cover__frame" data-reveal="clip"><img alt="" data-parallax></div>
+    </section>
+
+    <section class="project-intro">
+      <p class="mono">(Overview)</p>
+      <div>
+        <p class="project-intro__lead" data-reveal="fade"></p>
+        <p class="project-intro__body" data-reveal="fade"></p>
+      </div>
+    </section>
+
+    <section class="gallery"></section>
+
+    <a class="next" data-cursor="Next case">
+      <div class="mono">(Next project)</div>
+      <div class="display next__title"><span class="line"><span class="line__in"></span></span></div>
+      <div class="next__bar"></div>
+    </a>
+  </main>
+
+  <div data-footer="mini"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js" defer></script>
+  <script src="js/data.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/project.js" defer></script>
+</body>
+</html>

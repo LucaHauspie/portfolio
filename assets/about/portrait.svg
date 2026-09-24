@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1500">
+  <rect width="1200" height="1500" fill="#1A1A1A"/>
+  <circle cx="600" cy="560" r="230" fill="#2A2A2A"/>
+  <path d="M170 1500c40-330 220-520 430-520s390 190 430 520z" fill="#2A2A2A"/>
+  <g font-family="Arial Black, Helvetica Neue, Arial, sans-serif" font-weight="900" fill="#E2401C">
+    <text x="600" y="1380" text-anchor="middle" font-size="300" letter-spacing="-16">LH</text>
+  </g>
+  <g font-family="Courier New, monospace" font-size="30" fill="#F2EFE9">
+    <text x="150" y="80">PORTRAIT — PLACEHOLDER</text>
+    <text x="150" y="125" opacity=".6">assets/about/portrait.jpg</text>
+  </g>
+</svg>

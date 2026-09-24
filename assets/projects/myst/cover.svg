@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200">
+  <defs>
+    <filter id="b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="90"/></filter>
+    <filter id="t" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .35 0"/></filter>
+  </defs>
+  <rect width="1600" height="1200" fill="#9C9591"/>
+  <g filter="url(#b)">
+    <ellipse cx="560" cy="520" rx="420" ry="300" fill="#F2EFE9"/>
+    <ellipse cx="1100" cy="760" rx="380" ry="260" fill="#0E0E0E" opacity=".6"/>
+    <ellipse cx="1250" cy="320" rx="220" ry="200" fill="#E2401C" opacity=".7"/>
+  </g>
+  <g font-family="Arial Black, Helvetica Neue, Arial, sans-serif" font-weight="900" fill="#0E0E0E" filter="url(#t)">
+    <text x="800" y="740" text-anchor="middle" font-size="420" letter-spacing="-10">MYST</text>
+  </g>
+  <rect width="1600" height="1200" filter="url(#n)"/>
+  <g font-family="Courier New, monospace" font-size="28" fill="#0E0E0E">
+    <text x="60" y="80">(04) MYST</text>
+    <text x="60" y="1150">PLACEHOLDER — REPLACE WITH YOUR COVER</text>
+  </g>
+</svg>
