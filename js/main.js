@@ -498,6 +498,18 @@
   window.Site = {
     $, $$, reduce, touch, splitChars, splitWords, fit, fitAll, stretchy, scramble, scrollTo,
     get lenis() { return lenis; },
+    // Big title laid over a project's video hero (home takeover + case page).
+    liveTitle(p) {
+      const el = document.createElement('div');
+      el.className = 'live-title';
+      el.setAttribute('aria-hidden', 'true');
+      el.innerHTML = `
+        ${p.kicker ? `<p class="live-title__kicker mono">(${p.kicker})</p>` : ''}
+        <div class="live-title__text display" data-fit="0.7" data-fit-vh="0.5">
+          ${p.lines.map((l) => `<span class="line"><span class="line__in">${l}</span></span>`).join('')}
+        </div>`;
+      return el;
+    },
     setHeader: (theme) => { const h = $('.header'); if (h) h.dataset.theme = theme; },
     onInit: (fn) => initHooks.push(fn),
     onReady: (fn) => (isReady ? fn() : readyHooks.push(fn)),

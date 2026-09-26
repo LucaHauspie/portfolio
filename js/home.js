@@ -7,6 +7,39 @@
   const P = Site.projects;
   const pad = (n) => String(n).padStart(2, '0');
   const href = (p) => `project.html?p=${p.slug}`;
+  const frame = (p, cls = '') => {
+    const f = document.createElement('iframe');
+    f.className = `preview-frame ${cls}`;
+    f.src = `${p.preview}?embed`;
+    f.title = `${p.title} — live preview`;
+    f.tabIndex = -1;
+    f.setAttribute('aria-hidden', 'true');
+    return f;
+  };
+  const tell = (f, msg) => f && f.contentWindow && f.contentWindow.postMessage(msg, '*');
+
+  // A live preview is either an HTML fold (p.preview → iframe) or a muted clip (p.video → video).
+  const hasLive = (p) => !!(p && (p.preview || p.video));
+  const liveEl = (p) => {
+    if (!p.video) return frame(p);
+    const v = document.createElement('video');
+    v.className = 'preview-frame preview-video';
+    v.src = p.video;
+    v.muted = true;
+    v.setAttribute('muted', '');
+    v.loop = true;
+    v.playsInline = true;
+    v.preload = 'auto';
+    v.setAttribute('aria-hidden', 'true');
+    return v;
+  };
+  // 'play' restarts a clip from the top (like the fold's puk bursting again), 'pause' stops it
+  const control = (el, msg) => {
+    if (!el) return;
+    if (el.tagName !== 'VIDEO') return tell(el, msg);
+    if (msg === 'play') { el.currentTime = 0; el.play().catch(() => {}); }
+    if (msg === 'pause') el.pause();
+  };
   const isLight = (hex) => {
     const n = parseInt(hex.replace('#', ''), 16);
     return ((n >> 16) * 0.299 + ((n >> 8) & 255) * 0.587 + (n & 255) * 0.114) / 255 > 0.5;
@@ -35,6 +68,40 @@
         <div class="thumb__label"><span>(${pad(i + 1)}) ${p.title}</span><span>${p.year}</span></div>
       </a>`).join('') + '<span class="hero__scroll">Scroll ↓</span>';
   const thumbs = $$('.thumb', strip);
+  strip.style.gridTemplateColumns = `repeat(${P.length}, 1fr) auto`;
+  const words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+  $$('[data-count]').forEach((el) => (el.textContent = el.dataset.count === 'word' ? words[P.length] || P.length : pad(P.length)));
+
+  // Projects with a live preview take over the whole hero with their own fold / clip.
+  const takeovers = P.map((p, i) => {
+    if (!hasLive(p)) return null;
+    const layer = document.createElement('div');
+    layer.className = 'hero__takeover';
+    const f = layer.appendChild(liveEl(p));
+    if (p.video) layer.appendChild(Site.liveTitle(p));
+    if (f.tagName === 'IFRAME') {
+      f.addEventListener('load', () => {
+        tell(f, { corners: false }); // the project strip sits where the fold's corner texts would be
+        if (current === i) tell(f, 'play');
+      });
+    }
+    hero.appendChild(layer);
+    return layer;
+  });
+  const meta = $('.hero__meta');
+  // During a takeover the other projects step back a little (scaled from the bottom, so the strip keeps its layout).
+  function setMini(on, active) {
+    thumbs.forEach((t, k) => gsap.to(t, {
+      scale: on && k !== active ? 0.8 : 1,
+      transformOrigin: '50% 100%', duration: reduce ? 0 : 0.6, ease: 'expo.out', overwrite: 'auto',
+    }));
+  }
+  // clip-path that matches a thumbnail, so the takeover grows out of it (and shrinks back into it)
+  const thumbClip = (i) => {
+    const h = hero.getBoundingClientRect();
+    const r = $('.thumb__img', thumbs[i]).getBoundingClientRect();
+    return `inset(${r.top - h.top}px ${h.right - r.right}px ${h.bottom - r.bottom}px ${r.left - h.left}px)`;
+  };
 
   gsap.set(hero, { '--hero-bg': '#f2efe9', '--hero-fg': '#0e0e0e' });
 
@@ -55,10 +122,37 @@
       duration: 0.6,
       ease: 'power2.out',
     });
-    Site.setHeader(p && isLight(p.ink) ? 'light' : 'dark');
-    gsap.to(thumbs, { opacity: (k) => (i < 0 || k === i ? 1 : 0.35), duration: 0.4 });
+    // a video can be light or dark from frame to frame → light UI text with a shadow on top of it
+    const video = !!(p && p.video);
+    document.body.classList.toggle('is-video-hero', video);
+    Site.setHeader(video || (p && isLight(p.ink)) ? 'light' : 'dark');
+    const live = hasLive(p);
+    gsap.to(thumbs, { opacity: (k) => (i < 0 || k === i ? 1 : live ? 0.7 : 0.35), duration: 0.4 });
+    gsap.to([title, meta], { opacity: live ? 0 : 1, duration: 0.4 });
+    setMini(live, i);
 
-    if (p) {
+    takeovers.forEach((layer, k) => {
+      if (!layer) return;
+      const f = layer.firstElementChild;
+      if (k === i) {
+        layer.classList.add('is-on');
+        control(f, 'play');
+        const lines = $$('.live-title .line__in', layer);
+        if (lines.length && !reduce) {
+          gsap.fromTo(lines, { yPercent: 110 }, { yPercent: 0, duration: 1.1, ease: 'expo.out', stagger: 0.08, delay: 0.35 });
+          gsap.fromTo($$('.live-title__kicker', layer), { opacity: 0 }, { opacity: 1, duration: 0.6, delay: 0.6 });
+        }
+        gsap.fromTo(layer, { clipPath: thumbClip(k) },
+          { clipPath: 'inset(0px 0px 0px 0px)', duration: reduce ? 0 : 0.9, ease: 'expo.inOut', overwrite: true });
+      } else if (layer.classList.contains('is-on')) {
+        gsap.to(layer, {
+          clipPath: thumbClip(k), duration: reduce ? 0 : 0.6, ease: 'expo.inOut', overwrite: true,
+          onComplete: () => { layer.classList.remove('is-on'); control(f, 'pause'); },
+        });
+      }
+    });
+
+    if (p && !live) {
       mediaImg.src = p.cover;
       gsap.to(media, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.9, ease: 'expo.out', overwrite: true });
       gsap.fromTo(mediaImg, { scale: 1.4 }, { scale: 1, duration: 1.2, ease: 'expo.out' });
@@ -80,6 +174,8 @@
     const my = gsap.quickTo(media, 'y', { duration: 1, ease: 'power3' });
     const mr = gsap.quickTo(media, 'rotation', { duration: 1, ease: 'power3' });
     hero.addEventListener('pointermove', (e) => {
+      const live = takeovers[current];
+      if (live && $('iframe', live)) tell($('iframe', live), { pointer: [e.clientX / innerWidth, e.clientY / innerHeight] });
       const nx = e.clientX / innerWidth - 0.5;
       const ny = e.clientY / innerHeight - 0.5;
       mx(nx * innerWidth * 0.25);
@@ -103,7 +199,7 @@
 
   const list = $('.works__list');
   list.innerHTML = P.map((p, i) => `
-    <a class="work" href="${href(p)}" data-i="${i}" data-label="${p.title}" data-cursor="View case">
+    <a class="work" href="${href(p)}" data-i="${i}" data-label="${p.title}" data-cursor="View case"${p.title.length > 18 ? ' data-long' : ''}>
       <span class="work__num mono">(${i + 1})</span>
       <span class="work__media"><img src="${p.cover}" alt="${p.title} — cover" loading="lazy"></span>
       <h3 class="work__title display"><span class="work__name" data-split>${p.title}</span></h3>
@@ -112,8 +208,14 @@
   list.dataset.reveal = 'stagger';
 
   const preview = $('.work-preview');
-  $('.work-preview__inner', preview).innerHTML = P.map((p) => `<img src="${p.cover}" alt="">`).join('');
-  const previewImgs = $$('img', preview);
+  const previewInner = $('.work-preview__inner', preview);
+  const previewImgs = P.map((p) => {
+    if (hasLive(p)) return previewInner.appendChild(liveEl(p));
+    const img = new Image();
+    img.src = p.cover;
+    img.alt = '';
+    return previewInner.appendChild(img);
+  });
 
   /* ---------------------------------------------------------------- init */
 
@@ -186,7 +288,10 @@
     const qr = gsap.quickTo(preview, 'rotation', { duration: 0.9, ease: 'power3' });
     gsap.set(preview, { xPercent: -50, yPercent: -50 });
 
-    function hidePreview() { gsap.to(preview, { opacity: 0, scale: 0.6, duration: 0.4, ease: 'power3', overwrite: 'auto' }); }
+    function hidePreview() {
+      gsap.to(preview, { opacity: 0, scale: 0.6, duration: 0.4, ease: 'power3', overwrite: 'auto' });
+      previewImgs.forEach((el) => el.tagName !== 'IMG' && control(el, 'pause'));
+    }
 
     if (!touch && !reduce) {
       list.addEventListener('pointermove', (e) => {
@@ -199,6 +304,7 @@
         row.addEventListener('pointerenter', () => {
           if (list.classList.contains('is-grid')) return;
           gsap.to(preview, { opacity: 1, scale: 1, duration: 0.5, ease: 'expo.out', overwrite: 'auto' });
+          previewImgs.forEach((el, k) => el.tagName !== 'IMG' && control(el, k === i ? 'play' : 'pause'));
           gsap.fromTo(previewImgs[i],
             { clipPath: 'inset(100% 0% 0% 0%)', zIndex: ++z, scale: 1.3 },
             { clipPath: 'inset(0% 0% 0% 0%)', scale: 1, duration: 0.7, ease: 'expo.out' });

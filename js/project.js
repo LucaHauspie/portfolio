@@ -21,7 +21,7 @@
   document.title = `${p.title} — ${window.SITE.name}`;
   document.body.style.setProperty('--p-bg', p.color);
   document.body.style.setProperty('--p-fg', p.ink);
-  $$('main > section').forEach((s) => (s.dataset.header = theme(p)));
+  const setHeaderThemes = () => $$('main > section').forEach((s) => (s.dataset.header = theme(p)));
 
   // hero
   $('.project-hero__kicker').textContent = `(${pad(i + 1)}/${pad(P.length)}) — ${p.context}`;
@@ -34,11 +34,93 @@
     <span>(Context)<br>${p.context}</span>`;
 
   // cover + intro
-  const cover = $('.project-cover__frame img');
-  cover.src = p.cover;
-  cover.alt = `${p.title} — cover`;
+  // Projects with a live preview (HTML fold or video clip) open on it full-screen, like the real site.
+  const hero = $('.project-hero');
+  let fold = null;
+  if (p.preview || p.video) {
+    hero.classList.add('project-hero--live');
+    const h1 = $('.project-hero__title');
+    h1.classList.add('sr-only');
+    delete h1.dataset.fit;
+    delete h1.dataset.reveal;
+    if (p.video) {
+      fold = document.createElement('video');
+      Object.assign(fold, { src: p.video, muted: true, loop: true, autoplay: true, playsInline: true });
+      fold.setAttribute('muted', '');
+      fold.setAttribute('aria-label', `${p.title} — video`);
+    } else {
+      fold = document.createElement('iframe');
+      fold.src = p.preview;
+      fold.title = `${p.title} — live hero`;
+      fold.tabIndex = -1;
+    }
+    fold.className = 'project-hero__live';
+    hero.prepend(fold);
+    if (p.video) {
+      const t = Site.liveTitle(p);
+      $('.live-title__text', t).dataset.reveal = 'lines';
+      fold.after(t);
+    }
+    // the meta row moves below the hero, and the hero replaces the cover
+    const row = $('.page-hero__row', hero);
+    const metaBlock = document.createElement('section');
+    metaBlock.className = 'project-meta';
+    metaBlock.appendChild(row);
+    hero.after(metaBlock);
+    $('.project-cover').remove();
+
+    let play, pause;
+    if (p.video) {
+      play = () => fold.play().catch(() => {});
+      pause = () => fold.pause();
+    } else {
+      // the iframe ignores the pointer (so scrolling + the cursor keep working) — forward it instead
+      const tell = (msg) => fold.contentWindow && fold.contentWindow.postMessage(msg, '*');
+      hero.dataset.cursor = 'Click to release';
+      hero.addEventListener('pointermove', (e) => tell({ pointer: [e.clientX / innerWidth, e.clientY / innerHeight] }));
+      hero.addEventListener('click', () => tell('burst'));
+      play = () => tell('play');
+      pause = () => tell('pause');
+    }
+    Site.onInit(() => ScrollTrigger.create({
+      trigger: hero, start: 'top top', end: 'bottom top', onLeave: pause, onEnterBack: play,
+    }));
+  } else {
+    const cover = $('.project-cover__frame img');
+    cover.src = p.cover;
+    cover.alt = `${p.title} — cover`;
+  }
   $('.project-intro__lead').textContent = p.intro;
   $('.project-intro__body').textContent = p.body;
+  if (p.url) {
+    $('.project-intro__body').insertAdjacentHTML('afterend',
+      `<a class="pill mono project-link" href="${p.url}" target="_blank" rel="noopener" data-magnetic>Visit live site <span>↗</span></a>`);
+  }
+
+  // full video (with sound + controls) between the intro and the gallery
+  if (p.film) {
+    $('.gallery').insertAdjacentHTML('beforebegin', `
+      <section class="project-film" id="film">
+        <div class="project-film__inner">
+          <div class="project-film__head mono"><span>(Full video)</span><span>Sound on ♪</span></div>
+          <video class="project-film__video" src="${p.film}" poster="${p.cover}" controls playsinline preload="metadata"></video>
+        </div>
+      </section>`);
+    const film = $('.project-film__video');
+    // jump-to button on the hero; the click counts as the gesture that allows playback with sound
+    hero.insertAdjacentHTML('beforeend', '<a class="pill mono project-watch" href="#film">Watch the full video <span>↓</span></a>');
+    $('.project-watch').addEventListener('click', (e) => {
+      e.preventDefault();
+      const play = () => film.play().catch(() => {});
+      // scroll so the player (labels + video) sits centred in the screen, then start it
+      const box = $('.project-film__inner');
+      const offset = -Math.max(0, (innerHeight - box.getBoundingClientRect().height) / 2);
+      if (Site.lenis) Site.scrollTo(box, { offset, onComplete: play });
+      else { scrollTo({ top: box.getBoundingClientRect().top + scrollY + offset }); play(); }
+    });
+    // the looping hero clip rests while the full video plays
+    film.addEventListener('play', () => fold && fold.pause && fold.pause());
+  }
 
   // gallery: real images, or placeholder frames until assets are added
   const pattern = [true, false, false, true, false, false];
@@ -51,6 +133,9 @@
         ? `<img src="${g.src}" alt="${p.title} — image ${k + 1}" loading="lazy">`
         : `<div class="gallery__ph mono"><span>(${pad(k + 1)}) Asset placeholder</span><b>${pad(k + 1)}</b><span>Add images to gallery[] in js/data.js</span></div>`}
     </figure>`).join('');
+
+  setHeaderThemes();
+  if (p.video) hero.dataset.header = 'light'; // light header on top of the dimmed clip
 
   // next project
   const nextEl = $('.next');
@@ -65,7 +150,7 @@
   $('.next__title').dataset.fit = '1';
 
   Site.onInit(() => {
-    stretchy($('.project-hero__title'), { listen: $('.project-hero'), radius: 0.2 });
+    if (!fold) stretchy($('.project-hero__title'), { listen: hero, radius: 0.2 });
     stretchy($('.next__title'), { listen: nextEl, radius: 0.2 });
     Site.fitAll();
 

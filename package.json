@@ -1,0 +1,12 @@
+{
+  "name": "luca-hauspie-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Portfolio of Luca Hauspie — digital designer & art direction",
+  "scripts": {
+    "start": "live-server --port=8000 --no-css-inject"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

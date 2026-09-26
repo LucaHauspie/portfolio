@@ -247,6 +247,50 @@ body::after {
   clip-path: inset(50% 50% 50% 50%);
 }
 .hero__media img { width: 100%; height: 100%; object-fit: cover; }
+.preview-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  border: 0;
+  pointer-events: none;
+  background: #fff;
+}
+.hero__takeover {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  visibility: hidden;
+  pointer-events: none;
+}
+.hero__takeover.is-on { visibility: visible; }
+.preview-video { object-fit: cover; background: #000; }
+/* title over a video hero — a soft scrim dims the clip so one solid colour reads on every frame */
+.live-title {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 0 var(--gutter) calc(var(--lift, 0px) * 2);
+  text-align: center;
+  color: var(--paper);
+  background: radial-gradient(ellipse at center, rgba(14, 14, 14, 0.55) 0%, rgba(14, 14, 14, 0.3) 60%, rgba(14, 14, 14, 0.15) 100%);
+  pointer-events: none;
+}
+.live-title__kicker { opacity: 0.85; }
+.live-title__text { width: 100%; font-variation-settings: 'wdth' 62, 'wght' 900; }
+.live-title__text .line__in { white-space: nowrap; }
+.hero__takeover .live-title { --lift: 5vh; }
+
+.is-video-hero .header,
+.is-video-hero .thumb__label,
+.is-video-hero .hero__scroll {
+  color: var(--paper);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
+}
 
 .hero__strip {
   position: relative;
@@ -377,7 +421,10 @@ body::after {
 .work__meta { text-align: right; transition: color 0.4s; }
 .work__arrow { display: inline-block; transition: transform 0.5s var(--ease-out); }
 
+.works__list:not(.is-grid) .work[data-long] .work__title { font-size: clamp(26px, 4.3vw, 84px); }
+
 @media (hover: hover) {
+  .works__list:not(.is-grid) .work[data-long]:hover .work__title .ch { --wd: 96; }
   .works__list:not(.is-grid) .work:hover::before { transform: scaleY(1); transform-origin: top; }
   .works__list:not(.is-grid) .work:hover .work__title,
   .works__list:not(.is-grid) .work:hover .work__meta,
@@ -423,7 +470,8 @@ body::after {
   scale: 0.6;
 }
 .work-preview__inner { position: relative; width: 100%; height: 100%; }
-.work-preview img {
+.work-preview img,
+.work-preview iframe {
   position: absolute;
   inset: 0;
   width: 100%; height: 100%;
@@ -750,11 +798,49 @@ body::after {
 .project { background: var(--p-bg, var(--paper)); color: var(--p-fg, var(--ink)); }
 .project-hero__title { font-size: 20vw; }
 .project-hero__title .ch { --wd: 62; }
+.project-hero--live { height: 100svh; padding: 0; overflow: hidden; }
+.project-hero--live .project-hero__kicker { display: none; }
+.project-hero__live {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  border: 0;
+  pointer-events: none;
+  background: #fff;
+}
+video.project-hero__live { object-fit: cover; background: #000; }
+.project-meta { padding: 24px var(--gutter) 0; }
+.project-watch {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 32px;
+  z-index: 2;
+  width: fit-content;
+  margin: 0 auto;
+  color: var(--paper);
+}
+.project-film { padding: 0 var(--gutter) 18vh; }
+/* as wide as possible, but never taller than the screen minus room for the header */
+.project-film__inner { width: min(100%, calc((100svh - 190px) * 16 / 9)); margin: 0 auto; }
+.project-film__head { display: flex; justify-content: space-between; margin-bottom: 12px; }
+.project-film__video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #000; }
+.project-meta .page-hero__row { margin-top: 0; }
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .project-cover {
   padding: 0 var(--gutter);
 }
 .project-cover__frame { overflow: hidden; aspect-ratio: 16 / 10; }
+.project-cover__frame { position: relative; }
 .project-cover__frame img { width: 100%; height: 120%; object-fit: cover; }
+.project-cover__frame .preview-frame { pointer-events: auto; }
+.project-link { margin-top: 40px; }
 .project-intro {
   padding: 18vh var(--gutter);
   display: grid;

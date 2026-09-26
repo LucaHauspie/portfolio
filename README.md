@@ -35,14 +35,10 @@ Replace the portrait in `assets/about/portrait.svg` (update the `src` in `about.
 
 ## Run locally
 
-Any static server works:
-
 ```bash
-python3 -m http.server 8000
-# → http://localhost:8000
+npm install   # first time only
+npm start     # → http://localhost:8000, reloads on save
 ```
-
-(Opening the HTML file directly also mostly works, but a server is closer to how it runs live.)
 
 ## Deploy to GitHub Pages
 

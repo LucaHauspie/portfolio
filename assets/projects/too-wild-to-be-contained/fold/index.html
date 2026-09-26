@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Too Wild to be Contained — fold</title>
+  <!--
+    Recreation of the Integration03 hero *after* the "click to release" moment,
+    used as the live preview on the portfolio.
+      ?still  → frozen frame (used to render ../cover.jpg)
+      ?embed  → waits paused until the parent page posts 'play' (and 'pause' again when hidden)
+      The parent can also post { safe: { top, bottom } } (px) to keep the content clear of its own UI,
+      and { corners: false } to hide the corner texts.
+  -->
+  <style>
+    @font-face {
+      font-family: 'PP Neue Montreal';
+      src: url('PPNeueMontreal-Book.otf') format('opentype');
+      font-weight: 400;
+    }
+
+    @font-face {
+      font-family: 'PP Neue Montreal';
+      src: url('PPNeueMontreal-SemiBolditalic.otf') format('opentype');
+      font-weight: 600;
+      font-style: italic;
+    }
+
+    :root {
+      --red: #ff2121;
+      --cell: 9.5vw;
+      --rule: 3.6vw;
+      /* side margin for the corner texts */
+      --lift: 0vh;
+      /* moves title + puk up together */
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      overflow: hidden;
+      background-color: #fff;
+      /* faint grid, same feel as int3background.svg */
+      background-image:
+        linear-gradient(to right, rgba(54, 54, 54, 0.05) 2px, transparent 2px),
+        linear-gradient(to bottom, rgba(54, 54, 54, 0.05) 2px, transparent 2px);
+      background-size: var(--cell) var(--cell);
+      background-position: calc(var(--cell) / -2) calc(var(--cell) / -2);
+      font-family: 'PP Neue Montreal', Helvetica, Arial, sans-serif;
+      color: var(--red);
+      cursor: pointer;
+      user-select: none;
+    }
+
+
+    .title {
+      position: fixed;
+      inset: 0 0 calc(var(--lift) * 2) 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: 400;
+      line-height: 0.9;
+      letter-spacing: -0.01em;
+      font-size: 12vw;
+      /* refined by fit() */
+    }
+
+    .title span {
+      display: block;
+      white-space: nowrap;
+    }
+
+    /* extra room between "TO" and "BE" */
+    .title span:nth-child(2) {
+      word-spacing: 0.65em;
+    }
+
+    .title b {
+      font-weight: 600;
+      font-style: italic;
+    }
+
+    /* centred with layout (not transforms), so the pointer lean can't push it off-centre */
+    .puk {
+      --size: min(34vw, 58vh);
+      position: fixed;
+      inset: 0 0 calc(var(--lift) * 2) 0;
+      margin: auto;
+      width: var(--size);
+      height: var(--size);
+      z-index: 3;
+    }
+
+    /* embedded on the portfolio home: title + puk sit a bit higher, clear of the project strip */
+    .is-embed {
+      --lift: 5vh;
+    }
+
+    .puk svg {
+      overflow: visible;
+    }
+
+    .walt {
+      position: fixed;
+      width: 6vw;
+      aspect-ratio: 1;
+      object-fit: cover;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .sub,
+    .brand {
+      position: fixed;
+      bottom: 3.2vh;
+      z-index: 4;
+    }
+
+    /* embedded with the parent's UI at the bottom → the corner texts move up under its top UI */
+    .no-corners .sub,
+    .no-corners .brand {
+      display: none;
+    }
+
+    .has-safe .sub,
+    .has-safe .brand {
+      bottom: auto;
+      top: calc(var(--safe-top, 0px) + 1vh);
+    }
+
+    .sub {
+      left: calc(var(--rule) + 0.8vw);
+      font-size: max(10px, 1.15vw);
+    }
+
+    .brand {
+      right: calc(var(--rule) + 0.8vw);
+      font-size: max(16px, 2.3vw);
+      text-transform: uppercase;
+      line-height: 1;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1 class="title" aria-label="Too wild to be contained">
+    <span>Too <b>wild</b></span>
+    <span>to be</span>
+    <span>contained</span>
+  </h1>
+
+  <div class="puk" id="puk" aria-hidden="true"></div>
+
+  <p class="sub">What happened to Walter Van Beirendonck’s most iconic brand</p>
+  <p class="brand">Wild &amp; Lethal Trash</p>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script>
+    (() => {
+      const params = new URLSearchParams(location.search);
+      const still = params.has('still') || matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let running = !params.has('embed');
+      document.documentElement.classList.toggle('is-embed', params.has('embed'));
+      const title = document.querySelector('.title');
+      const pukEl = document.getElementById('puk');
+
+      // Space taken by the parent page's UI; margins stay symmetric so everything remains screen-centred.
+      const safe = { top: 0, bottom: 0 };
+      const root = document.documentElement.style;
+
+      // Big type: widest line fills ~78% of the width, capped by the available height.
+      const fit = () => {
+        const margin = Math.max(safe.top, safe.bottom, innerHeight * 0.1);
+        const availH = innerHeight - 2 * margin;
+        root.setProperty('--safe-top', `${safe.top}px`);
+        document.documentElement.classList.toggle('has-safe', safe.bottom > 0);
+        title.style.fontSize = '100px';
+        const widest = Math.max(...[...title.children].map((s) => s.getBoundingClientRect().width));
+        const byW = (100 * innerWidth * 0.70) / widest;
+        const byH = availH / (3 * 0.9);
+        title.style.fontSize = Math.min(byW, byH) + 'px';
+      };
+      document.fonts.ready.then(fit);
+      addEventListener('resize', fit);
+
+      // Puk: the header Lottie. Frames 0–23 are the burst, then it loops from the "loop" marker.
+      const LOOP_START = 23;
+      const anim = lottie.loadAnimation({
+        container: pukEl, renderer: 'svg', loop: false, autoplay: false, path: 'headeranimation.json',
+      });
+      anim.addEventListener('DOMLoaded', () => {
+        if (still || !running) return anim.goToAndStop(140, true);
+        anim.goToAndPlay(0, true);
+      });
+      anim.addEventListener('complete', () => {
+        if (!still && running) anim.playSegments([LOOP_START, anim.totalFrames - 1], true);
+      });
+      const release = () => { if (!still) { running = true; anim.goToAndPlay(0, true); } };
+
+      // Clicking anywhere releases the puk again.
+      addEventListener('click', release);
+
+      // Parent page (portfolio) controls embedded previews.
+      // (it can also forward the pointer + clicks, since the iframe itself ignores pointer events there)
+      addEventListener('message', (e) => {
+        if (e.data === 'play' || e.data === 'burst') release();
+        if (e.data === 'pause') { running = false; anim.pause(); }
+        if (e.data && e.data.safe) { Object.assign(safe, e.data.safe); fit(); }
+        if (typeof e.data === 'object' && e.data && 'corners' in e.data) document.documentElement.classList.toggle('no-corners', !e.data.corners);
+        if (e.data && e.data.pointer && !still) lean(...e.data.pointer);
+      });
+
+      // Walter images popping up around the fold (like after the click on the real site).
+      const imgs = [1, 2, 3, 4, 5, 6].map((n) => `walt${n}.jpg`);
+      const spots = [
+        [0.27, 0.05], [0.8, 0.07], [0.07, 0.24], [0.87, 0.5], [0.18, 0.8], [0.64, 0.84], [0.52, 0.04], [0.06, 0.6],
+      ];
+      const place = (src, [x, y]) => {
+        const img = new Image();
+        img.src = src;
+        img.alt = '';
+        img.className = 'walt';
+        // spots are mapped into the band between the parent's UI (if any)
+        const size = innerWidth * 0.06;
+        img.style.left = x * 100 + 'vw';
+        const top = safe.top + (safe.bottom ? innerHeight * 0.08 : 0); // below the moved corner texts
+        img.style.top = `${top + y * (innerHeight - top - safe.bottom - size)}px`;
+        document.body.appendChild(img);
+        return img;
+      };
+
+      if (still) {
+        place(imgs[0], spots[0]);
+        place(imgs[1], spots[1]);
+        place(imgs[3], spots[4]);
+        return;
+      }
+      let k = 0;
+      const pop = () => {
+        if (!running) return;
+        const img = place(imgs[k % imgs.length], spots[(k * 3) % spots.length]);
+        k++;
+        gsap.timeline({ onComplete: () => img.remove() })
+          .from(img, { scale: 0, rotation: gsap.utils.random(-20, 20), duration: 0.35, ease: 'back.out(2.5)' })
+          .to(img, { scale: 0, duration: 0.25, ease: 'power2.in' }, '+=2.2');
+      };
+      pop();
+      setInterval(pop, 900);
+
+      // Puk leans towards the pointer a little.
+      const px = gsap.quickTo(pukEl, 'x', { duration: 0.8, ease: 'power3' });
+      const py = gsap.quickTo(pukEl, 'y', { duration: 0.8, ease: 'power3' });
+      function lean(nx, ny) { // nx, ny: pointer position from 0 to 1
+        px((nx - 0.5) * innerWidth * 0.04);
+        py((ny - 0.5) * innerHeight * 0.04);
+      }
+      addEventListener('pointermove', (e) => lean(e.clientX / innerWidth, e.clientY / innerHeight));
+    })();
+  </script>
+</body>
+
+</html>
