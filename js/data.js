@@ -24,6 +24,8 @@ window.TEXT = {
   heroLeft: '(Portfolio)<br>Selected works ©2024-2026',
   heroRight: '(Hover a project)',
   scroll: 'Scroll ↓',
+  nameCursor: 'Click me', // cursor label on the big name in the hero
+  nameEgg: '(Okay okay) you found the button', // shows for a moment after every 5th click on the name
 
   // home: works list
   worksTitle: '(Works)',
@@ -66,8 +68,8 @@ window.TEXT = {
 
   // archive page
   archiveTitle: 'Archive',
-  archiveIntro: 'Posters and cover art I made before I started studying. Self-taught, mostly for bands and for fun.',
-  archiveCount: '({archive}) Posters, before school',
+  archiveIntro: 'Older graphic design work: posters and cover art I made before I started studying, self-taught and mostly for bands and for fun. My school projects are under Work.',
+  archiveCount: '({archive}) Older graphic design projects, before school',
   archiveClose: 'Close',
 
   // contact page title
@@ -80,14 +82,14 @@ window.TEXT = {
    - title, note: shown under the poster and in the full-size view. Leave note empty if you like.
    ------------------------------------------------------------------------- */
 window.ARCHIVE = [
-  { file: 'explanation.jpg', title: 'Explanation', note: 'Poster' },
-  { file: 'qui-veut-la-facilite.jpg', title: 'Qui veut la facilité?', note: 'Poster' },
-  { file: 'fontaines-dc.jpg', title: 'Fontaines D.C.', note: 'Band poster' },
-  { file: 'the-luka-state.jpg', title: 'The Luka State', note: 'Tour poster' },
-  { file: 'proportions.jpg', title: 'Proportions', note: 'Poster' },
-  { file: 'fictional-film.jpg', title: 'A fictional film', note: 'Film poster' },
-  { file: 'progress.jpg', title: 'Progress or not understanding sh*t', note: 'Square poster' },
-  { file: 'teardrop.jpg', title: 'Teardrop', note: 'Cover art' },
+  { file: 'explanation.webp', title: 'Explanation', note: 'Poster' },
+  { file: 'qui-veut-la-facilite.webp', title: 'Qui veut la facilité?', note: 'Poster' },
+  { file: 'fontaines-dc.webp', title: 'Fontaines D.C.', note: 'Band poster' },
+  { file: 'the-luka-state.webp', title: 'The Luka State', note: 'Tour poster' },
+  { file: 'proportions.webp', title: 'Proportions', note: 'Poster' },
+  { file: 'fictional-film.webp', title: 'A fictional film', note: 'Film poster' },
+  { file: 'progress.webp', title: 'Progress or not understanding sh*t', note: 'Square poster' },
+  { file: 'teardrop.webp', title: 'Teardrop', note: 'Cover art' },
 ];
 
 /* Projects -----------------------------------------------------------------
@@ -123,12 +125,12 @@ window.PROJECTS = [
     role: 'Concept, illustration, design & development',
     color: '#161616',
     ink: '#FFF4ED',
-    cover: 'assets/projects/gabber-unleashed/cover.jpg',
+    cover: 'assets/projects/gabber-unleashed/cover.webp',
     // hero rebuilt from the 1DEV int1 site (title + gabber breaking his chain)
     preview: 'assets/projects/gabber-unleashed/fold/index.html',
     url: 'https://lucahauspie.be/integration1/',
     // the live site, built for a 1440px screen (13" MacBook): rendered at that size and scaled to fit
-    site: { url: 'https://lucahauspie.be/integration1/', width: 1440, height: 900, shot: 'assets/projects/gabber-unleashed/site-home.jpg' },
+    site: { url: 'https://lucahauspie.be/integration1/', width: 1440, height: 900, shot: 'assets/projects/gabber-unleashed/site-home.webp' },
     // process summarised from the Miro board (1DEV_LucaHauspie_miro)
     process: {
       unit: 'steps',
@@ -143,18 +145,18 @@ window.PROJECTS = [
           title: 'Concept',
           points: ['HMW', 'Crazy 8s', 'Tips & tricks', 'Pitch'],
           note: 'The brainstorms are in Dutch',
-          imgs: [{ src: 'assets/projects/gabber-unleashed/process/brainstorm-key-values.jpg', wide: true }, 'assets/projects/gabber-unleashed/process/brainstorm-community.jpg', 'assets/projects/gabber-unleashed/process/brainstorm-culture.jpg', { src: 'assets/projects/gabber-unleashed/process/crazy-8.jpg', wide: true }],
+          imgs: [{ src: 'assets/projects/gabber-unleashed/process/brainstorm-key-values.webp', wide: true }, 'assets/projects/gabber-unleashed/process/brainstorm-community.webp', 'assets/projects/gabber-unleashed/process/brainstorm-culture.webp', { src: 'assets/projects/gabber-unleashed/process/crazy-8.webp', wide: true }],
         },
         {
           title: 'Style',
           points: ['Styleboard', 'Saul Bass', 'First illustrations'],
-          imgs: ['assets/projects/gabber-unleashed/process/styleboard.jpg', 'assets/projects/gabber-unleashed/process/wireframe.jpg'],
+          imgs: ['assets/projects/gabber-unleashed/process/styleboard.webp', 'assets/projects/gabber-unleashed/process/wireframe.webp'],
         },
         {
           title: 'Concept image',
           points: ['Rejected → redrawn', 'Chains'],
           note: 'First sketch (rejected), mind map (in Dutch), final concept image',
-          imgs: ['assets/projects/gabber-unleashed/process/first-sketch.jpg', 'assets/projects/gabber-unleashed/process/concept-image-mindmap.jpg', { src: 'assets/projects/gabber-unleashed/process/hero-grid.jpg', wide: true }],
+          imgs: ['assets/projects/gabber-unleashed/process/first-sketch.webp', 'assets/projects/gabber-unleashed/process/concept-image-mindmap.webp', { src: 'assets/projects/gabber-unleashed/process/hero-grid.webp', wide: true }],
         },
         {
           title: 'Feedback rounds',
@@ -182,7 +184,7 @@ window.PROJECTS = [
     color: '#F2EFE9',
     ink: '#0E0E0E',
     accent: '#52B6EE', // numbers, underlines and buttons on this project's page (taken from the design)
-    cover: 'assets/projects/juke-kickstarter/cover.jpg',
+    cover: 'assets/projects/juke-kickstarter/cover.webp',
     // 8s muted cut (0:03–0:11) of the Kickstarter video — plays as hero on hover + case page
     video: 'assets/projects/juke-kickstarter/hero.mp4',
     // the whole video with sound, shown on the case page
@@ -199,12 +201,12 @@ window.PROJECTS = [
         {
           title: 'Style',
           points: ['Styleboard', 'Styleframe'],
-          imgs: [{ src: 'assets/projects/juke-kickstarter/process/styleboard.jpg', wide: true }, 'assets/projects/juke-kickstarter/process/styleframe.jpg', 'assets/projects/juke-kickstarter/process/two-friends.jpg'],
+          imgs: [{ src: 'assets/projects/juke-kickstarter/process/styleboard.webp', wide: true }, 'assets/projects/juke-kickstarter/process/styleframe.webp', 'assets/projects/juke-kickstarter/process/two-friends.webp'],
         },
         {
           title: 'Script & storyboard',
           points: ['7 scenes', '30 seconds'],
-          imgs: [{ src: 'assets/projects/juke-kickstarter/process/storyboard.jpg', wide: true }],
+          imgs: [{ src: 'assets/projects/juke-kickstarter/process/storyboard.webp', wide: true }],
         },
       ],
     },
@@ -221,25 +223,25 @@ window.PROJECTS = [
     color: '#161616',
     ink: '#BDF640',
     accent: '#B184F5', // numbers, underlines and buttons on this project's page (taken from the design)
-    cover: 'assets/projects/type01-conference/cover.jpg',
+    cover: 'assets/projects/type01-conference/cover.webp',
     // the Type01 hero, rebuilt with the letter assets — letters slowly stretch and float
     preview: 'assets/projects/type01-conference/fold/index.html',
     // final design, page by page: full-page screenshots you scroll through (desktop + mobile side by side)
     screens: [
-      { label: '(01) Home', desktop: 'assets/projects/type01-conference/pages/home.jpg', mobile: 'assets/projects/type01-conference/pages/home-mobile.jpg' },
-      { label: '(02) Schedule, Friday', desktop: 'assets/projects/type01-conference/pages/schedule-friday.jpg', mobile: 'assets/projects/type01-conference/pages/schedule-friday-mobile.jpg' },
-      { label: '(03) Speaker', desktop: 'assets/projects/type01-conference/pages/speaker.jpg', mobile: 'assets/projects/type01-conference/pages/speaker-mobile.jpg' },
-      { label: '(04) Schedule, Saturday', desktop: 'assets/projects/type01-conference/pages/schedule-saturday.jpg', mobile: 'assets/projects/type01-conference/pages/schedule-saturday-mobile.jpg' },
+      { label: '(01) Home', desktop: 'assets/projects/type01-conference/pages/home.webp', mobile: 'assets/projects/type01-conference/pages/home-mobile.webp' },
+      { label: '(02) Schedule, Friday', desktop: 'assets/projects/type01-conference/pages/schedule-friday.webp', mobile: 'assets/projects/type01-conference/pages/schedule-friday-mobile.webp' },
+      { label: '(03) Speaker', desktop: 'assets/projects/type01-conference/pages/speaker.webp', mobile: 'assets/projects/type01-conference/pages/speaker-mobile.webp' },
+      { label: '(04) Schedule, Saturday', desktop: 'assets/projects/type01-conference/pages/schedule-saturday.webp', mobile: 'assets/projects/type01-conference/pages/schedule-saturday-mobile.webp' },
     ],
     process: {
       unit: 'steps',
       step: 'Step',
       weeks: [
-        { title: 'First tryout', points: ['Wrong message'], imgs: [{ src: 'assets/projects/type01-conference/process/first-tryout.jpg', scroll: true, label: 'Desktop' }, { src: 'assets/projects/type01-conference/process/first-tryout-mobile.jpg', scroll: true, label: 'Mobile' }] },
-        { title: 'Research', points: ['Magazines', 'Experimental type'], imgs: ['assets/projects/type01-conference/process/inspiration-editorial.jpg', 'assets/projects/type01-conference/process/inspiration-type.jpg'] },
-        { title: 'A new direction', points: ['Styleframe'], imgs: ['assets/projects/type01-conference/process/styleframe-green.jpg'] },
-        { title: 'Wireframe & UI research', points: ['Wireframe', 'UI references'], imgs: [{ src: 'assets/projects/type01-conference/process/wireframe.jpg', scroll: true, label: 'Wireframe' }, 'assets/projects/type01-conference/process/ui-research.jpg'] },
-        { title: 'Second tryout', points: ['Green + black', 'Needed a third colour'], imgs: [{ src: 'assets/projects/type01-conference/process/second-tryout.jpg', scroll: true, label: 'Second tryout' }] },
+        { title: 'First tryout', points: ['Wrong message'], imgs: [{ src: 'assets/projects/type01-conference/process/first-tryout.webp', scroll: true, label: 'Desktop' }, { src: 'assets/projects/type01-conference/process/first-tryout-mobile.webp', scroll: true, label: 'Mobile' }] },
+        { title: 'Research', points: ['Magazines', 'Experimental type'], imgs: ['assets/projects/type01-conference/process/inspiration-editorial.webp', 'assets/projects/type01-conference/process/inspiration-type.webp'] },
+        { title: 'A new direction', points: ['Styleframe'], imgs: ['assets/projects/type01-conference/process/styleframe-green.webp'] },
+        { title: 'Wireframe & UI research', points: ['Wireframe', 'UI references'], imgs: [{ src: 'assets/projects/type01-conference/process/wireframe.webp', scroll: true, label: 'Wireframe' }, 'assets/projects/type01-conference/process/ui-research.webp'] },
+        { title: 'Second tryout', points: ['Green + black', 'Needed a third colour'], imgs: [{ src: 'assets/projects/type01-conference/process/second-tryout.webp', scroll: true, label: 'Second tryout' }] },
         { title: 'Final', points: ['Desktop', 'Phone', 'Auto Layout'], imgs: false },
       ],
     },
@@ -247,7 +249,7 @@ window.PROJECTS = [
   },
   {
     slug: 'myst',
-    subtitle: 'Installation & app for Visit Antwerp', // bottom left, in MYST's own letterspaced style (css: .live-sub--myst)
+    subtitle: 'Group project, app/motion design, projection mapping / Antwerp', // not shown: MYST's hero (fold) has its own subtitle
     title: 'Myst',
     lines: ['MYST'],
     year: '2026',
@@ -257,22 +259,22 @@ window.PROJECTS = [
     color: '#ECEAE6',
     ink: '#161616',
     accent: '#D42F2F', // numbers, underlines and buttons on this project's page (taken from the design)
-    cover: 'assets/projects/myst/cover.jpg',
+    cover: 'assets/projects/myst/cover.webp',
     // start screen of the INT4 installation, live: animated mist + the original Lottie logo (mystload.json)
     preview: 'assets/projects/myst/fold/index.html',
     // visual for each "## Concept N" part in content/myst.md: { big } (typographic), { img } or { video, poster }
     concept: [
       { big: 'No plans.<br>Side quests.' },
-      { video: 'assets/projects/myst/web/installation.mp4', poster: 'assets/projects/myst/web/installation-poster.jpg' },
-      { img: 'assets/projects/myst/web/map-fog.jpg' },
+      { video: 'assets/projects/myst/web/installation.mp4', poster: 'assets/projects/myst/web/installation-poster.webp' },
+      { img: 'assets/projects/myst/web/map-fog.webp' },
     ],
     // end result, shown before the process
     showcase: [
-      { label: '(Installation) Pick an outfit on the iPad, it’s projected onto the mannequin', imgs: [{ video: 'assets/projects/myst/web/installation.mp4', poster: 'assets/projects/myst/web/installation-poster.jpg' }, 'assets/projects/myst/web/final-ipad.jpg'] },
-      { label: '(App) Onboarding: before the mist clears, who are you?', phone: true, imgs: ['assets/projects/myst/web/onboarding-styles.jpg', 'assets/projects/myst/web/onboarding-interests.jpg'] },
-      { label: '(App) The fog map: pins clear the mist', phone: true, imgs: ['assets/projects/myst/web/map-fog.jpg', 'assets/projects/myst/web/map-pin.jpg', 'assets/projects/myst/web/pin-detail.jpg', 'assets/projects/myst/web/add-discovery.jpg'] },
-      { label: '(App) Crews & profile', phone: true, imgs: ['assets/projects/myst/web/crews.jpg', 'assets/projects/myst/web/crew-detail.jpg', 'assets/projects/myst/web/crew-code.jpg', 'assets/projects/myst/web/profile.jpg'] },
-      { label: '(Motion) Promo video & case movie, made with Alexander Jonckheere', imgs: [{ film: 'assets/projects/myst/web/promo.mp4', poster: 'assets/projects/myst/web/promo-poster.jpg', title: 'Promo video, 0:20' }, { film: 'assets/projects/myst/web/case-movie.mp4', poster: 'assets/projects/myst/web/case-movie-poster.jpg', title: 'Case movie, 1:07' }] },
+      { label: '(Installation) Pick an outfit on the iPad, it’s projected onto the mannequin', imgs: [{ video: 'assets/projects/myst/web/installation.mp4', poster: 'assets/projects/myst/web/installation-poster.webp' }, 'assets/projects/myst/web/final-ipad.webp'] },
+      { label: '(App) Onboarding: before the mist clears, who are you?', phone: true, imgs: ['assets/projects/myst/web/onboarding-styles.webp', 'assets/projects/myst/web/onboarding-interests.webp'] },
+      { label: '(App) The fog map: pins clear the mist', phone: true, imgs: ['assets/projects/myst/web/map-fog.webp', 'assets/projects/myst/web/map-pin.webp', 'assets/projects/myst/web/pin-detail.webp', 'assets/projects/myst/web/add-discovery.webp'] },
+      { label: '(App) Crews & profile', phone: true, imgs: ['assets/projects/myst/web/crews.webp', 'assets/projects/myst/web/crew-detail.webp', 'assets/projects/myst/web/crew-code.webp', 'assets/projects/myst/web/profile.webp'] },
+      { label: '(Motion) Promo video & case movie, made with Alexander Jonckheere', imgs: [{ film: 'assets/projects/myst/web/promo.mp4', poster: 'assets/projects/myst/web/promo-poster.webp', title: 'Promo video, 0:20' }, { film: 'assets/projects/myst/web/case-movie.mp4', poster: 'assets/projects/myst/web/case-movie-poster.webp', title: 'Case movie, 1:07' }] },
     ],
     // six-week process, shown as a timeline on the case page.
     // imgs: add paths (e.g. 'assets/projects/myst/process/w1-01.jpg') — empty frames show until then
@@ -292,19 +294,19 @@ window.PROJECTS = [
         {
           title: 'Refining & validating',
           points: ['Styleboards', 'Survey', 'Personas', 'Hi-fi wireframes'],
-          imgs: ['assets/projects/myst/web/inspo.jpg', 'assets/projects/myst/web/styleboard.jpg'],
+          imgs: ['assets/projects/myst/web/inspo.webp', 'assets/projects/myst/web/styleboard.webp'],
         },
         {
           title: 'Testing & prototyping',
           points: ['Flowchart', 'MadMapper', '9 fashion styles', 'iPad iterations'],
           note: 'First design: dark and blue-tinted. The final went light, with black and red.',
-          imgs: ['assets/projects/myst/web/first-ipad.jpg', 'assets/projects/myst/web/first-story.jpg'],
+          imgs: ['assets/projects/myst/web/first-ipad.webp', 'assets/projects/myst/web/first-story.webp'],
         },
         {
           title: 'Building the box',
           points: ['Physical build', 'Projection mapping', 'OSC + MadMapper', 'Mobile design'],
           note: 'The iPad app that ran in the box: pick an outfit, read its story, find the store',
-          imgs: ['assets/projects/myst/web/ipad-picker.jpg', 'assets/projects/myst/web/ipad-outfit.jpg', 'assets/projects/myst/web/ipad-store.jpg'],
+          imgs: ['assets/projects/myst/web/ipad-picker.webp', 'assets/projects/myst/web/ipad-outfit.webp', 'assets/projects/myst/web/ipad-store.webp'],
         },
         {
           title: 'Final design & development',
@@ -331,12 +333,12 @@ window.PROJECTS = [
     color: '#FFFFFF',
     ink: '#FF2121',
     accent: '#7BC6E4', // numbers, underlines and buttons on this project's page (taken from the design)
-    cover: 'assets/projects/too-wild-to-be-contained/cover.jpg',
+    cover: 'assets/projects/too-wild-to-be-contained/cover.webp',
     // live, animated recreation of the site's fold — used instead of the cover where there's room for it
     preview: 'assets/projects/too-wild-to-be-contained/fold/index.html',
     url: 'https://lucahauspie.github.io/integration03/',
     // the live site in a browser frame (end result, shown before the process)
-    site: { url: 'https://lucahauspie.github.io/integration03/', width: 1440, height: 900, shot: 'assets/projects/too-wild-to-be-contained/pages/desktop.jpg' },
+    site: { url: 'https://lucahauspie.github.io/integration03/', width: 1440, height: 900, shot: 'assets/projects/too-wild-to-be-contained/pages/desktop.webp' },
     previewCursor: 'Click to release',
     previewClick: 'burst',
     process: {
@@ -350,16 +352,16 @@ window.PROJECTS = [
         {
           title: 'Wireframes',
           points: ['Chapters', 'Puk interactions', 'White → black'],
-          imgs: ['assets/projects/too-wild-to-be-contained/process/wireframe-1.jpg', 'assets/projects/too-wild-to-be-contained/process/wireframe-2.jpg', 'assets/projects/too-wild-to-be-contained/process/wireframe-4.jpg', { src: 'assets/projects/too-wild-to-be-contained/process/wireframe-escalation.jpg' }],
+          imgs: ['assets/projects/too-wild-to-be-contained/process/wireframe-1.webp', 'assets/projects/too-wild-to-be-contained/process/wireframe-2.webp', 'assets/projects/too-wild-to-be-contained/process/wireframe-4.webp', { src: 'assets/projects/too-wild-to-be-contained/process/wireframe-escalation.webp' }],
         },
         {
           title: 'Styleframe',
-          imgs: ['assets/projects/too-wild-to-be-contained/process/styleframe.jpg', { src: 'assets/projects/too-wild-to-be-contained/process/first-design.jpg', scroll: true, label: 'First styled version' }],
+          imgs: ['assets/projects/too-wild-to-be-contained/process/styleframe.webp', { src: 'assets/projects/too-wild-to-be-contained/process/first-design.webp', scroll: true, label: 'First styled version' }],
         },
         {
           title: 'Iteration',
           points: ['Start production → drag game'],
-          imgs: [{ src: 'assets/projects/too-wild-to-be-contained/process/design-v1.jpg', scroll: true, label: 'Earlier: start production', at: 0.27 }, { src: 'assets/projects/too-wild-to-be-contained/pages/desktop.jpg', scroll: true, label: 'Final: drag game', at: 0.3 }],
+          imgs: [{ src: 'assets/projects/too-wild-to-be-contained/process/design-v1.webp', scroll: true, label: 'Earlier: start production', at: 0.27 }, { src: 'assets/projects/too-wild-to-be-contained/pages/desktop.webp', scroll: true, label: 'Final: drag game', at: 0.3 }],
         },
         {
           title: 'Build',

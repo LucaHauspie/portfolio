@@ -81,7 +81,7 @@
         <div class="thumb__label"><span>(${pad(i + 1)}) ${p.title}</span><span>${p.year}</span></div>
       </a>`).join('') + `<span class="hero__scroll">${Site.t('scroll')}</span>`;
   const thumbs = $$('.thumb', strip);
-  strip.style.gridTemplateColumns = `repeat(${P.length}, 1fr) auto`;
+  strip.style.setProperty('--n', P.length); // number of thumbnails (css: .hero__strip)
   const words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
   $$('[data-count]').forEach((el) => (el.textContent = el.dataset.count === 'word' ? words[P.length] || P.length : pad(P.length)));
 
@@ -126,6 +126,44 @@
   };
 
   gsap.set(hero, { '--hero-bg': '#f2efe9', '--hero-fg': '#0e0e0e' });
+
+  // click the big name: the letters get kicked into the air and bounce back,
+  // and the project covers burst out of the click like stickers
+  title.dataset.cursor = Site.t('nameCursor');
+  let kicks = 0;
+  title.addEventListener('click', (e) => {
+    if (current !== -1 || reduce) return;
+    kicks += 1;
+    const r = gsap.utils.random;
+    const chars = $$('.ch', title);
+    title.classList.add('is-kicked');
+    gsap.timeline({ onComplete: () => title.classList.remove('is-kicked') })
+      .to(chars, { y: () => r(-innerHeight * 0.35, -innerHeight * 0.1), rotation: () => r(-50, 50), duration: 0.35, ease: 'power2.out', stagger: { each: 0.015, from: 'random' }, overwrite: true })
+      .to(chars, { y: 0, rotation: 0, duration: 1.3, ease: 'bounce.out', stagger: { each: 0.02, from: 'random' } }, '>-0.05');
+    // stickers: every project cover (plus a few archive posters) flies out and falls off screen
+    const pics = [...P.map((p) => p.cover), ...(window.ARCHIVE || []).slice(0, 3).map((a) => `assets/archive/thumbs/${a.file}`)];
+    pics.forEach((src) => {
+      const s = document.createElement('img');
+      s.src = src;
+      s.alt = '';
+      s.className = 'hero__sticker';
+      s.style.left = `${e.clientX}px`;
+      s.style.top = `${e.clientY}px`;
+      document.body.appendChild(s);
+      const dx = r(-innerWidth * 0.45, innerWidth * 0.45);
+      gsap.timeline({ onComplete: () => s.remove() })
+        .fromTo(s, { xPercent: -50, yPercent: -50, scale: 0.2, rotation: r(-30, 30) },
+          { x: dx * 0.6, y: r(-innerHeight * 0.45, -innerHeight * 0.2), scale: 1, rotation: `+=${r(-90, 90)}`, duration: 0.55, ease: 'power2.out' })
+        .to(s, { x: dx, y: innerHeight * 1.2, rotation: `+=${r(-120, 120)}`, duration: r(0.9, 1.4), ease: 'power2.in' });
+    });
+    // every 5th click: a little reward in the hero
+    if (kicks % 5 === 0) {
+      const el = $('.hero__meta p');
+      const html = el.innerHTML;
+      Site.scramble(el, Site.t('nameEgg'), 0.8);
+      setTimeout(() => (el.innerHTML = html), 3200);
+    }
+  });
 
   let current = -1;
   function show(i) {

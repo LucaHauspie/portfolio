@@ -4,8 +4,7 @@
   Paragraphs for this project page. Edit the text under each heading.
   Keep the heading names ("## Intro", "## Step 2: ..."). You can change a step's title after "Step N:".
   A blank line starts a new paragraph. Leave a section empty to show "To be written".
-  In step texts: "### Heading" for a small heading, lines starting with "- " for a list,
-  and a line with only "---" hides everything below it behind a "Read more" button.
+  In step texts: "### Heading" for a small heading, lines starting with "- " for a list.
   Images, tags, colours and captions live in js/data.js. This file only loads through a server (npm start or the live site).
 -->
 
@@ -97,4 +96,4 @@ Creating interactions that add to the story and are not meaningless.
 
 ## What I've learned
 
-Gsap, Lottie Animations, fun interactive media.
+Gsap, Lottie Animations, use of git & github, vite, fun interactive media.
