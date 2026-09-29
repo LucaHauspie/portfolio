@@ -21,7 +21,7 @@ window.SITE = {
    ------------------------------------------------------------------------- */
 window.TEXT = {
   // home: small texts at the top of the hero
-  heroLeft: '(Portfolio)<br>Selected works ©2024-2026',
+  heroLeft: '(Portfolio)<br>Selected works ©2025-2026',
   heroRight: '(Hover a project)',
   scroll: 'Scroll ↓',
   nameCursor: 'Click me', // cursor label on the big name in the hero
@@ -29,7 +29,7 @@ window.TEXT = {
 
   // home: works list
   worksTitle: '(Works)',
-  worksSide: '({count}) School projects<br>©2024-2026',
+  worksSide: '({count}) School projects<br>©2025-2026',
   viewCase: 'View case', // label that follows the cursor over a project
 
   // home: the statement block
@@ -119,7 +119,7 @@ window.PROJECTS = [
     slug: 'gabber-unleashed',
     title: 'Gabber Unleashed',
     lines: ['GABBER', 'UNLEASHED'],
-    year: '2025',
+    year: 'January 2025',
     tags: ['Webdesign', 'Illustration', 'Concept'],
     context: 'School project, Howest (Integration 1)',
     role: 'Concept, illustration, design & development',
@@ -173,11 +173,96 @@ window.PROJECTS = [
     gallery: [],
   },
   {
+    slug: 'type01-conference',
+    title: 'Type01 Conference',
+    lines: ['TYPE01', 'CONFERENCE'],
+    year: 'December 2025',
+    tags: ['Webdesign', 'UI design', 'Typography'],
+    context: 'School project, Howest',
+    role: 'Responsive webdesign',
+    color: '#161616',
+    ink: '#BDF640',
+    accent: '#B184F5', // numbers, underlines and buttons on this project's page (taken from the design)
+    cover: 'assets/projects/type01-conference/cover.webp',
+    // the Type01 hero, rebuilt with the letter assets — letters slowly stretch and float
+    preview: 'assets/projects/type01-conference/fold/index.html',
+    // final design, page by page: full-page screenshots you scroll through (desktop + mobile side by side)
+    screens: [
+      { label: '(01) Home', desktop: 'assets/projects/type01-conference/pages/home.webp', mobile: 'assets/projects/type01-conference/pages/home-mobile.webp' },
+      { label: '(02) Schedule, Friday', desktop: 'assets/projects/type01-conference/pages/schedule-friday.webp', mobile: 'assets/projects/type01-conference/pages/schedule-friday-mobile.webp' },
+      { label: '(03) Speaker', desktop: 'assets/projects/type01-conference/pages/speaker.webp', mobile: 'assets/projects/type01-conference/pages/speaker-mobile.webp' },
+      { label: '(04) Schedule, Saturday', desktop: 'assets/projects/type01-conference/pages/schedule-saturday.webp', mobile: 'assets/projects/type01-conference/pages/schedule-saturday-mobile.webp' },
+    ],
+    process: {
+      unit: 'steps',
+      step: 'Step',
+      weeks: [
+        { title: 'First tryout', points: ['Wrong message'], imgs: [{ src: 'assets/projects/type01-conference/process/first-tryout.webp', scroll: true, label: 'Desktop' }, { src: 'assets/projects/type01-conference/process/first-tryout-mobile.webp', scroll: true, label: 'Mobile' }] },
+        { title: 'Research', points: ['Magazines', 'Experimental type'], imgs: ['assets/projects/type01-conference/process/inspiration-editorial.webp', 'assets/projects/type01-conference/process/inspiration-type.webp'] },
+        { title: 'A new direction', points: ['Styleframe'], imgs: ['assets/projects/type01-conference/process/styleframe-green.webp'] },
+        { title: 'Wireframe & UI research', points: ['Wireframe', 'UI references'], imgs: [{ src: 'assets/projects/type01-conference/process/wireframe.webp', scroll: true, label: 'Wireframe' }, 'assets/projects/type01-conference/process/ui-research.webp'] },
+        { title: 'Second tryout', points: ['Green + black', 'Needed a third colour'], imgs: [{ src: 'assets/projects/type01-conference/process/second-tryout.webp', scroll: true, label: 'Second tryout' }] },
+        { title: 'Final', points: ['Desktop', 'Phone', 'Auto Layout'], imgs: false },
+      ],
+    },
+    gallery: [],
+  },
+  {
+    slug: 'too-wild-to-be-contained',
+    title: 'Too Wild To Be Contained',
+    lines: ['TOO WILD', 'TO BE', 'CONTAINED'],
+    year: 'January 2026',
+    tags: ['Interactive storytelling', 'Web', 'Motion'],
+    context: 'School project, Howest (Integration 03)',
+    role: 'Concept, design & development',
+    color: '#FFFFFF',
+    ink: '#FF2121',
+    accent: '#7BC6E4', // numbers, underlines and buttons on this project's page (taken from the design)
+    cover: 'assets/projects/too-wild-to-be-contained/cover.webp',
+    // live, animated recreation of the site's fold — used instead of the cover where there's room for it
+    preview: 'assets/projects/too-wild-to-be-contained/fold/index.html',
+    url: 'https://lucahauspie.github.io/integration03/',
+    // the live site in a browser frame (end result, shown before the process)
+    site: { url: 'https://lucahauspie.github.io/integration03/', width: 1440, height: 900, shot: 'assets/projects/too-wild-to-be-contained/pages/desktop.webp' },
+    previewCursor: 'Click to release',
+    previewClick: 'burst',
+    process: {
+      unit: 'steps',
+      step: 'Step',
+      weeks: [
+        {
+          title: 'The story',
+          imgs: false,
+        },
+        {
+          title: 'Wireframes',
+          points: ['Chapters', 'Puk interactions', 'White → black'],
+          imgs: ['assets/projects/too-wild-to-be-contained/process/wireframe-1.webp', 'assets/projects/too-wild-to-be-contained/process/wireframe-2.webp', 'assets/projects/too-wild-to-be-contained/process/wireframe-4.webp', { src: 'assets/projects/too-wild-to-be-contained/process/wireframe-escalation.webp' }],
+        },
+        {
+          title: 'Styleframe',
+          imgs: ['assets/projects/too-wild-to-be-contained/process/styleframe.webp', { src: 'assets/projects/too-wild-to-be-contained/process/first-design.webp', scroll: true, label: 'First styled version' }],
+        },
+        {
+          title: 'Iteration',
+          points: ['Start production → drag game'],
+          imgs: [{ src: 'assets/projects/too-wild-to-be-contained/process/design-v1.webp', scroll: true, label: 'Earlier: start production', at: 0.27 }, { src: 'assets/projects/too-wild-to-be-contained/pages/desktop.webp', scroll: true, label: 'Final: drag game', at: 0.3 }],
+        },
+        {
+          title: 'Build',
+          points: ['Vite', 'GSAP', 'Lottie'],
+          imgs: false,
+        },
+      ],
+    },
+    gallery: [],
+  },
+  {
     slug: 'juke-kickstarter',
     subtitle: 'Motion design / Kickstarter campaign', // shown right under the title on the video
     title: 'Juke Snowboards',
     lines: ['JUKE', 'SNOWBOARDS'],
-    year: '2025',
+    year: 'April 2026',
     tags: ['Motion design', 'Kickstarter', 'Video'],
     context: 'School project, Howest (Motion design)',
     role: 'Concept, animation & edit',
@@ -213,46 +298,11 @@ window.PROJECTS = [
     gallery: [],
   },
   {
-    slug: 'type01-conference',
-    title: 'Type01 Conference',
-    lines: ['TYPE01', 'CONFERENCE'],
-    year: '2024',
-    tags: ['Webdesign', 'UI design', 'Typography'],
-    context: 'School project, Howest',
-    role: 'Responsive webdesign',
-    color: '#161616',
-    ink: '#BDF640',
-    accent: '#B184F5', // numbers, underlines and buttons on this project's page (taken from the design)
-    cover: 'assets/projects/type01-conference/cover.webp',
-    // the Type01 hero, rebuilt with the letter assets — letters slowly stretch and float
-    preview: 'assets/projects/type01-conference/fold/index.html',
-    // final design, page by page: full-page screenshots you scroll through (desktop + mobile side by side)
-    screens: [
-      { label: '(01) Home', desktop: 'assets/projects/type01-conference/pages/home.webp', mobile: 'assets/projects/type01-conference/pages/home-mobile.webp' },
-      { label: '(02) Schedule, Friday', desktop: 'assets/projects/type01-conference/pages/schedule-friday.webp', mobile: 'assets/projects/type01-conference/pages/schedule-friday-mobile.webp' },
-      { label: '(03) Speaker', desktop: 'assets/projects/type01-conference/pages/speaker.webp', mobile: 'assets/projects/type01-conference/pages/speaker-mobile.webp' },
-      { label: '(04) Schedule, Saturday', desktop: 'assets/projects/type01-conference/pages/schedule-saturday.webp', mobile: 'assets/projects/type01-conference/pages/schedule-saturday-mobile.webp' },
-    ],
-    process: {
-      unit: 'steps',
-      step: 'Step',
-      weeks: [
-        { title: 'First tryout', points: ['Wrong message'], imgs: [{ src: 'assets/projects/type01-conference/process/first-tryout.webp', scroll: true, label: 'Desktop' }, { src: 'assets/projects/type01-conference/process/first-tryout-mobile.webp', scroll: true, label: 'Mobile' }] },
-        { title: 'Research', points: ['Magazines', 'Experimental type'], imgs: ['assets/projects/type01-conference/process/inspiration-editorial.webp', 'assets/projects/type01-conference/process/inspiration-type.webp'] },
-        { title: 'A new direction', points: ['Styleframe'], imgs: ['assets/projects/type01-conference/process/styleframe-green.webp'] },
-        { title: 'Wireframe & UI research', points: ['Wireframe', 'UI references'], imgs: [{ src: 'assets/projects/type01-conference/process/wireframe.webp', scroll: true, label: 'Wireframe' }, 'assets/projects/type01-conference/process/ui-research.webp'] },
-        { title: 'Second tryout', points: ['Green + black', 'Needed a third colour'], imgs: [{ src: 'assets/projects/type01-conference/process/second-tryout.webp', scroll: true, label: 'Second tryout' }] },
-        { title: 'Final', points: ['Desktop', 'Phone', 'Auto Layout'], imgs: false },
-      ],
-    },
-    gallery: [],
-  },
-  {
     slug: 'myst',
     subtitle: 'Group project, app/motion design, projection mapping / Antwerp', // not shown: MYST's hero (fold) has its own subtitle
     title: 'Myst',
     lines: ['MYST'],
-    year: '2026',
+    year: 'June 2026',
     tags: ['Experience design', 'Installation', 'App'],
     context: 'Howest × Rotterdam, brief by Visit Antwerp',
     role: 'Design, motion & installation',
@@ -316,56 +366,6 @@ window.PROJECTS = [
         {
           title: 'Expo',
           points: ['Expo in Kortrijk'],
-          imgs: false,
-        },
-      ],
-    },
-    gallery: [],
-  },
-  {
-    slug: 'too-wild-to-be-contained',
-    title: 'Too Wild To Be Contained',
-    lines: ['TOO WILD', 'TO BE', 'CONTAINED'],
-    year: '2026',
-    tags: ['Interactive storytelling', 'Web', 'Motion'],
-    context: 'School project, Howest (Integration 03)',
-    role: 'Concept, design & development',
-    color: '#FFFFFF',
-    ink: '#FF2121',
-    accent: '#7BC6E4', // numbers, underlines and buttons on this project's page (taken from the design)
-    cover: 'assets/projects/too-wild-to-be-contained/cover.webp',
-    // live, animated recreation of the site's fold — used instead of the cover where there's room for it
-    preview: 'assets/projects/too-wild-to-be-contained/fold/index.html',
-    url: 'https://lucahauspie.github.io/integration03/',
-    // the live site in a browser frame (end result, shown before the process)
-    site: { url: 'https://lucahauspie.github.io/integration03/', width: 1440, height: 900, shot: 'assets/projects/too-wild-to-be-contained/pages/desktop.webp' },
-    previewCursor: 'Click to release',
-    previewClick: 'burst',
-    process: {
-      unit: 'steps',
-      step: 'Step',
-      weeks: [
-        {
-          title: 'The story',
-          imgs: false,
-        },
-        {
-          title: 'Wireframes',
-          points: ['Chapters', 'Puk interactions', 'White → black'],
-          imgs: ['assets/projects/too-wild-to-be-contained/process/wireframe-1.webp', 'assets/projects/too-wild-to-be-contained/process/wireframe-2.webp', 'assets/projects/too-wild-to-be-contained/process/wireframe-4.webp', { src: 'assets/projects/too-wild-to-be-contained/process/wireframe-escalation.webp' }],
-        },
-        {
-          title: 'Styleframe',
-          imgs: ['assets/projects/too-wild-to-be-contained/process/styleframe.webp', { src: 'assets/projects/too-wild-to-be-contained/process/first-design.webp', scroll: true, label: 'First styled version' }],
-        },
-        {
-          title: 'Iteration',
-          points: ['Start production → drag game'],
-          imgs: [{ src: 'assets/projects/too-wild-to-be-contained/process/design-v1.webp', scroll: true, label: 'Earlier: start production', at: 0.27 }, { src: 'assets/projects/too-wild-to-be-contained/pages/desktop.webp', scroll: true, label: 'Final: drag game', at: 0.3 }],
-        },
-        {
-          title: 'Build',
-          points: ['Vite', 'GSAP', 'Lottie'],
           imgs: false,
         },
       ],

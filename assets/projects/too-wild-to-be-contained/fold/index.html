@@ -162,6 +162,16 @@
       white-space: nowrap;
     }
     .tagline b { font-weight: 600; font-style: italic; }
+    /* phone (portrait) */
+    @media (max-aspect-ratio: 17/20) {
+      :root { --cell: 19vw; --rule: 5vw; }
+      .puk { --size: min(56vw, 34vh); }
+      .walt { width: 14vw; }
+      .tagline { white-space: normal; max-width: 80vw; margin: 3vh auto 0; font-size: 13px; line-height: 1.3; }
+      .sub, .brand { left: var(--rule); right: var(--rule); text-align: left; }
+      .sub { bottom: calc(3.2vh + 30px); font-size: 12px; }
+      .brand { font-size: 22px; }
+    }
   </style>
 </head>
 
@@ -203,7 +213,8 @@
         document.documentElement.classList.toggle('has-safe', safe.bottom > 0);
         title.style.fontSize = '100px';
         const widest = Math.max(...[...title.querySelectorAll(':scope > span')].map((s) => s.getBoundingClientRect().width));
-        const byW = (100 * innerWidth * 0.6) / widest;
+        const tall = innerWidth / innerHeight < 0.85; // phone: the title can take more of the width
+        const byW = (100 * innerWidth * (tall ? 0.86 : 0.6)) / widest;
         const byH = availH / (3 * 0.9);
         title.style.fontSize = Math.min(byW, byH) + 'px';
       };
@@ -248,7 +259,7 @@
         img.alt = '';
         img.className = 'walt';
         // spots are mapped into the band between the parent's UI (if any)
-        const size = innerWidth * 0.06;
+        const size = innerWidth * (innerWidth / innerHeight < 0.85 ? 0.14 : 0.06);
         img.style.left = x * 100 + 'vw';
         const top = safe.top + (safe.bottom ? innerHeight * 0.08 : 0); // below the moved corner texts
         img.style.top = `${top + y * (innerHeight - top - safe.bottom - size)}px`;

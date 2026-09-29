@@ -439,6 +439,8 @@ body::after {
 }
 .thumb:hover .thumb__img img { transform: scale(1.08); }
 .thumb__label { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; }
+.thumb__label span:first-child { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.thumb__label span:last-child { flex: none; white-space: nowrap; }
 .hero__scroll { writing-mode: vertical-rl; padding-left: 8px; }
 
 @media (max-width: 720px) {
@@ -626,14 +628,35 @@ body::after {
 }
 
 @media (max-width: 720px) {
-  .work { grid-template-columns: 4ch 22vw 1fr; }
-  .work__meta { display: none; }
+  /* phone: number + thumb + title that wraps, tags small underneath */
+  .work {
+    grid-template-columns: 26vw 1fr;
+    grid-template-areas: 'media title' 'media meta';
+    column-gap: 14px;
+    row-gap: 6px;
+    align-items: start;
+  }
+  .work__num { display: none; }
+  .work__media { grid-area: media; }
+  .work__title, .works__list:not(.is-grid) .work[data-long] .work__title { grid-area: title; font-size: clamp(22px, 7vw, 34px); align-self: end; }
+  .work__name { white-space: normal; }
+  .work__meta { grid-area: meta; display: block; text-align: left; font-size: 10px; opacity: 0.8; }
+  .works__title { font-size: clamp(56px, 22vw, 120px); }
   .works__head { grid-template-columns: 1fr; }
   .works__side { align-items: flex-start; }
   .works__list.is-grid { grid-template-columns: 1fr; }
   .works__list.is-grid .work:nth-child(even) { margin-top: 0; }
   .works__list.is-grid .work__meta { display: block; }
   .work-preview { display: none; }
+}
+
+/* tablet: tags under the title instead of in a narrow column */
+@media (min-width: 721px) and (max-width: 1100px) {
+  .works__list:not(.is-grid) .work { grid-template-columns: 5ch 12vw 1fr; grid-template-areas: 'num media title' 'num media meta'; row-gap: 6px; }
+  .works__list:not(.is-grid) .work__num { grid-area: num; }
+  .works__list:not(.is-grid) .work__media { grid-area: media; }
+  .works__list:not(.is-grid) .work__title { grid-area: title; align-self: end; }
+  .works__list:not(.is-grid) .work__meta { grid-area: meta; text-align: left; }
 }
 
 /* ---------- STATEMENT ---------- */
