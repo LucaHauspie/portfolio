@@ -11,6 +11,19 @@ Personal portfolio site. Plain HTML/CSS/JS with no build step, animated with [GS
 | `about.html` | About: disciplines, toolbox, education, tone of voice |
 | `contact.html` | Contact: copy-to-clipboard e-mail, socials, mailto form |
 
+## Where to edit text
+
+| What | Where |
+| --- | --- |
+| Name, email, socials, availability line | `js/data.js`, `window.SITE` at the top |
+| Home page texts, footer, labels on project pages, contact title | `js/data.js`, `window.TEXT` |
+| Project paragraphs: intro, body, process question and step texts, biggest challenge, what I've learned | `content/<project>.md` |
+| Project structure: title, subtitle, tags, colours, images, captions | `js/data.js`, `window.PROJECTS` |
+| About page: facts, intro, disciplines, tools, code, education, tone of voice | `content/about.md` |
+| About portrait | `assets/about/portrait.jpg` |
+| Contact page form labels | `contact.html` |
+| Text inside the animated project heroes | `assets/projects/<project>/fold/index.html` |
+
 ## Editing content
 
 Almost everything lives in **`js/data.js`**:

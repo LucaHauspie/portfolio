@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gabber Unleashed fold</title>
+  <!--
+    Gabber Unleashed hero, rebuilt from the 1DEV int1 site assets (title + gabber.svg).
+    Used as the live preview on the portfolio.
+      ?still  → frozen frame (used to render ../cover.jpg)
+      ?embed  → waits paused until the parent page posts 'play' ('pause' stops it again)
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --orange: #de3d22;
+      --black: #161616;
+      --white: #fff4ed;
+      --lift: 0vh;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      overflow: hidden;
+      background: var(--black);
+      user-select: none;
+    }
+
+    /* title + gabber form one group, centred on the screen */
+    .scene {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      translate: -50% 0;
+      display: flex;
+      align-items: center;
+      gap: 1vw;
+    }
+
+    /* title block — about as big as the other project titles */
+    .title {
+      position: relative;
+      top: calc(var(--lift) * -1);
+      flex: none;
+      width: min(41vw, 86vh);
+      z-index: 2;
+    }
+    .title img { display: block; width: 100%; height: auto; }
+    .title p {
+      margin-top: 0.7em;
+      margin-left: 1%;
+      color: var(--orange);
+      font-family: 'Archivo Narrow', 'Arial Narrow', sans-serif;
+      font-weight: 600;
+      font-size: clamp(16px, 1.7vw, 30px);
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+    }
+
+    /* the gabber (breaking his chain) — tall, feet bleeding off the bottom edge */
+    .gabber {
+      flex: none;
+      align-self: flex-end;
+      /* sized by width too, so it never runs into the title (figure is ~0.58 wide per 1 tall) */
+      height: min(128vh, 80vw);
+      margin-bottom: -40vh;
+      z-index: 1;
+      transform-origin: 50% 100%;
+    }
+    .gabber img { display: block; height: 100%; width: auto; }
+
+    /* portfolio home: sit a little higher, clear of the project strip */
+    .is-embed { --lift: 5vh; }
+
+    /* tall (phone) screens: title on top, gabber below */
+    @media (max-aspect-ratio: 17/20) {
+      .scene { left: 0; right: 0; translate: none; flex-direction: column; justify-content: space-between; padding-top: 14vh; }
+      .title { top: 0; width: 86vw; }
+      .gabber { align-self: center; height: 62vh; margin-bottom: -10vh; }
+    }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <div class="title">
+      <img src="title.svg" alt="Gabber Unleashed">
+      <p>Desktop webdesign</p>
+    </div>
+    <div class="gabber"><img src="gabber.svg" alt=""></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script>
+    (() => {
+      const params = new URLSearchParams(location.search);
+      const still = params.has('still') || matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.documentElement.classList.toggle('is-embed', params.has('embed'));
+      if (still) return;
+
+      // subtle: the gabber breathes and sways a little, the title drifts slowly
+      const tl = gsap.timeline({ paused: params.has('embed') });
+      tl.to('.gabber', { y: '-1.2vh', rotation: -0.8, duration: 3.2, ease: 'sine.inOut', yoyo: true, repeat: -1 }, 0);
+      tl.to('.title', { y: '-0.8vh', duration: 4.4, ease: 'sine.inOut', yoyo: true, repeat: -1 }, 0);
+
+      addEventListener('message', (e) => {
+        if (e.data === 'play') tl.play();
+        if (e.data === 'pause') tl.pause();
+      });
+    })();
+  </script>
+</body>
+</html>

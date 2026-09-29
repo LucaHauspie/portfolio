@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Too Wild to be Contained — fold</title>
+  <title>Too Wild to be Contained fold</title>
   <!--
     Recreation of the Integration03 hero *after* the "click to release" moment,
     used as the live preview on the portfolio.
@@ -96,7 +96,7 @@
 
     /* centred with layout (not transforms), so the pointer lean can't push it off-centre */
     .puk {
-      --size: min(34vw, 58vh);
+      --size: min(28vw, 48vh);
       position: fixed;
       inset: 0 0 calc(var(--lift) * 2) 0;
       margin: auto;
@@ -153,6 +153,15 @@
       text-transform: uppercase;
       line-height: 1;
     }
+    .tagline {
+      display: block;
+      margin-top: 2.2vh;
+      font-size: clamp(16px, 1.5vw, 26px);
+      line-height: 1.1;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .tagline b { font-weight: 600; font-style: italic; }
   </style>
 </head>
 
@@ -162,6 +171,8 @@
     <span>Too <b>wild</b></span>
     <span>to be</span>
     <span>contained</span>
+    <!-- subtitle, same size as the other projects' subtitles -->
+    <small class="tagline">Interactive storytelling / Walter Van Beirendonck</small>
   </h1>
 
   <div class="puk" id="puk" aria-hidden="true"></div>
@@ -186,13 +197,13 @@
 
       // Big type: widest line fills ~78% of the width, capped by the available height.
       const fit = () => {
-        const margin = Math.max(safe.top, safe.bottom, innerHeight * 0.1);
+        const margin = Math.max(safe.top, safe.bottom, innerHeight * 0.16);
         const availH = innerHeight - 2 * margin;
         root.setProperty('--safe-top', `${safe.top}px`);
         document.documentElement.classList.toggle('has-safe', safe.bottom > 0);
         title.style.fontSize = '100px';
-        const widest = Math.max(...[...title.children].map((s) => s.getBoundingClientRect().width));
-        const byW = (100 * innerWidth * 0.70) / widest;
+        const widest = Math.max(...[...title.querySelectorAll(':scope > span')].map((s) => s.getBoundingClientRect().width));
+        const byW = (100 * innerWidth * 0.6) / widest;
         const byH = availH / (3 * 0.9);
         title.style.fontSize = Math.min(byW, byH) + 'px';
       };

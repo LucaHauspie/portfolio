@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Luca Hauspie — Selected Works</title>
-  <meta name="description" content="Portfolio of Luca Hauspie — digital designer & art direction. Loud identities, experimental type and things that move.">
-  <meta property="og:title" content="Luca Hauspie — Selected Works">
-  <meta property="og:description" content="Digital designer & art direction. Loud identities, experimental type and things that move.">
+  <title>Luca Hauspie | Selected works</title>
+  <meta name="description" content="Portfolio of Luca Hauspie, digital designer and creative developer from Belgium. Motion, web, branding and interactive media.">
+  <meta property="og:title" content="Luca Hauspie | Selected works">
+  <meta property="og:description" content="Digital designer and creative developer from Belgium. Motion, web, branding and interactive media.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,13 +17,18 @@
 </head>
 <body data-page="home">
 
+  <!-- page transition overlay: in the HTML so it covers the page from the very first paint (no white flash) -->
+  <div class="transition" aria-hidden="true"><div class="transition__col"></div><div class="transition__col"></div><div class="transition__col"></div><div class="transition__col"></div><div class="transition__col"></div><div class="transition__label display"></div></div>
+  <script>try{var l=sessionStorage.getItem('lh-label');if(l){var e=document.querySelector('.transition__label');e.textContent=l;e.style.opacity=1;}}catch(_){}</script>
+
   <main>
     <!-- HERO — hover a project thumbnail to preview it -->
     <section class="hero" data-header="dark">
       <div class="hero__meta mono" data-reveal="stagger">
-        <p>(Portfolio)<br>Selected works ©22—26</p>
-        <p>Graphic &amp; digital designer from Belgium, making loud identities, experimental type &amp; things that move.</p>
-        <p>(Hover a project)<br><span data-count="word"></span> holy grails</p>
+        <!-- texts come from window.TEXT in js/data.js -->
+        <p data-t="heroLeft"></p>
+        <p data-t="heroMiddle"></p>
+        <p data-t="heroRight"></p>
       </div>
       <div class="hero__stage">
         <div class="hero__media"><img src="" alt=""></div>
@@ -41,10 +46,10 @@
     <section class="works" id="works" data-header="dark">
       <div class="works__head">
         <h2 class="display works__title">
-          <span class="line"><span class="line__in" data-split>(Works)</span></span>
+          <span class="line"><span class="line__in" data-split data-t="worksTitle"></span></span>
         </h2>
         <div class="works__side mono">
-          <span>(<span data-count></span>) School projects<br>©2022—2026</span>
+          <span data-t="worksSide"></span>
           <div class="toggle" role="group" aria-label="Layout">
             <span class="toggle__pill"></span>
             <button type="button" data-mode="list" aria-pressed="true">List</button>
@@ -57,9 +62,9 @@
 
     <!-- STATEMENT -->
     <section class="statement" data-header="light">
-      <p class="statement__label mono">(Hi, I'm Luca)</p>
-      <p class="statement__text">I design <em>loud</em> identities <span class="inline-img"><img src="assets/projects/gabber-unleashed/cover.svg" alt=""></span> experimental type <span class="inline-img"><img src="assets/projects/type01-conference/cover.svg" alt=""></span> &amp; things that <em>move</em> — graphic design with the volume turned up.</p>
-      <a class="pill mono statement__cta" href="about.html" data-magnetic>More about me <span>→</span></a>
+      <p class="statement__label mono" data-t="statementLabel"></p>
+      <p class="statement__text" data-t="statement"></p>
+      <a class="pill mono statement__cta" href="about.html" data-magnetic><span data-t="statementButton"></span> <span>→</span></a>
     </section>
   </main>
 

@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Contact — Luca Hauspie</title>
-  <meta name="description" content="Get in touch with Luca Hauspie — internships, freelance and collaborations.">
+  <title>Contact | Luca Hauspie</title>
+  <meta name="description" content="Get in touch with Luca Hauspie about internships, freelance work or a collaboration.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,11 +15,15 @@
 </head>
 <body data-page="contact" class="contact">
 
+  <!-- page transition overlay: in the HTML so it covers the page from the very first paint (no white flash) -->
+  <div class="transition" aria-hidden="true"><div class="transition__col"></div><div class="transition__col"></div><div class="transition__col"></div><div class="transition__col"></div><div class="transition__col"></div><div class="transition__label display"></div></div>
+  <script>try{var l=sessionStorage.getItem('lh-label');if(l){var e=document.querySelector('.transition__label');e.textContent=l;e.style.opacity=1;}}catch(_){}</script>
+
   <main>
     <section class="page-hero contact-hero" data-header="light">
       <div class="status mono" data-reveal="fade"><span class="status__dot"></span><span data-availability></span></div>
       <h1 class="display contact-hero__title" data-fit="1" data-reveal="chars">
-        <span class="line"><span class="line__in" data-split>Say hi!</span></span>
+        <span class="line"><span class="line__in" data-split data-t="contactTitle"></span></span>
       </h1>
       <button type="button" class="copy-email" data-reveal="fade" data-cursor="Copy">
         <span class="copy-email__addr" data-email></span>

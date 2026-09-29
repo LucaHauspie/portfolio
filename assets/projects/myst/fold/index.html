@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MYST fold</title>
+  <!--
+    MYST start screen, used as the live preview on the portfolio.
+    The logo is the original Lottie (mystload.json): pixel blocks build the MYST logo, then "BY STAD ANTWERPEN" appears.
+    The Lottie is drawn in off-white for a dark screen, so it's colour-inverted here (the Antwerp "A" stays red).
+      ?still  → frozen frame (used to render ../cover.jpg)
+      ?embed  → waits until the parent page posts 'play' (and 'pause' again when hidden)
+  -->
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { overflow: hidden; background: #eeeeee; }
+
+    /* mist: soft grey blocks drifting and fading, like the installation's splash */
+    .blocks { position: fixed; inset: 0; pointer-events: none; }
+    .block {
+      position: absolute;
+      background: #d9d9d9;
+      opacity: 0;
+      animation: drift var(--dur) var(--delay) infinite ease-in-out;
+    }
+    @keyframes drift {
+      0%   { opacity: 0; transform: translate(0, 0); }
+      25%  { opacity: 1; }
+      65%  { opacity: 0.7; transform: translate(var(--dx), var(--dy)); }
+      100% { opacity: 0; transform: translate(0, 0); }
+    }
+    .is-still .block { animation: none; opacity: 1; }
+
+    /* logo: the Lottie's composition is square; the logo sits in its middle band */
+    .logo-wrap {
+      position: fixed;
+      left: 50%; top: 50%;
+      width: min(44vw, 70vh); /* logo ≈ 36% of the screen width, like the thumbnail */
+      aspect-ratio: 1;
+      translate: -50% calc(-50% - var(--lift, 0px));
+    }
+    /* only the Lottie is inverted (it's drawn in off-white for a dark screen) — not the subtitle */
+    .logo { position: absolute; inset: 0; filter: invert(1) hue-rotate(180deg); }
+    .is-embed { --lift: 5vh; }
+
+    /* the Lottie's "BY STAD ANTWERPEN" image is swapped for our own subtitle */
+    #logo image { display: none; }
+    @font-face { font-family: 'SunAntwerpen'; src: url('../fonts/SunAntwerpen-Regular.otf') format('opentype'); }
+    .sub {
+      position: absolute;
+      left: 0; right: 0;
+      top: 67%;
+      text-align: center;
+      font-family: 'SunAntwerpen', Helvetica, Arial, sans-serif;
+      font-size: max(12px, 1.25vw);
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: #161616;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 1.2s ease, transform 1.2s ease;
+    }
+    .sub.is-on, .is-still .sub { opacity: 1; transform: none; }
+  </style>
+</head>
+<body>
+  <div class="blocks" id="blocks" aria-hidden="true"></div>
+  <div class="logo-wrap">
+    <div class="logo" id="logo" role="img" aria-label="MYST, found in Antwerp"></div>
+    <p class="sub">Found in Antwerp</p>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+  <script>
+    (() => {
+      const params = new URLSearchParams(location.search);
+      const still = params.has('still') || matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.documentElement.classList.toggle('is-embed', params.has('embed'));
+      document.documentElement.classList.toggle('is-still', still);
+
+      // background blocks (fixed spots for the still frame, random otherwise)
+      const spots = [[19, 5], [34, 20], [67, 18], [88, 52], [9, 71], [76, 84], [52, 88], [4, 30], [93, 12], [60, 62], [25, 90], [45, 8]];
+      const box = document.getElementById('blocks');
+      spots.forEach(([x, y], i) => {
+        const b = document.createElement('div');
+        b.className = 'block';
+        const w = 26 + Math.random() * 14;
+        b.style.cssText = `left:${x}%; top:${y}%; width:${w}px; height:${w * 0.68}px;
+          --dur:${5 + Math.random() * 5}s; --delay:${-Math.random() * 8}s;
+          --dx:${(Math.random() - 0.5) * 60}px; --dy:${(Math.random() - 0.5) * 40}px;`;
+        box.appendChild(b);
+      });
+
+      // logo: the blocks build the logo slowly (SPEED), then the subtitle fades in and it holds
+      const END = 20;      // last frame of the build
+      const SPEED = 0.3;   // 1 = original speed
+      const sub = document.querySelector('.sub');
+      const anim = lottie.loadAnimation({
+        container: document.getElementById('logo'), renderer: 'svg', loop: false, autoplay: false, path: 'mystload.json',
+      });
+      const play = () => {
+        if (still) return;
+        sub.classList.remove('is-on');
+        anim.setSpeed(SPEED);
+        anim.playSegments([0, END], true);
+      };
+      anim.addEventListener('complete', () => sub.classList.add('is-on'));
+      anim.addEventListener('DOMLoaded', () => {
+        if (still || params.has('embed')) { sub.classList.add('is-on'); return anim.goToAndStop(END, true); }
+        play();
+      });
+
+      addEventListener('message', (e) => {
+        if (e.data === 'play') play();
+        if (e.data === 'pause') anim.pause();
+      });
+    })();
+  </script>
+</body>
+</html>

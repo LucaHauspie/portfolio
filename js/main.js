@@ -8,6 +8,10 @@
 
 (() => {
   const { SITE, PROJECTS } = window;
+  const TEXT = window.TEXT || {};
+  const words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
+  // fill {placeholders} in a TEXT string
+  const t = (key, vars = {}) => String(TEXT[key] ?? '').replace(/\{(\w+)\}/g, (_, k) => (k in vars ? vars[k] : `{${k}}`));
   gsap.registerPlugin(ScrollTrigger);
   if (window.Flip) gsap.registerPlugin(Flip);
 
@@ -18,6 +22,7 @@
   const page = document.body.dataset.page;
 
   const initHooks = [];
+  const waits = []; // async page work (e.g. loading a project's Markdown) that boot waits for
   const readyHooks = [];
   let isReady = false;
 
@@ -193,6 +198,7 @@
         <span class="header__clock">${SITE.location}<br><span data-clock></span></span>
         <nav class="header__nav">
           <a class="u-link" href="index.html#works" data-label="Work">Work</a>
+          ${navLink('archive.html', 'Archive')}
           ${navLink('about.html', 'About')}
           ${navLink('contact.html', 'Contact')}
         </nav>
@@ -209,22 +215,31 @@
     slot.outerHTML = `
       <footer class="footer${mini ? ' footer--mini' : ''}" data-header="dark">
         ${mini ? '' : `
-        <div class="footer__kicker mono"><span>(Got a project?)</span><span>(Let's make it loud)</span></div>
+        <div class="footer__kicker mono"><span>${t('footerKickerLeft')}</span><span>${t('footerKickerRight')}</span></div>
         <a href="contact.html" class="footer__big display" data-fit="1" data-cursor="Say hi" data-label="Contact">
-          <span class="line"><span class="line__in" data-split>Let's talk</span></span>
+          <span class="line"><span class="line__in" data-split>${t('footerBig')}</span></span>
         </a>
         <a class="footer__email u-link" data-email href="#"></a>`}
         <div class="footer__grid mono">
-          <div><span>©${year}</span><span>${SITE.name}</span><span>All rights reserved</span></div>
+          <div><span>©${year}</span><span>${SITE.name}</span><span>${t('footerRights')}</span></div>
           <div>${socialLinks()}</div>
           <div>
             <a class="u-link" href="index.html#works" data-label="Work">Work</a>
+            <a class="u-link" href="archive.html">Archive</a>
             <a class="u-link" href="about.html">About</a>
             <a class="u-link" href="contact.html">Contact</a>
           </div>
-          <div><span>Local time — ${SITE.location}</span><span data-clock></span><button class="u-link" data-top>Back to top ↑</button></div>
+          <div><span>${t('footerTime')}, ${SITE.location}</span><span data-clock></span><button class="u-link" data-top>${t('backToTop')}</button></div>
         </div>
       </footer>`;
+  }
+
+  // every element with data-t="key" gets its text from window.TEXT (js/data.js)
+  function fillText() {
+    const n = PROJECTS.length;
+    const img = (p) => p ? `<span class="inline-img"><img src="${p.cover}" alt=""></span>` : '';
+    const vars = { archive: String((window.ARCHIVE || []).length).padStart(2, '0'), count: String(n).padStart(2, '0'), countWord: words[n] || n, img1: img(PROJECTS[0]), img2: img(PROJECTS[2]) };
+    $$('[data-t]').forEach((el) => (el.innerHTML = t(el.dataset.t, vars)));
   }
 
   function fillSiteData() {
@@ -306,10 +321,14 @@
 
   /* ------------------------------------------------------ page transition */
 
-  const overlay = document.createElement('div');
-  overlay.className = 'transition';
-  overlay.innerHTML = '<div class="transition__col"></div>'.repeat(5) + '<div class="transition__label display"></div>';
-  document.body.appendChild(overlay);
+  // the overlay is in each page's HTML (so it's there before any paint); create it only as a fallback
+  let overlay = $('.transition');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.className = 'transition';
+    overlay.innerHTML = '<div class="transition__col"></div>'.repeat(5) + '<div class="transition__label display"></div>';
+    document.body.appendChild(overlay);
+  }
   const cols = $$('.transition__col', overlay);
   const overlayLabel = $('.transition__label', overlay);
   gsap.set(cols, { scaleY: 1 });
@@ -321,6 +340,7 @@
   function leave(href, label) {
     lenis && lenis.stop();
     overlayLabel.textContent = label || '';
+    try { sessionStorage.setItem('lh-label', label || ''); } catch (_) {}
     gsap.timeline({ onComplete: () => (location.href = href) })
       .set(cols, { transformOrigin: 'bottom' })
       .fromTo(cols, { scaleY: 0 }, { scaleY: 1, duration: 0.7, ease: 'expo.inOut', stagger: 0.05 })
@@ -328,9 +348,11 @@
   }
 
   function enter() {
+    try { sessionStorage.removeItem('lh-label'); } catch (_) {}
     return gsap.timeline()
-      .set(cols, { transformOrigin: 'top' })
-      .to(cols, { scaleY: 0, duration: 0.9, ease: 'expo.inOut', stagger: 0.05 });
+      .to(overlayLabel, { opacity: 0, yPercent: -30, duration: 0.4, ease: 'power2.in' }, 0)
+      .set(cols, { transformOrigin: 'top' }, 0)
+      .to(cols, { scaleY: 0, duration: 0.9, ease: 'expo.inOut', stagger: 0.05 }, 0.1);
   }
 
   document.addEventListener('click', (e) => {
@@ -357,7 +379,7 @@
 
   // Coming back via the browser's back button restores a cached page — reset overlay.
   addEventListener('pageshow', (e) => {
-    if (e.persisted) { gsap.set(cols, { scaleY: 0 }); lenis && lenis.start(); }
+    if (e.persisted) { gsap.set(cols, { scaleY: 0 }); gsap.set(overlayLabel, { opacity: 0 }); lenis && lenis.start(); }
   });
 
   /* ------------------------------------------------------------ preloader */
@@ -377,6 +399,7 @@
       </div>`;
     document.body.appendChild(el);
     gsap.set(cols, { scaleY: 0 });
+    gsap.set(overlayLabel, { opacity: 0 });
     lenis && lenis.stop();
 
     const count = $('.preloader__count', el);
@@ -446,13 +469,16 @@
   async function boot() {
     const header = renderHeader();
     renderFooter();
+    fillText();
     fillSiteData();
     startClock();
-    $$('[data-split]').forEach(splitChars);
     cursor();
 
     const loader = preloader();
 
+    try { await Promise.all(waits); } catch (err) { console.error(err); }
+    fillText();
+    $$('[data-split]').forEach(splitChars);
     try { await Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 2500))]); } catch (_) {}
     fitAll();
 
@@ -478,7 +504,7 @@
       readyHooks.forEach((fn) => fn());
     };
     if (loader) loader.add(go, '-=0.9');
-    else if (reduce) { gsap.set(cols, { scaleY: 0 }); go(); }
+    else if (reduce) { gsap.set(cols, { scaleY: 0 }); gsap.set(overlayLabel, { opacity: 0 }); go(); }
     else enter().add(go, 0.45);
     window.__siteBooted = true;
 
@@ -498,6 +524,14 @@
   window.Site = {
     $, $$, reduce, touch, splitChars, splitWords, fit, fitAll, stretchy, scramble, scrollTo,
     get lenis() { return lenis; },
+    t,
+    // Subtitle line in the project's own style (.live-sub--<slug>).
+    subTag(p, cls = '') {
+      const el = document.createElement('p');
+      el.className = `live-sub live-sub--${p.slug} ${cls}`;
+      el.textContent = p.subtitle;
+      return el;
+    },
     // Big title laid over a project's video hero (home takeover + case page).
     liveTitle(p) {
       const el = document.createElement('div');
@@ -507,11 +541,13 @@
         ${p.kicker ? `<p class="live-title__kicker mono">(${p.kicker})</p>` : ''}
         <div class="live-title__text display" data-fit="0.7" data-fit-vh="0.5">
           ${p.lines.map((l) => `<span class="line"><span class="line__in">${l}</span></span>`).join('')}
-        </div>`;
+        </div>
+        ${p.subtitle ? `<p class="live-title__sub"><span class="line"><span class="line__in">${p.subtitle}</span></span></p>` : ''}`;
       return el;
     },
     setHeader: (theme) => { const h = $('.header'); if (h) h.dataset.theme = theme; },
     onInit: (fn) => initHooks.push(fn),
+    wait: (promise) => waits.push(promise),
     onReady: (fn) => (isReady ? fn() : readyHooks.push(fn)),
     projects: PROJECTS,
   };

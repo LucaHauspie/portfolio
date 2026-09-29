@@ -42,8 +42,8 @@
       gsap.fromTo(field, { x: -10 }, { x: 0, duration: 0.6, ease: 'elastic.out(1, 0.3)' });
       return;
     }
-    const subject = `${data.get('topic')} — ${data.get('name')}`;
-    const body = `${data.get('message')}\n\n— ${data.get('name')} (${data.get('email')})`;
+    const subject = `${data.get('topic')}: ${data.get('name')}`;
+    const body = `${data.get('message')}\n\n${data.get('name')} (${data.get('email')})`;
     location.href = `mailto:${SITE.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     const label = submit.innerHTML;
     scramble(submit, 'Opening mail app…');

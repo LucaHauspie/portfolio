@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Type01 fold</title>
+  <!--
+    Type01 hero, used as the live preview on the portfolio.
+    Two artboards, each scaled to fit: 1524×764 for wide screens, 704×1006 for tall (phone) screens.
+      ?still  → frozen frame (used to render ../cover.jpg)
+      ?embed  → waits paused until the parent page posts 'play' ('pause' stops it again)
+  -->
+  <style>
+    :root {
+      --bg: #111111;
+      --lime: #bdf640;
+      --line: rgba(255, 255, 255, 0.45);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      overflow: hidden;
+      background: var(--bg);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      color: #fff;
+      user-select: none;
+    }
+
+    /* smoky texture + grain */
+    .smoke {
+      position: fixed;
+      inset: -10%;
+      background: url('../Type01-blur.png') center / cover no-repeat;
+      opacity: 0.07;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.18;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* artboards, scaled by --s (set in JS) and centred; only one is shown at a time */
+    .stage {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      width: 1524px;
+      height: 764px;
+      transform: translate(-50%, calc(-50% - var(--lift, 0px))) scale(var(--s, 1));
+    }
+
+    .stage--tall { width: 704px; height: 1006px; display: none; }
+    .is-tall .stage--wide { display: none; }
+    .is-tall .stage--tall { display: block; }
+
+    .glyph,
+    .label,
+    .tag {
+      position: absolute;
+    }
+
+    /* letter group size — scales around the middle of the letters */
+    .glyphs {
+      position: absolute;
+      inset: 0;
+      transform: scale(0.85);
+    }
+
+    .glyph {
+      will-change: transform;
+    }
+
+    .glyph img {
+      display: block;
+      height: 100%;
+      width: auto;
+    }
+
+    .label {
+      font-size: 12px;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .tag {
+      right: 94px;
+      top: 606px;
+      text-align: right;
+      font-size: 24px;
+      line-height: 1.02;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+    }
+
+    .tag span {
+      display: inline-block;
+      background: #fff;
+      color: #000;
+      padding: 0 2px;
+    }
+
+    .stage--tall .tag { right: 24px; top: 742px; font-size: 30px; line-height: 1.12; }
+  </style>
+</head>
+
+<body>
+  <div class="smoke"></div>
+
+  <!-- wide artboard -->
+  <div class="stage stage--wide" aria-label="Type01, responsive webdesign">
+    <!-- letters, each PNG includes its dashed frame (origin = where it's "pinned" while stretching) -->
+    <div class="glyphs" style="transform-origin:770px 345px">
+    <div class="glyph" data-o="50% 100%" style="left:123px; top:109px; height:487px"><img src="../type01-T.png" alt="T">
+    </div>
+    <div class="glyph" data-o="100% 50%" style="left:373px; top:218px; height:202px"><img src="../type01-Y.png" alt="Y">
+    </div>
+    <div class="glyph" data-o="50% 0%" style="left:556px; top:263px; height:317px"><img src="../Type01-P.png" alt="P">
+    </div>
+    <div class="glyph" data-o="0% 100%" style="left:857px; top:95px;  height:343px"><img src="../type01-E.png" alt="E">
+    </div>
+    <div class="glyph" data-o="50% 100%" style="left:1060px; top:297px; height:160px"><img src="../type01-0.png"
+        alt="0"></div>
+    <div class="glyph" data-o="100% 100%" style="left:1116px; top:216px; height:334px"><img src="../Type01-1.png"
+        alt="1"></div>
+    </div>
+
+    <!-- small labels -->
+    <p class="label" style="left:63px; top:499px">Typog</p>
+    <p class="label" style="left:63px; top:562px">Typography confe</p>
+    <p class="label" style="left:63px; top:626px">Conference</p>
+    <p class="label" style="left:546px; top:499px">Typog</p>
+    <p class="label" style="left:546px; top:562px">Typography confe</p>
+    <p class="label" style="left:546px; top:626px">Conference</p>
+    <p class="label" style="left:1030px; top:152px">Typography conference</p>
+    <p class="label" style="left:1030px; top:216px">Typography</p>
+    <p class="label" style="left:1030px; top:279px">Typo conference</p>
+    <p class="label" style="left:1030px; top:343px">Typogr confere</p>
+
+    <p class="tag"><span>Type01</span><br><span>Responsive webdesign</span></p>
+  </div>
+
+  <!-- tall (phone) artboard -->
+  <div class="stage stage--tall" aria-hidden="true">
+    <div class="glyphs" style="transform-origin:348px 426px">
+    <div class="glyph" data-o="50% 100%" style="left:20px;  top:183px; height:373px"><img src="../type01-T.png" alt=""></div>
+    <div class="glyph" data-o="0% 50%"   style="left:163px; top:284px; height:152px"><img src="../type01-Y.png" alt=""></div>
+    <div class="glyph" data-o="50% 100%" style="left:312px; top:160px; height:244px"><img src="../Type01-P.png" alt=""></div>
+    <div class="glyph" data-o="100% 0%"  style="left:521px; top:231px; height:262px"><img src="../type01-E.png" alt=""></div>
+    <div class="glyph" data-o="50% 100%" style="left:232px; top:494px; height:125px"><img src="../type01-0.png" alt=""></div>
+    <div class="glyph" data-o="0% 100%"  style="left:252px; top:436px; height:256px"><img src="../Type01-1.png" alt=""></div>
+    </div>
+
+    <p class="tag"><span>Type01</span><br><span>Responsive webdesign</span></p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script>
+    (() => {
+      const params = new URLSearchParams(location.search);
+      const still = params.has('still') || matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const wide = document.querySelector('.stage--wide');
+      const tall = document.querySelector('.stage--tall');
+
+      // pick the artboard for the screen's shape and fit it (a bit of breathing room around it)
+      const fit = () => {
+        const isTall = innerWidth / innerHeight < 0.85;
+        document.documentElement.classList.toggle('is-tall', isTall);
+        const [stage, w, h] = isTall ? [tall, 704, 1006] : [wide, 1524, 764];
+        stage.style.setProperty('--s', Math.min(innerWidth / w, innerHeight / h) * 0.96);
+      };
+      fit();
+      addEventListener('resize', fit);
+      // embedded on the portfolio home: sit a little higher, clear of the project strip
+      if (params.has('embed')) [wide, tall].forEach((st) => st.style.setProperty('--lift', '4vh'));
+
+      if (still) return;
+
+      // letters slowly stretch (like pulled type) and float; every letter gets its own rhythm
+      const tl = gsap.timeline({ paused: params.has('embed') });
+      gsap.utils.toArray('.glyph').forEach((g, i) => {
+        const o = g.dataset.o;
+        const r = (a, b) => gsap.utils.random(a, b);
+        const tall = i % 2 === 0; // alternate: stretch taller vs. wider
+        tl.to(g, {
+          scaleY: tall ? r(1.12, 1.22) : r(0.9, 0.96),
+          scaleX: tall ? r(0.88, 0.95) : r(1.1, 1.2),
+          skewX: r(-4, 4),
+          transformOrigin: o,
+          duration: r(3.5, 5.5),
+          ease: 'sine.inOut',
+          repeat: -1,
+          yoyo: true,
+        }, r(0, 1.5));
+        tl.to(g, { y: r(-14, 14), x: r(-8, 8), duration: r(4, 7), ease: 'sine.inOut', repeat: -1, yoyo: true }, 0);
+      });
+      tl.to('.smoke', { x: '3%', y: '-2%', scale: 1.05, duration: 14, ease: 'sine.inOut', repeat: -1, yoyo: true }, 0);
+
+      addEventListener('message', (e) => {
+        if (e.data === 'play') tl.play();
+        if (e.data === 'pause') tl.pause();
+      });
+    })();
+  </script>
+</body>
+
+</html>

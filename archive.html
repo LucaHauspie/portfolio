@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Archive | Luca Hauspie</title>
+  <meta name="description" content="Posters and cover art by Luca Hauspie, made before art school.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script>setTimeout(function(){if(!window.__siteBooted){var t=document.querySelector('.transition');t&&t.remove();}},5000);</script>
+</head>
+<body data-page="archive" class="archive">
+
+  <!-- page transition overlay: in the HTML so it covers the page from the very first paint (no white flash) -->
+  <div class="transition" aria-hidden="true"><div class="transition__col"></div><div class="transition__col"></div><div class="transition__col"></div><div class="transition__col"></div><div class="transition__col"></div><div class="transition__label display"></div></div>
+  <script>try{var l=sessionStorage.getItem('lh-label');if(l){var e=document.querySelector('.transition__label');e.textContent=l;e.style.opacity=1;}}catch(_){}</script>
+
+  <!-- posters and texts come from js/data.js (window.ARCHIVE and window.TEXT) -->
+  <main>
+    <section class="archive-hero" data-header="light">
+      <h1 class="display archive-hero__title" data-fit="1" data-fit-vh="0.45" data-reveal="chars">
+        <span class="line"><span class="line__in" data-split data-t="archiveTitle"></span></span>
+      </h1>
+      <div class="archive-hero__row mono" data-reveal="stagger">
+        <span data-t="archiveCount"></span>
+        <p data-t="archiveIntro"></p>
+      </div>
+    </section>
+
+    <section class="archive-grid" data-header="light"></section>
+  </main>
+
+  <div class="lightbox" aria-hidden="true">
+    <button class="lightbox__close mono" type="button" data-t="archiveClose"></button>
+    <button class="lightbox__nav lightbox__nav--prev mono" type="button" aria-label="Previous">←</button>
+    <figure class="lightbox__fig">
+      <img alt="">
+      <figcaption class="mono"></figcaption>
+    </figure>
+    <button class="lightbox__nav lightbox__nav--next mono" type="button" aria-label="Next">→</button>
+  </div>
+
+  <div data-footer="mini"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js" defer></script>
+  <script src="js/data.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/archive.js" defer></script>
+</body>
+</html>

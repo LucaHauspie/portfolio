@@ -5,17 +5,85 @@
 
 window.SITE = {
   name: 'Luca Hauspie',
-  role: ['Digital designer', '& art direction'],
+  role: ['Digital designer', '& creative developer'],
   location: 'Belgium',
-  timezone: 'Europe/Brussels',
-  email: 'hello@lucahauspie.be', // TODO: replace with your real address
-  availability: 'Open for internships & freelance — 2026',
+  email: 'lucahauspie@gmail.com', // TODO: replace with your real address
+  availability: 'Open for internships and freelance in 2026/2027',
   socials: [
-    { label: 'Instagram', url: 'https://instagram.com/' }, // TODO
-    { label: 'Behance', url: 'https://behance.net/' },     // TODO
-    { label: 'LinkedIn', url: 'https://linkedin.com/' },   // TODO
+    { label: 'Instagram', url: 'https://www.instagram.com/luca.gfxdesign/' },
   ],
 };
+
+/* Text on the site ---------------------------------------------------------
+   All fixed text of the home page, the footer and the project pages.
+   You can use <br> for a line break and <em>word</em> for the red italic word in the statement.
+   {count} = number of projects (05), {countWord} = the same in words (five), {archive} = number of archive posters.
+   ------------------------------------------------------------------------- */
+window.TEXT = {
+  // home: small texts at the top of the hero
+  heroLeft: '(Portfolio)<br>Selected works ©2024-2026',
+  heroMiddle: 'Digital designer &amp; creative developer from Belgium. Motion, web, branding and interactive media.',
+  heroRight: '(Hover a project)',
+  scroll: 'Scroll ↓',
+
+  // home: works list
+  worksTitle: '(Works)',
+  worksSide: '({count}) School projects<br>©2024-2026',
+  viewCase: 'View case', // label that follows the cursor over a project
+
+  // home: the statement block
+  statementLabel: '(Hi, I’m Luca)',
+  statement: 'I design <em>loud</em> identities {img1} experimental type {img2} &amp; things that <em>move</em>. Graphic design with the volume turned up.',
+  statementButton: 'More about me',
+
+  // footer (every page)
+  footerKickerLeft: '(Got a project?)',
+  footerKickerRight: '(Let’s make it loud)',
+  footerBig: 'Let’s talk',
+  footerRights: 'All rights reserved',
+  footerTime: 'Local time',
+  backToTop: 'Back to top ↑',
+
+  // project pages
+  visitLive: 'Visit live site',
+  liveWebsiteNote: '(Live website, designed for {size}. Scroll inside.)',
+  openWebsite: 'Open the website',
+  watchFilm: 'Watch the full video',
+  filmLabel: '(Full video)',
+  filmSound: 'Sound on ♪',
+  conceptLabel: '(The concept)',
+  processLabel: '(Process)',
+  questionLabel: '(The question)',
+  challengeLabel: '(Biggest challenge)',
+  learnedLabel: '(What I’ve learned)',
+  todo: 'To be written.',
+  nextProject: '(Next project)',
+
+  // archive page
+  archiveTitle: 'Archive',
+  archiveIntro: 'Posters and cover art I made before I started studying. Self-taught, mostly for bands and for fun.',
+  archiveCount: '({archive}) Posters, before school',
+  archiveClose: 'Close',
+
+  // contact page title
+  contactTitle: 'Say hi!',
+};
+
+/* Archive -----------------------------------------------------------------
+   Work from before school, shown on archive.html (no detail pages).
+   - file: name in assets/archive/ (a smaller copy with the same name lives in assets/archive/thumbs/)
+   - title, note: shown under the poster and in the full-size view. Leave note empty if you like.
+   ------------------------------------------------------------------------- */
+window.ARCHIVE = [
+  { file: 'explanation.jpg', title: 'Explanation', note: 'Poster' },
+  { file: 'qui-veut-la-facilite.jpg', title: 'Qui veut la facilité?', note: 'Poster' },
+  { file: 'fontaines-dc.jpg', title: 'Fontaines D.C.', note: 'Band poster' },
+  { file: 'the-luka-state.jpg', title: 'The Luka State', note: 'Tour poster' },
+  { file: 'proportions.jpg', title: 'Proportions', note: 'Poster' },
+  { file: 'fictional-film.jpg', title: 'A fictional film', note: 'Film poster' },
+  { file: 'progress.jpg', title: 'Progress or not understanding sh*t', note: 'Square poster' },
+  { file: 'teardrop.jpg', title: 'Teardrop', note: 'Cover art' },
+];
 
 /* Projects -----------------------------------------------------------------
    - slug:    used in the URL → project.html?p=<slug>
@@ -26,7 +94,16 @@ window.SITE = {
    - preview: (optional) path to a live HTML preview, shown instead of the cover on hover + case page
    - video:   (optional) short muted clip, used the same way as preview
    - film:    (optional) full video with sound + controls on the case page
+   - still:   (optional) full-screen image, used as hero the same way as preview / video
+   - subtitle: (optional) line that goes with the hero title (projects with an HTML preview have it inside the fold)
+   - paragraphs (intro, body, the process question + step texts, biggest challenge, what I've learned)
+     live in content/<slug>.md, one Markdown file per project
+   - process: (optional) { hmw, team[], weeks[], unit?, step? } — timeline on the case page
+              (unit/step rename the counter, e.g. 'steps' / 'Step' instead of 'weeks' / 'Week')
    - url:     (optional) link to the live project
+   - site:    (optional) { url, width, height, shot } — live website in a browser frame on the case page,
+              always rendered at its design size and scaled to fit; 'shot' (full-page screenshot) is shown on phones
+   - previewCursor / previewClick: (optional) cursor label + message sent to the preview when its hero is clicked
    ------------------------------------------------------------------------- */
 window.PROJECTS = [
   {
@@ -34,25 +111,66 @@ window.PROJECTS = [
     title: 'Gabber Unleashed',
     lines: ['GABBER', 'UNLEASHED'],
     year: '2025',
-    tags: ['Identity', 'Poster', 'Motion'],
-    context: 'School project — Howest',
-    role: 'Concept, design & motion',
-    color: '#E2401C',
-    ink: '#0E0E0E',
-    cover: 'assets/projects/gabber-unleashed/cover.svg',
-    intro:
-      'Placeholder — write a short, punchy intro about Gabber Unleashed here. What was the brief, what did you make, and why does it hit at 180 BPM?',
-    body:
-      'Placeholder — describe the process: research, concept, typography choices, the system you built and the final deliverables.',
+    tags: ['Webdesign', 'Illustration', 'Concept'],
+    context: 'School project, Howest (Integration 1)',
+    role: 'Concept, illustration, design & development',
+    color: '#161616',
+    ink: '#FFF4ED',
+    cover: 'assets/projects/gabber-unleashed/cover.jpg',
+    // hero rebuilt from the 1DEV int1 site (title + gabber breaking his chain)
+    preview: 'assets/projects/gabber-unleashed/fold/index.html',
+    url: 'https://lucahauspie.be/integration1/',
+    // the live site, built for a 1440px screen (13" MacBook): rendered at that size and scaled to fit
+    site: { url: 'https://lucahauspie.be/integration1/', width: 1440, height: 900, shot: 'assets/projects/gabber-unleashed/site-home.jpg' },
+    // process summarised from the Miro board (1DEV_LucaHauspie_miro)
+    process: {
+      unit: 'steps',
+      step: 'Step',
+      weeks: [
+        {
+          title: 'Research',
+          points: ['Target audience', 'Interview', 'Valuable content'],
+          imgs: false,
+        },
+        {
+          title: 'Concept',
+          points: ['HMW', 'Crazy 8s', 'Tips & tricks', 'Pitch'],
+          note: 'The brainstorms are in Dutch',
+          imgs: [{ src: 'assets/projects/gabber-unleashed/process/brainstorm-key-values.jpg', wide: true }, 'assets/projects/gabber-unleashed/process/brainstorm-community.jpg', 'assets/projects/gabber-unleashed/process/brainstorm-culture.jpg', { src: 'assets/projects/gabber-unleashed/process/crazy-8.jpg', wide: true }],
+        },
+        {
+          title: 'Style',
+          points: ['Styleboard', 'Saul Bass', 'First illustrations'],
+          imgs: ['assets/projects/gabber-unleashed/process/styleboard.jpg', 'assets/projects/gabber-unleashed/process/wireframe.jpg'],
+        },
+        {
+          title: 'Concept image',
+          points: ['Rejected → redrawn', 'Chains'],
+          note: 'First sketch (rejected), mind map (in Dutch), final concept image',
+          imgs: ['assets/projects/gabber-unleashed/process/first-sketch.jpg', 'assets/projects/gabber-unleashed/process/concept-image-mindmap.jpg', { src: 'assets/projects/gabber-unleashed/process/hero-grid.jpg', wide: true }],
+        },
+        {
+          title: 'Feedback rounds',
+          points: ['Peer-to-peer', 'Consults', 'Alignment'],
+          imgs: false,
+        },
+        {
+          title: 'Final',
+          points: ['Join us page', 'Accessibility', 'HTML & CSS'],
+          imgs: false,
+        },
+      ],
+    },
     gallery: [],
   },
   {
     slug: 'juke-kickstarter',
-    title: 'Juke Kickstarter',
-    lines: ['JUKE', 'KICKSTARTER'],
+    subtitle: 'Motion design / Kickstarter campaign', // shown right under the title on the video
+    title: 'Juke Snowboards',
+    lines: ['JUKE', 'SNOWBOARDS'],
     year: '2025',
     tags: ['Motion design', 'Kickstarter', 'Video'],
-    context: 'School project — Howest (Motion design)',
+    context: 'School project, Howest (Motion design)',
     role: 'Concept, animation & edit',
     color: '#F2EFE9',
     ink: '#0E0E0E',
@@ -61,12 +179,27 @@ window.PROJECTS = [
     video: 'assets/projects/juke-kickstarter/hero.mp4',
     // the whole video with sound, shown on the case page
     film: 'assets/projects/juke-kickstarter/film.mp4',
-    // small line shown above the big title on top of the video
-    kicker: 'Motion design — a Kickstarter video for Juke, handmade snowboards',
-    intro:
-      'A motion design project: create the video for someone’s Kickstarter campaign. I chose Juke — a brand of handmade snowboards, made by two friends.',
-    body:
-      'The video tells Juke’s story in bold, flat shapes and big type: snowboards, made by hand, by two friends, locally made — ending on the boards themselves and a call to support the campaign.',
+    process: {
+      unit: 'steps',
+      step: 'Step',
+      weeks: [
+        {
+          title: 'The brand',
+          points: ['Authenticity', 'Handmade craft', 'Passion over profit', 'Locally made'],
+          imgs: false,
+        },
+        {
+          title: 'Style',
+          points: ['Styleboard', 'Styleframe'],
+          imgs: [{ src: 'assets/projects/juke-kickstarter/process/styleboard.jpg', wide: true }, 'assets/projects/juke-kickstarter/process/styleframe.jpg', 'assets/projects/juke-kickstarter/process/two-friends.jpg'],
+        },
+        {
+          title: 'Script & storyboard',
+          points: ['7 scenes', '30 seconds'],
+          imgs: [{ src: 'assets/projects/juke-kickstarter/process/storyboard.jpg', wide: true }],
+        },
+      ],
+    },
     gallery: [],
   },
   {
@@ -75,32 +208,86 @@ window.PROJECTS = [
     lines: ['TYPE01', 'CONFERENCE'],
     year: '2024',
     tags: ['Typography', 'Identity', 'Editorial'],
-    context: 'School project — Howest',
+    context: 'School project, Howest',
     role: 'Identity & editorial design',
-    color: '#0E0E0E',
-    ink: '#F2EFE9',
-    cover: 'assets/projects/type01-conference/cover.svg',
-    intro:
-      'Placeholder — write a short intro about the Type01 Conference identity here. Who is the audience and what makes the system typographic at its core?',
-    body:
-      'Placeholder — describe the grid, the type pairing, the signage / programme / badges and how the identity scales.',
+    color: '#161616',
+    ink: '#BDF640',
+    cover: 'assets/projects/type01-conference/cover.jpg',
+    // the Type01 hero, rebuilt with the letter assets — letters slowly stretch and float
+    preview: 'assets/projects/type01-conference/fold/index.html',
     gallery: [],
   },
   {
     slug: 'myst',
+    subtitle: 'Installation & app for Visit Antwerp', // bottom left, in MYST's own letterspaced style (css: .live-sub--myst)
     title: 'Myst',
     lines: ['MYST'],
-    year: '2024',
-    tags: ['Art direction', 'Visual identity'],
-    context: 'School project — Howest',
-    role: 'Art direction & design',
-    color: '#9C9591',
-    ink: '#0E0E0E',
-    cover: 'assets/projects/myst/cover.svg',
-    intro:
-      'Placeholder — write a short intro about MYST here. Set the mood: what is it, and what should people feel when they see it?',
-    body:
-      'Placeholder — describe the art direction, photography / imagery, colour and texture decisions and the final outcome.',
+    year: '2026',
+    tags: ['Experience design', 'Installation', 'App'],
+    context: 'Howest × Rotterdam, brief by Visit Antwerp',
+    role: 'Visual design & installation',
+    color: '#ECEAE6',
+    ink: '#161616',
+    cover: 'assets/projects/myst/cover.jpg',
+    // start screen of the INT4 installation, live: animated mist + the original Lottie logo (mystload.json)
+    preview: 'assets/projects/myst/fold/index.html',
+    // visual for each "## Concept N" part in content/myst.md: { big } (typographic), { img } or { video, poster }
+    concept: [
+      { big: 'No plans.<br>Side quests.' },
+      { video: 'assets/projects/myst/web/installation.mp4', poster: 'assets/projects/myst/web/installation-poster.jpg' },
+      { img: 'assets/projects/myst/web/map-fog.jpg' },
+    ],
+    // end result, shown before the process
+    showcase: [
+      { label: '(Installation) Pick an outfit on the iPad, it’s projected onto the mannequin', imgs: [{ video: 'assets/projects/myst/web/installation.mp4', poster: 'assets/projects/myst/web/installation-poster.jpg' }, 'assets/projects/myst/web/final-ipad.jpg'] },
+      { label: '(App) Onboarding: before the mist clears, who are you?', phone: true, imgs: ['assets/projects/myst/web/onboarding-styles.jpg', 'assets/projects/myst/web/onboarding-interests.jpg'] },
+      { label: '(App) The fog map: pins clear the mist', phone: true, imgs: ['assets/projects/myst/web/map-fog.jpg', 'assets/projects/myst/web/map-pin.jpg', 'assets/projects/myst/web/pin-detail.jpg', 'assets/projects/myst/web/add-discovery.jpg'] },
+      { label: '(App) Crews & profile', phone: true, imgs: ['assets/projects/myst/web/crews.jpg', 'assets/projects/myst/web/crew-detail.jpg', 'assets/projects/myst/web/crew-code.jpg', 'assets/projects/myst/web/profile.jpg'] },
+    ],
+    // six-week process, shown as a timeline on the case page.
+    // imgs: add paths (e.g. 'assets/projects/myst/process/w1-01.jpg') — empty frames show until then
+    process: {
+      team: [
+        { name: 'Amber Vanhooren', role: 'Experience design, development' },
+        { name: 'Luca Hauspie', role: 'Visual design, installation', me: true },
+        { name: 'Alexander Jonckheere', role: 'Physical installation, visual design' },
+        { name: 'Tjorven Florin', role: 'Development' },
+      ],
+      weeks: [
+        {
+          title: 'Research & concept',
+          points: ['Co-creation', 'Free choice', 'Unconscious discovery', 'Personality'],
+          imgs: false,
+        },
+        {
+          title: 'Refining & validating',
+          points: ['Styleboards', 'Survey', 'Personas', 'Hi-fi wireframes'],
+          imgs: ['assets/projects/myst/web/inspo.jpg', 'assets/projects/myst/web/styleboard.jpg'],
+        },
+        {
+          title: 'Testing & prototyping',
+          points: ['Flowchart', 'MadMapper', '9 fashion styles', 'iPad iterations'],
+          note: 'First design: dark and blue-tinted. The final went light, with black and red.',
+          imgs: ['assets/projects/myst/web/first-ipad.jpg', 'assets/projects/myst/web/first-story.jpg'],
+        },
+        {
+          title: 'Building the box',
+          points: ['Physical build', 'Projection mapping', 'OSC + MadMapper', 'Mobile design'],
+          note: 'The iPad app that ran in the box: pick an outfit, read its story, find the store',
+          imgs: ['assets/projects/myst/web/ipad-picker.jpg', 'assets/projects/myst/web/ipad-outfit.jpg', 'assets/projects/myst/web/ipad-store.jpg'],
+        },
+        {
+          title: 'Final design & development',
+          points: ['Final app', 'iPad kiosk', 'Case movie & promo'],
+          imgs: false,
+        },
+        {
+          title: 'Expo',
+          points: ['Expo in Kortrijk'],
+          imgs: false,
+        },
+      ],
+    },
     gallery: [],
   },
   {
@@ -109,7 +296,7 @@ window.PROJECTS = [
     lines: ['TOO WILD', 'TO BE', 'CONTAINED'],
     year: '2026',
     tags: ['Interactive storytelling', 'Web', 'Motion'],
-    context: 'School project — Howest (Integration 03)',
+    context: 'School project, Howest (Integration 03)',
     role: 'Concept, design & development',
     color: '#FFFFFF',
     ink: '#FF2121',
@@ -117,10 +304,39 @@ window.PROJECTS = [
     // live, animated recreation of the site's fold — used instead of the cover where there's room for it
     preview: 'assets/projects/too-wild-to-be-contained/fold/index.html',
     url: 'https://lucahauspie.github.io/integration03/',
-    intro:
-      'An interactive storytelling website about what happened to Wild & Lethal Trash — Walter Van Beirendonck’s most iconic brand, founded in 1993 and too wild for the market that tried to contain it.',
-    body:
-      'Visitors release the W&LT mascot to start the story, then wake, drag and scroll their way through the label’s rise, its collaboration with Mustang and the breaking point where radical expression collided with large-scale fashion commerce. Built with GSAP, ScrollTrigger, Draggable and Lottie.',
+    // the live site in a browser frame (end result, shown before the process)
+    site: { url: 'https://lucahauspie.github.io/integration03/', width: 1440, height: 900, shot: 'assets/projects/too-wild-to-be-contained/pages/desktop.jpg' },
+    previewCursor: 'Click to release',
+    previewClick: 'burst',
+    process: {
+      unit: 'steps',
+      step: 'Step',
+      weeks: [
+        {
+          title: 'The story',
+          imgs: ['assets/projects/too-wild-to-be-contained/process/final-focus.jpg'],
+        },
+        {
+          title: 'Wireframes',
+          points: ['Chapters', 'Puk interactions', 'White → black'],
+          imgs: ['assets/projects/too-wild-to-be-contained/process/wireframe-1.jpg', 'assets/projects/too-wild-to-be-contained/process/wireframe-2.jpg', 'assets/projects/too-wild-to-be-contained/process/wireframe-4.jpg', { src: 'assets/projects/too-wild-to-be-contained/process/wireframe-escalation.jpg' }],
+        },
+        {
+          title: 'Styleframe',
+          imgs: ['assets/projects/too-wild-to-be-contained/process/styleframe.jpg', { src: 'assets/projects/too-wild-to-be-contained/process/first-design.jpg', scroll: true, label: 'First styled version' }],
+        },
+        {
+          title: 'Iteration',
+          points: ['Start production → drag game'],
+          imgs: [{ src: 'assets/projects/too-wild-to-be-contained/process/design-v1.jpg', scroll: true, label: 'Earlier: start production', at: 0.27 }, { src: 'assets/projects/too-wild-to-be-contained/pages/desktop.jpg', scroll: true, label: 'Final: drag game', at: 0.3 }],
+        },
+        {
+          title: 'Build',
+          points: ['Vite', 'GSAP', 'Lottie'],
+          imgs: false,
+        },
+      ],
+    },
     gallery: [],
   },
 ];

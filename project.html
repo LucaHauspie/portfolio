@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Project — Luca Hauspie</title>
+  <title>Project | Luca Hauspie</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,6 +13,10 @@
   <script>setTimeout(function(){if(!window.__siteBooted){var t=document.querySelector('.transition');t&&t.remove();}},5000);</script>
 </head>
 <body data-page="project" class="project">
+
+  <!-- page transition overlay: in the HTML so it covers the page from the very first paint (no white flash) -->
+  <div class="transition" aria-hidden="true"><div class="transition__col"></div><div class="transition__col"></div><div class="transition__col"></div><div class="transition__col"></div><div class="transition__col"></div><div class="transition__label display"></div></div>
+  <script>try{var l=sessionStorage.getItem('lh-label');if(l){var e=document.querySelector('.transition__label');e.textContent=l;e.style.opacity=1;}}catch(_){}</script>
 
   <!-- Content is rendered from js/data.js by js/project.js (project.html?p=<slug>) -->
   <main>
@@ -37,7 +41,7 @@
     <section class="gallery"></section>
 
     <a class="next" data-cursor="Next case">
-      <div class="mono">(Next project)</div>
+      <div class="mono" data-t="nextProject"></div>
       <div class="display next__title"><span class="line"><span class="line__in"></span></span></div>
       <div class="next__bar"></div>
     </a>

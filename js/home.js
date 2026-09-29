@@ -7,11 +7,16 @@
   const P = Site.projects;
   const pad = (n) => String(n).padStart(2, '0');
   const href = (p) => `project.html?p=${p.slug}`;
-  const frame = (p, cls = '') => {
+  // Iframes only start loading once someone hovers the projects (or shortly after the page is ready),
+  // so the live previews don't weigh down the first load of the home page.
+  const lazyFrames = [];
+  const wake = () => lazyFrames.forEach((f) => { if (!f.src) f.src = f.dataset.src; });
+  const frame = (p, cls = 'preview-frame') => {
     const f = document.createElement('iframe');
-    f.className = `preview-frame ${cls}`;
-    f.src = `${p.preview}?embed`;
-    f.title = `${p.title} — live preview`;
+    f.className = cls;
+    f.dataset.src = `${p.preview}?embed`;
+    lazyFrames.push(f);
+    f.title = `${p.title}, live preview`;
     f.tabIndex = -1;
     f.setAttribute('aria-hidden', 'true');
     return f;
@@ -19,8 +24,15 @@
   const tell = (f, msg) => f && f.contentWindow && f.contentWindow.postMessage(msg, '*');
 
   // A live preview is either an HTML fold (p.preview → iframe) or a muted clip (p.video → video).
-  const hasLive = (p) => !!(p && (p.preview || p.video));
+  const hasLive = (p) => !!(p && (p.preview || p.video || p.still));
   const liveEl = (p) => {
+    if (p.still) {
+      const img = new Image();
+      img.className = 'preview-frame preview-still';
+      img.src = p.still;
+      img.alt = '';
+      return img;
+    }
     if (!p.video) return frame(p);
     const v = document.createElement('video');
     v.className = 'preview-frame preview-video';
@@ -35,6 +47,7 @@
   };
   // 'play' restarts a clip from the top (like the fold's puk bursting again), 'pause' stops it
   const control = (el, msg) => {
+    if (el && el.classList.contains('preview-scaled')) el = el.firstElementChild;
     if (!el) return;
     if (el.tagName !== 'VIDEO') return tell(el, msg);
     if (msg === 'play') { el.currentTime = 0; el.play().catch(() => {}); }
@@ -63,10 +76,10 @@
 
   strip.innerHTML =
     P.map((p, i) => `
-      <a class="thumb" href="${href(p)}" data-i="${i}" data-label="${p.title}" data-cursor="View case">
-        <div class="thumb__img"><img src="${p.cover}" alt="${p.title} — cover"></div>
+      <a class="thumb" href="${href(p)}" data-i="${i}" data-label="${p.title}" data-cursor="${Site.t('viewCase')}">
+        <div class="thumb__img"><img src="${p.cover}" alt="${p.title}, cover"></div>
         <div class="thumb__label"><span>(${pad(i + 1)}) ${p.title}</span><span>${p.year}</span></div>
-      </a>`).join('') + '<span class="hero__scroll">Scroll ↓</span>';
+      </a>`).join('') + `<span class="hero__scroll">${Site.t('scroll')}</span>`;
   const thumbs = $$('.thumb', strip);
   strip.style.gridTemplateColumns = `repeat(${P.length}, 1fr) auto`;
   const words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
@@ -81,6 +94,7 @@
     if (p.video) layer.appendChild(Site.liveTitle(p));
     if (f.tagName === 'IFRAME') {
       f.addEventListener('load', () => {
+        if (!f.getAttribute('src')) return; // the empty iframe fires 'load' before its real src is set
         tell(f, { corners: false }); // the project strip sits where the fold's corner texts would be
         if (current === i) tell(f, 'play');
       });
@@ -89,6 +103,14 @@
     return layer;
   });
   const meta = $('.hero__meta');
+  const stage = $('.hero__stage');
+  let sub = null;
+  function showSub(p) {
+    if (sub) { const old = sub; gsap.to(old, { opacity: 0, y: 10, duration: 0.25, onComplete: () => old.remove() }); sub = null; }
+    if (!p || !p.subtitle || p.preview || p.video) return; // folds + video titles carry their own subtitle
+    sub = stage.appendChild(Site.subTag(p, 'hero__sub'));
+    gsap.fromTo(sub, { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: 'expo.out', delay: 0.25 });
+  }
   // During a takeover the other projects step back a little (scaled from the bottom, so the strip keeps its layout).
   function setMini(on, active) {
     thumbs.forEach((t, k) => gsap.to(t, {
@@ -130,6 +152,7 @@
     gsap.to(thumbs, { opacity: (k) => (i < 0 || k === i ? 1 : live ? 0.7 : 0.35), duration: 0.4 });
     gsap.to([title, meta], { opacity: live ? 0 : 1, duration: 0.4 });
     setMini(live, i);
+    showSub(p);
 
     takeovers.forEach((layer, k) => {
       if (!layer) return;
@@ -199,9 +222,9 @@
 
   const list = $('.works__list');
   list.innerHTML = P.map((p, i) => `
-    <a class="work" href="${href(p)}" data-i="${i}" data-label="${p.title}" data-cursor="View case"${p.title.length > 18 ? ' data-long' : ''}>
+    <a class="work" href="${href(p)}" data-i="${i}" data-label="${p.title}" data-cursor="${Site.t('viewCase')}"${p.title.length > 18 ? ' data-long' : ''}>
       <span class="work__num mono">(${i + 1})</span>
-      <span class="work__media"><img src="${p.cover}" alt="${p.title} — cover" loading="lazy"></span>
+      <span class="work__media"><img src="${p.cover}" alt="${p.title}, cover" loading="lazy"></span>
       <h3 class="work__title display"><span class="work__name" data-split>${p.title}</span></h3>
       <span class="work__meta mono">${p.tags.join(', ')}<br>${p.year} <span class="work__arrow">→</span></span>
     </a>`).join('');
@@ -210,6 +233,13 @@
   const preview = $('.work-preview');
   const previewInner = $('.work-preview__inner', preview);
   const previewImgs = P.map((p) => {
+    if (p.preview) {
+      // the fold is laid out for a full screen: render it at desktop size and scale it down to the card
+      const box = document.createElement('div');
+      box.className = 'preview-scaled';
+      box.appendChild(frame(p, ''));
+      return previewInner.appendChild(box);
+    }
     if (hasLive(p)) return previewInner.appendChild(liveEl(p));
     const img = new Image();
     img.src = p.cover;
@@ -316,7 +346,14 @@
 
   /* ----------------------------------------------------------------- ready */
 
+  const fitScaled = () => preview.style.setProperty('--s', preview.offsetWidth / 1440);
+  fitScaled();
+  addEventListener('resize', fitScaled);
+  strip.addEventListener('pointerenter', wake, { once: true });
+  list.addEventListener('pointerenter', wake, { once: true });
+
   Site.onReady(() => {
+    setTimeout(wake, 2500);
     if (reduce) return;
     gsap.timeline()
       .to($$('.ch', title), { yPercent: 0, duration: 1.3, ease: 'expo.out', stagger: 0.04 })
