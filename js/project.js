@@ -62,6 +62,8 @@
   document.title = `${p.title} | ${window.SITE.name}`;
   document.body.style.setProperty('--p-bg', p.color);
   document.body.style.setProperty('--p-fg', p.ink);
+  // accent colour (numbers, underlines, buttons) from the project's own design; default is the site orange
+  if (p.accent) document.body.style.setProperty('--red', p.accent);
   const setHeaderThemes = () => $$('main > section').forEach((s) => (s.dataset.header = theme(p)));
 
   // hero
@@ -146,6 +148,31 @@
   if (p.url) {
     $$('.project-intro__body').pop().insertAdjacentHTML('afterend',
       `<a class="pill mono project-link" href="${p.url}" target="_blank" rel="noopener" data-magnetic>${Site.t('visitLive')} <span>↗</span></a>`);
+  }
+
+  // final design, page by page: scrollable desktop screenshot in a browser frame + the mobile version in a phone
+  if (p.screens) {
+    $('.project-intro').insertAdjacentHTML('afterend', `
+      <section class="proto">
+        ${p.screens.map((sc) => `
+        <div class="proto__group">
+          <p class="mono proto__label">${sc.label}</p>
+          <div class="proto__row">
+            ${sc.desktop ? `
+            <figure class="proto__desk">
+              <div class="site-demo__browser">
+                <div class="site-demo__bar mono"><i></i><i></i><i></i><span>Desktop</span></div>
+                <div class="proto__screen proto__screen--desk" data-lenis-prevent><img src="${sc.desktop}" alt="${p.title}, ${sc.label}, desktop" loading="lazy"></div>
+              </div>
+            </figure>` : ''}
+            ${sc.mobile ? `
+            <figure class="proto__phone">
+              <div class="proto__screen proto__screen--phone" data-lenis-prevent><img src="${sc.mobile}" alt="${p.title}, ${sc.label}, mobile" loading="lazy"></div>
+            </figure>` : ''}
+          </div>
+        </div>`).join('')}
+        <p class="site-demo__note mono">${Site.t('screensNote')}</p>
+      </section>`);
   }
 
   // live website in a browser frame — rendered at its design size (e.g. 1440×900) and scaled, never reflowed
@@ -240,12 +267,13 @@
       const rows = [];
       for (let r = 0; r < list.length; r += perRow) rows.push(list.slice(r, r + perRow));
       let j = 0;
+      // rows with a scrollable page get more height; { large: true } shows an image at reading size (e.g. text)
       return rows.map((row) => `
-        <div class="process__row">${row.map(({ src, scroll, label, at }) => {
+        <div class="process__row${row.some((x) => x.scroll) ? ' process__row--tall' : ''}${row.some((x) => x.large) ? ' process__row--large' : ''}">${row.map(({ src, scroll, label, at, large }) => {
           j += 1;
           const alt = `${p.title}, ${label || `${(pr.step || 'week').toLowerCase()} ${k + 1}, image ${j}`}`;
           return `
-          <figure class="process__img${src ? ' has-img' : ''}${scroll ? ' process__img--scroll' : ''}" data-reveal="clip">
+          <figure class="process__img${src ? ' has-img' : ''}${scroll ? ' process__img--scroll' : ''}${large ? ' process__img--large' : ''}" data-reveal="clip">
             ${scroll ? `<div class="process__scroll" data-lenis-prevent${at ? ` data-at="${at}"` : ''}><img src="${src}" alt="${alt}"></div>${label ? `<figcaption class="mono">${label}</figcaption>` : ''}`
               : src ? `<img src="${src}" alt="${alt}">`
               : `<span class="mono">(${pr.step || 'Week'} ${pad(k + 1)}) Image ${j}</span>`}
@@ -256,8 +284,7 @@
     $('.gallery').insertAdjacentHTML('beforebegin', `
       <section class="process">
         <div class="process__head">
-          <p class="mono">${Site.t('processLabel')}</p>
-          <h2 class="display process__title" data-fit="1"><span class="line"><span class="line__in" data-split>${pr.weeks.length} ${pr.unit || 'weeks'}</span></span></h2>
+          <h2 class="display process__title" data-fit="1"><span class="line"><span class="line__in" data-split>${Site.t('processTitle')}</span></span></h2>
         </div>
         ${pr.hmw ? `
         <div class="process__hmw">
@@ -302,7 +329,7 @@
   };
   $$('.process__row').forEach((row) => {
     [...row.children].forEach((fig) => {
-      if (fig.classList.contains('process__img--scroll')) return fig.style.setProperty('--ar', 0.7);
+      if (fig.classList.contains('process__img--scroll')) return fig.style.setProperty('--ar', 0.72);
       if (fig.dataset.ar) return fig.style.setProperty('--ar', fig.dataset.ar);
       const img = $('img', fig);
       const set = () => { fig.style.setProperty('--ar', img.naturalWidth / img.naturalHeight); fitRow(row); ScrollTrigger.refresh(); };

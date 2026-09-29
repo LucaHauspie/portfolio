@@ -215,7 +215,7 @@
   /* --------------------------------------------------------------- MARQUEE */
 
   const track = $('.marquee__track');
-  const item = `<div class="marquee__item display">${P.map((p) => `<span>${p.title}</span><i>✺</i>`).join('')}</div>`;
+  const item = `<div class="marquee__item display">${P.map((p) => `<span>${p.title}</span><i class="marquee__sep" aria-hidden="true"></i>`).join('')}</div>`;
   track.innerHTML = item + item;
 
   /* ----------------------------------------------------------------- WORKS */

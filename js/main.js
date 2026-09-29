@@ -187,22 +187,61 @@
   const socialLinks = () =>
     SITE.socials.map((s) => `<a class="u-link" href="${s.url}" target="_blank" rel="noopener">${s.label}</a>`).join('');
 
+  // header: name left, main links in the middle (with counts), Contact as the one button.
+  // On phones the links move into a full-screen menu.
+  const NAV = () => [
+    { href: 'index.html#works', label: 'Work', count: PROJECTS.length, active: path === 'index.html' || page === 'project' },
+    { href: 'archive.html', label: 'Archive', count: (window.ARCHIVE || []).length, active: path === 'archive.html' },
+    { href: 'about.html', label: 'About', active: path === 'about.html' },
+  ];
   function renderHeader() {
     const h = document.createElement('header');
-    h.className = 'header mono';
+    h.className = 'header';
     h.dataset.theme = 'dark';
+    const links = NAV().map((l) => `
+          <a class="nav-link${l.active ? ' is-active' : ''}" href="${l.href}" data-label="${l.label}"${l.active ? ' aria-current="page"' : ''}>
+            <span class="nav-link__text">${l.label}</span>${l.count ? `<sup class="nav-link__count">${String(l.count).padStart(2, '0')}</sup>` : ''}
+          </a>`).join('');
     h.innerHTML = `
-      <a href="index.html" class="header__brand" data-label="Home">${SITE.name}<br>${SITE.role.join('<br>')}</a>
-      <div class="header__socials">${socialLinks()}</div>
-      <div class="header__right">
-        <span class="header__clock">${SITE.location}<br><span data-clock></span></span>
-        <nav class="header__nav">
-          <a class="u-link" href="index.html#works" data-label="Work">Work</a>
-          ${navLink('archive.html', 'Archive')}
-          ${navLink('about.html', 'About')}
-          ${navLink('contact.html', 'Contact')}
-        </nav>
+      <a href="index.html" class="header__brand" data-label="Home">
+        <span class="header__name">${SITE.name}</span>
+        <span class="header__role mono">${SITE.role.join(' ')}</span>
+      </a>
+      <nav class="header__nav" aria-label="Main">${links}</nav>
+      <div class="header__end">
+        <a class="header__cta${path === 'contact.html' ? ' is-active' : ''}" href="contact.html" data-label="Contact">Contact</a>
+        <button class="header__menu" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
       </div>`;
+    // phone menu
+    const menu = document.createElement('div');
+    menu.className = 'menu';
+    menu.id = 'menu';
+    menu.setAttribute('aria-hidden', 'true');
+    menu.innerHTML = `
+      <nav class="menu__links display">
+        ${[...NAV(), { href: 'contact.html', label: 'Contact', active: path === 'contact.html' }].map((l, i) => `
+        <a class="menu__link${l.active ? ' is-active' : ''}" href="${l.href}" data-label="${l.label}"><span class="line"><span class="line__in">${l.label}</span></span><sup class="mono">${String(i + 1).padStart(2, '0')}</sup></a>`).join('')}
+      </nav>
+      <div class="menu__foot mono">${socialLinks()}<a class="u-link" href="mailto:${SITE.email}">${SITE.email}</a></div>`;
+    document.body.prepend(menu);
+    const btn = $('.header__menu', h);
+    const toggle = (open) => {
+      document.documentElement.classList.toggle('menu-open', open);
+      btn.setAttribute('aria-expanded', open);
+      btn.textContent = open ? 'Close' : 'Menu';
+      menu.setAttribute('aria-hidden', !open);
+      if (open) {
+        lenis && lenis.stop();
+        gsap.fromTo(menu, { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', duration: reduce ? 0 : 0.7, ease: 'expo.inOut' });
+        gsap.fromTo($$('.menu__link .line__in', menu), { yPercent: 110 }, { yPercent: 0, duration: reduce ? 0 : 0.9, ease: 'expo.out', stagger: 0.06, delay: 0.25 });
+      } else {
+        lenis && lenis.start();
+        gsap.to(menu, { clipPath: 'inset(0 0 100% 0)', duration: reduce ? 0 : 0.5, ease: 'expo.inOut' });
+      }
+    };
+    btn.addEventListener('click', () => toggle(!document.documentElement.classList.contains('menu-open')));
+    menu.addEventListener('click', (e) => { if (e.target.closest('a')) toggle(false); });
+    addEventListener('keydown', (e) => { if (e.key === 'Escape' && document.documentElement.classList.contains('menu-open')) toggle(false); });
     document.body.prepend(h);
     return h;
   }

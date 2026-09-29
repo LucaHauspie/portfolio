@@ -22,7 +22,6 @@ window.SITE = {
 window.TEXT = {
   // home: small texts at the top of the hero
   heroLeft: '(Portfolio)<br>Selected works ©2024-2026',
-  heroMiddle: 'Digital designer &amp; creative developer from Belgium. Motion, web, branding and interactive media.',
   heroRight: '(Hover a project)',
   scroll: 'Scroll ↓',
 
@@ -48,11 +47,12 @@ window.TEXT = {
   visitLive: 'Visit live site',
   liveWebsiteNote: '(Live website, designed for {size}. Scroll inside.)',
   openWebsite: 'Open the website',
+  screensNote: '(Scroll inside the screens)',
   watchFilm: 'Watch the full video',
   filmLabel: '(Full video)',
   filmSound: 'Sound on ♪',
   conceptLabel: '(The concept)',
-  processLabel: '(Process)',
+  processTitle: 'Process', // big title above every project's process
   questionLabel: '(The question)',
   challengeLabel: '(Biggest challenge)',
   learnedLabel: '(What I’ve learned)',
@@ -88,6 +88,7 @@ window.ARCHIVE = [
 /* Projects -----------------------------------------------------------------
    - slug:    used in the URL → project.html?p=<slug>
    - color:   background accent for the project; ink: text colour on top of it
+   - accent:  (optional) highlight colour on the project's page, instead of the site orange
    - cover:   main image (drop your own file in assets/projects/<slug>/ and change the path)
    - gallery: list of images for the case page. Leave empty to show placeholder frames.
               Each item can be a string (path) or { src, wide: true } for full-width.
@@ -101,6 +102,7 @@ window.ARCHIVE = [
    - process: (optional) { hmw, team[], weeks[], unit?, step? } — timeline on the case page
               (unit/step rename the counter, e.g. 'steps' / 'Step' instead of 'weeks' / 'Week')
    - url:     (optional) link to the live project
+   - screens: (optional) [{ label, desktop, mobile }] full-page screenshots, scrollable, desktop next to mobile
    - site:    (optional) { url, width, height, shot } — live website in a browser frame on the case page,
               always rendered at its design size and scaled to fit; 'shot' (full-page screenshot) is shown on phones
    - previewCursor / previewClick: (optional) cursor label + message sent to the preview when its hero is clicked
@@ -174,6 +176,7 @@ window.PROJECTS = [
     role: 'Concept, animation & edit',
     color: '#F2EFE9',
     ink: '#0E0E0E',
+    accent: '#52B6EE', // numbers, underlines and buttons on this project's page (taken from the design)
     cover: 'assets/projects/juke-kickstarter/cover.jpg',
     // 8s muted cut (0:03–0:11) of the Kickstarter video — plays as hero on hover + case page
     video: 'assets/projects/juke-kickstarter/hero.mp4',
@@ -207,14 +210,34 @@ window.PROJECTS = [
     title: 'Type01 Conference',
     lines: ['TYPE01', 'CONFERENCE'],
     year: '2024',
-    tags: ['Typography', 'Identity', 'Editorial'],
+    tags: ['Webdesign', 'UI design', 'Typography'],
     context: 'School project, Howest',
-    role: 'Identity & editorial design',
+    role: 'Responsive webdesign',
     color: '#161616',
     ink: '#BDF640',
+    accent: '#B184F5', // numbers, underlines and buttons on this project's page (taken from the design)
     cover: 'assets/projects/type01-conference/cover.jpg',
     // the Type01 hero, rebuilt with the letter assets — letters slowly stretch and float
     preview: 'assets/projects/type01-conference/fold/index.html',
+    // final design, page by page: full-page screenshots you scroll through (desktop + mobile side by side)
+    screens: [
+      { label: '(01) Home', desktop: 'assets/projects/type01-conference/pages/home.jpg', mobile: 'assets/projects/type01-conference/pages/home-mobile.jpg' },
+      { label: '(02) Schedule, Friday', desktop: 'assets/projects/type01-conference/pages/schedule-friday.jpg', mobile: 'assets/projects/type01-conference/pages/schedule-friday-mobile.jpg' },
+      { label: '(03) Speaker', desktop: 'assets/projects/type01-conference/pages/speaker.jpg', mobile: 'assets/projects/type01-conference/pages/speaker-mobile.jpg' },
+      { label: '(04) Schedule, Saturday', desktop: 'assets/projects/type01-conference/pages/schedule-saturday.jpg', mobile: 'assets/projects/type01-conference/pages/schedule-saturday-mobile.jpg' },
+    ],
+    process: {
+      unit: 'steps',
+      step: 'Step',
+      weeks: [
+        { title: 'First tryout', points: ['Wrong message'], imgs: [{ src: 'assets/projects/type01-conference/process/first-tryout.jpg', scroll: true, label: 'Desktop' }, { src: 'assets/projects/type01-conference/process/first-tryout-mobile.jpg', scroll: true, label: 'Mobile' }] },
+        { title: 'Research', points: ['Magazines', 'Experimental type'], imgs: ['assets/projects/type01-conference/process/inspiration-editorial.jpg', 'assets/projects/type01-conference/process/inspiration-type.jpg'] },
+        { title: 'A new direction', points: ['Styleframe'], imgs: ['assets/projects/type01-conference/process/styleframe-green.jpg'] },
+        { title: 'Wireframe & UI research', points: ['Wireframe', 'UI references'], imgs: [{ src: 'assets/projects/type01-conference/process/wireframe.jpg', scroll: true, label: 'Wireframe' }, 'assets/projects/type01-conference/process/ui-research.jpg'] },
+        { title: 'Second tryout', points: ['Green + black', 'Needed a third colour'], imgs: [{ src: 'assets/projects/type01-conference/process/second-tryout.jpg', scroll: true, label: 'Second tryout' }] },
+        { title: 'Final', points: ['Desktop', 'Phone', 'Auto Layout'], imgs: false },
+      ],
+    },
     gallery: [],
   },
   {
@@ -228,6 +251,7 @@ window.PROJECTS = [
     role: 'Visual design & installation',
     color: '#ECEAE6',
     ink: '#161616',
+    accent: '#D42F2F', // numbers, underlines and buttons on this project's page (taken from the design)
     cover: 'assets/projects/myst/cover.jpg',
     // start screen of the INT4 installation, live: animated mist + the original Lottie logo (mystload.json)
     preview: 'assets/projects/myst/fold/index.html',
@@ -300,6 +324,7 @@ window.PROJECTS = [
     role: 'Concept, design & development',
     color: '#FFFFFF',
     ink: '#FF2121',
+    accent: '#F8D800', // numbers, underlines and buttons on this project's page (taken from the design)
     cover: 'assets/projects/too-wild-to-be-contained/cover.jpg',
     // live, animated recreation of the site's fold — used instead of the cover where there's room for it
     preview: 'assets/projects/too-wild-to-be-contained/fold/index.html',
@@ -314,7 +339,7 @@ window.PROJECTS = [
       weeks: [
         {
           title: 'The story',
-          imgs: ['assets/projects/too-wild-to-be-contained/process/final-focus.jpg'],
+          imgs: [{ src: 'assets/projects/too-wild-to-be-contained/process/final-focus.jpg', large: true }],
         },
         {
           title: 'Wireframes',
