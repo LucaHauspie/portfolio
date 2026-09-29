@@ -1199,7 +1199,80 @@ img.project-hero__live { object-fit: cover; }
 .showcase__group { max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; align-items: center; }
 .showcase__label { align-self: flex-start; margin-bottom: 14px; }
 .showcase video { display: block; width: 100%; height: 100%; object-fit: cover; background: #000; }
+.showcase__film { overflow: visible; }
+.showcase__film video { object-fit: contain; }
+.showcase__film figcaption { margin-top: 8px; }
 .showcase .process__row { --row-h: 78svh; width: 100%; justify-content: center; }
+
+/* ---------- step text with headings + lists (e.g. Too Wild's story) ---------- */
+.process__text p + p, .process__text p + ul, .process__text ul + p { margin-top: 1em; }
+.process__text h4 {
+  margin: 1.8em 0 0.5em;
+  font-size: 1.15em;
+  font-variation-settings: 'wdth' 90, 'wght' 750;
+  text-transform: uppercase;
+  letter-spacing: -0.005em;
+  color: var(--red);
+}
+.process__text ul { list-style: none; margin-top: 0.8em; }
+.process__text li { position: relative; padding-left: 1.2em; margin-top: 0.45em; }
+.process__text li::before { content: ''; position: absolute; left: 0; top: 0.62em; width: 0.4em; height: 0.4em; background: currentColor; }
+
+/* ---------- read more (long step texts) ---------- */
+.process__more .process__text { margin-top: 1em; }
+.process__more-btn { margin-top: 24px; font-size: 12px; padding: 12px 20px; }
+
+/* ---------- project switcher (case pages) ---------- */
+.switcher {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 5px;
+  border-radius: 99px;
+  background: rgba(14, 14, 14, 0.88);
+  backdrop-filter: blur(10px);
+  color: var(--paper);
+  font-family: var(--f-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  transform: translate(-50%, 140%);
+  transition: transform 0.6s var(--ease-out);
+}
+.switcher.is-shown { transform: translate(-50%, 0); }
+.switcher a { display: flex; align-items: center; gap: 6px; padding: 9px 12px; border-radius: 99px; transition: background 0.3s, color 0.3s; white-space: nowrap; }
+.switcher a:hover { background: rgba(242, 239, 233, 0.12); }
+.switcher__item.is-active { background: var(--red); color: var(--ink); }
+.switcher__item.is-active:hover { background: var(--red); }
+.switcher__name { display: none; }
+.switcher__item:hover .switcher__name, .switcher__item.is-active .switcher__name { display: inline; }
+.switcher__arrow { font-size: 14px; }
+@media (max-width: 600px) {
+  .switcher { bottom: 12px; }
+  .switcher__item.is-active .switcher__name { display: none; }
+  .switcher a { padding: 9px 10px; }
+}
+
+/* ---------- previous project link ---------- */
+.prev {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--gutter);
+  padding: 28px var(--gutter);
+  border-top: 1px solid currentColor;
+}
+.prev__title {
+  font-size: clamp(26px, 3.6vw, 60px);
+  font-variation-settings: 'wdth' 70, 'wght' 900;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.prev__arrow { display: inline-block; transition: transform 0.5s var(--ease-out); color: var(--red); }
+.prev:hover .prev__arrow { transform: translateX(-10px); }
 
 /* ---------- biggest challenge / what I've learned ---------- */
 .reflect {

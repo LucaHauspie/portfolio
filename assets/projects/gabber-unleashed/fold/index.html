@@ -77,10 +77,14 @@
 
     /* tall (phone) screens: title on top, gabber below */
     @media (max-aspect-ratio: 17/20) {
-      .scene { left: 0; right: 0; translate: none; flex-direction: column; justify-content: space-between; padding-top: 14vh; }
-      .title { top: 0; width: 86vw; }
-      .gabber { align-self: center; height: 62vh; margin-bottom: -10vh; }
+      /* phone: only the title, centred */
+      .scene { left: 0; right: 0; translate: none; justify-content: center; }
+      .title { width: 86vw; }
+      .gabber { display: none; }
     }
+    /* ?text: title only (used to render the thumbnail) */
+    .text-only .gabber { display: none; }
+    .text-only .title { width: min(62vw, 110vh); }
   </style>
 </head>
 <body>
@@ -98,6 +102,7 @@
       const params = new URLSearchParams(location.search);
       const still = params.has('still') || matchMedia('(prefers-reduced-motion: reduce)').matches;
       document.documentElement.classList.toggle('is-embed', params.has('embed'));
+      document.documentElement.classList.toggle('text-only', params.has('text'));
       if (still) return;
 
       // subtle: the gabber breathes and sways a little, the title drifts slowly

@@ -46,6 +46,13 @@
       });
     }
   };
+  // step text (already escaped) → paragraphs, "### heading" and "- list" blocks
+  const blocks = (txt) => String(txt || '').split(/\n\s*\n/).map((b) => b.trim()).filter(Boolean).map((b) => {
+    if (/^###\s+/.test(b)) return `<h4>${b.replace(/^###\s+/, '')}</h4>`;
+    const lines = b.split('\n');
+    if (lines.every((l) => /^\s*-\s+/.test(l))) return `<ul>${lines.map((l) => `<li>${l.replace(/^\s*-\s+/, '')}</li>`).join('')}</ul>`;
+    return `<p>${b.replace(/\n/g, ' ')}</p>`;
+  }).join('');
   // text → escaped HTML paragraphs (blank line = new paragraph)
   const paras = (txt) => String(txt || '').split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean)
     .map((x) => x.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\n/g, ' '));
@@ -240,6 +247,12 @@
             <figure class="process__img has-img" data-reveal="clip" data-ar="${it.ar || 0.5625}">
               <video src="${it.video}" poster="${it.poster || ''}" muted loop autoplay playsinline aria-label="${p.title}, ${r.label}"></video>
             </figure>`;
+            // { film, poster, title }: a video with sound and controls (motion, case movies)
+            if (it && it.film) return `
+            <figure class="process__img has-img showcase__film" data-reveal="clip" data-ar="${it.ar || 1.7778}">
+              <video src="${it.film}" poster="${it.poster || ''}" controls playsinline preload="metadata" aria-label="${p.title}, ${it.title || r.label}"></video>
+              ${it.title ? `<figcaption class="mono">${it.title}</figcaption>` : ''}
+            </figure>`;
             return `
             <figure class="process__img has-img" data-reveal="clip"${r.phone ? ' data-ar="0.462"' : ''}>
               <img src="${it}" alt="${p.title}, ${r.label}"${r.phone ? ' style="object-position: top"' : ''}>
@@ -304,7 +317,14 @@
             </div>
             <div class="process__body">
               <h3 class="process__wt" data-reveal="fade">${w.title}</h3>
-              <p class="process__text" data-reveal="fade">${w.text}</p>
+              ${(() => {
+                // a "---" line splits the text: the rest opens with "Read more"
+                const [first, ...rest] = String(w.text || '').split(/\n\s*---\s*\n/);
+                if (!rest.length) return `<div class="process__text" data-reveal="fade">${blocks(first)}</div>`;
+                return `<div class="process__text" data-reveal="fade">${blocks(first)}</div>
+              <div class="process__more" hidden><div class="process__text">${blocks(rest.join('\n\n'))}</div></div>
+              <button class="pill mono process__more-btn" type="button" aria-expanded="false">${Site.t('readMore')} <span>↓</span></button>`;
+              })()}
               ${w.note ? `<p class="process__note mono">(${w.note})</p>` : ''}
               ${w.points ? `<ul class="process__points mono" data-reveal="stagger">${w.points.map((x) => `<li>${x}</li>`).join('')}</ul>` : ''}
               <div class="process__imgs">${imgs(w, k)}</div>
@@ -320,6 +340,18 @@
     const go = () => (box.scrollTop = box.scrollHeight * parseFloat(box.dataset.at));
     if (img.complete && img.naturalWidth) go(); else img.addEventListener('load', go, { once: true });
   });
+
+  // "Read more": open / close the rest of a long step text
+  $$('.process__more-btn').forEach((btn) => btn.addEventListener('click', () => {
+    const more = btn.previousElementSibling;
+    const open = more.hidden;
+    more.hidden = !open;
+    btn.setAttribute('aria-expanded', open);
+    btn.innerHTML = open ? `${Site.t('readLess')} <span>↑</span>` : `${Site.t('readMore')} <span>↓</span>`;
+    if (open && !Site.reduce) gsap.fromTo(more, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'expo.out' });
+    if (!open) Site.scrollTo(btn.closest('.process__week'), { offset: -90, duration: 0.8 });
+    ScrollTrigger.refresh();
+  }));
 
   // justified rows: each figure grows by its aspect ratio; the row is capped so it never gets too tall
   const fitRow = (row) => {
@@ -413,6 +445,26 @@
     else $('.page-hero__row', hero).before(Site.subTag(p, 'project-sub'));
   }
   if (p.video) hero.dataset.header = 'light'; // light header on top of the dimmed clip
+
+  // quick switcher: fixed bar at the bottom with every project, shown once you scroll past the hero
+  document.body.insertAdjacentHTML('beforeend', `
+    <nav class="switcher" aria-label="${Site.t('switcherLabel')}">
+      <a class="switcher__arrow" href="project.html?p=${P[(i - 1 + P.length) % P.length].slug}" data-label="${P[(i - 1 + P.length) % P.length].title}" aria-label="${Site.t('prevProject')}">←</a>
+      ${P.map((q, k) => `<a class="switcher__item${k === i ? ' is-active' : ''}" href="project.html?p=${q.slug}" data-label="${q.title}"${k === i ? ' aria-current="page"' : ''}><span class="switcher__num">${pad(k + 1)}</span><span class="switcher__name">${q.title}</span></a>`).join('')}
+      <a class="switcher__arrow" href="project.html?p=${P[(i + 1) % P.length].slug}" data-label="${P[(i + 1) % P.length].title}" aria-label="${Site.t('nextProject')}">→</a>
+    </nav>`);
+  Site.onInit(() => ScrollTrigger.create({
+    start: () => innerHeight * 0.6,
+    onToggle: (self) => $('.switcher').classList.toggle('is-shown', self.isActive),
+  }));
+
+  // previous project: a quieter link just before the big "next project" block
+  const prev = P[(i - 1 + P.length) % P.length];
+  $('.next').insertAdjacentHTML('beforebegin', `
+    <a class="prev" href="project.html?p=${prev.slug}" data-label="${prev.title}" data-cursor="${Site.t('prevCursor')}">
+      <span class="mono">${Site.t('prevProject')}</span>
+      <span class="prev__title"><span class="prev__arrow">←</span> ${prev.title}</span>
+    </a>`);
 
   // next project
   const nextEl = $('.next');

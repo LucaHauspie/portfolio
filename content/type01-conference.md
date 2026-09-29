@@ -41,8 +41,8 @@ Adding purple gave the site the contrast it missed. The final design works on tw
 
 ## Biggest challenge
 
-
+Integrating good UI while still keeping the experimental type-look that type01 represents.
 
 ## What I've learned
 
-
+Use of autolayout, responsive web UI.

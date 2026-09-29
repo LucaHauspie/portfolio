@@ -13,7 +13,7 @@ MYST, found in Antwerp. A brief by Visit Antwerp: get young travellers into the 
 
 ## Body
 
-Six weeks, four Devine students and two CMD students from Rotterdam. I did the visual design and helped build the installation.
+Six weeks, four Devine students and two CMD students from Rotterdam. I made all the design and motion together with Alexander Jonckheere, and helped build the installation.
 
 ## Concept 1: The problem
 
@@ -61,4 +61,4 @@ Good communication with team members.
 
 ## What I've learned
 
-UX/UI (app) design, testing, 
+UX/UI (app) design, testing, communication and teamwork, concepting with minimal flaws.

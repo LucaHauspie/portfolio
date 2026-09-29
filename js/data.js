@@ -58,6 +58,11 @@ window.TEXT = {
   learnedLabel: '(What I’ve learned)',
   todo: 'To be written.',
   nextProject: '(Next project)',
+  prevProject: '(Previous project)',
+  prevCursor: 'Previous',
+  readMore: 'Read more',
+  readLess: 'Read less',
+  switcherLabel: 'Projects',
 
   // archive page
   archiveTitle: 'Archive',
@@ -248,7 +253,7 @@ window.PROJECTS = [
     year: '2026',
     tags: ['Experience design', 'Installation', 'App'],
     context: 'Howest × Rotterdam, brief by Visit Antwerp',
-    role: 'Visual design & installation',
+    role: 'Design, motion & installation',
     color: '#ECEAE6',
     ink: '#161616',
     accent: '#D42F2F', // numbers, underlines and buttons on this project's page (taken from the design)
@@ -267,14 +272,15 @@ window.PROJECTS = [
       { label: '(App) Onboarding: before the mist clears, who are you?', phone: true, imgs: ['assets/projects/myst/web/onboarding-styles.jpg', 'assets/projects/myst/web/onboarding-interests.jpg'] },
       { label: '(App) The fog map: pins clear the mist', phone: true, imgs: ['assets/projects/myst/web/map-fog.jpg', 'assets/projects/myst/web/map-pin.jpg', 'assets/projects/myst/web/pin-detail.jpg', 'assets/projects/myst/web/add-discovery.jpg'] },
       { label: '(App) Crews & profile', phone: true, imgs: ['assets/projects/myst/web/crews.jpg', 'assets/projects/myst/web/crew-detail.jpg', 'assets/projects/myst/web/crew-code.jpg', 'assets/projects/myst/web/profile.jpg'] },
+      { label: '(Motion) Promo video & case movie, made with Alexander Jonckheere', imgs: [{ film: 'assets/projects/myst/web/promo.mp4', poster: 'assets/projects/myst/web/promo-poster.jpg', title: 'Promo video, 0:20' }, { film: 'assets/projects/myst/web/case-movie.mp4', poster: 'assets/projects/myst/web/case-movie-poster.jpg', title: 'Case movie, 1:07' }] },
     ],
     // six-week process, shown as a timeline on the case page.
     // imgs: add paths (e.g. 'assets/projects/myst/process/w1-01.jpg') — empty frames show until then
     process: {
       team: [
         { name: 'Amber Vanhooren', role: 'Experience design, development' },
-        { name: 'Luca Hauspie', role: 'Visual design, installation', me: true },
-        { name: 'Alexander Jonckheere', role: 'Physical installation, visual design' },
+        { name: 'Luca Hauspie', role: 'Visual design, motion, installation', me: true },
+        { name: 'Alexander Jonckheere', role: 'Visual design, motion, installation' },
         { name: 'Tjorven Florin', role: 'Development' },
       ],
       weeks: [
@@ -324,7 +330,7 @@ window.PROJECTS = [
     role: 'Concept, design & development',
     color: '#FFFFFF',
     ink: '#FF2121',
-    accent: '#F8D800', // numbers, underlines and buttons on this project's page (taken from the design)
+    accent: '#7BC6E4', // numbers, underlines and buttons on this project's page (taken from the design)
     cover: 'assets/projects/too-wild-to-be-contained/cover.jpg',
     // live, animated recreation of the site's fold — used instead of the cover where there's room for it
     preview: 'assets/projects/too-wild-to-be-contained/fold/index.html',
@@ -339,7 +345,7 @@ window.PROJECTS = [
       weeks: [
         {
           title: 'The story',
-          imgs: [{ src: 'assets/projects/too-wild-to-be-contained/process/final-focus.jpg', large: true }],
+          imgs: false,
         },
         {
           title: 'Wireframes',

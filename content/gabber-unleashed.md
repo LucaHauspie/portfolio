@@ -49,4 +49,4 @@ Making non-repetitive webdesign
 
 ## What I've learned
 
-HTML, CSS, composition
+HTML, CSS, composition, brainstorming.
