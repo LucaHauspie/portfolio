@@ -34,7 +34,7 @@ window.TEXT = {
 
   // home: the statement block
   statementLabel: '(Hi, I’m Luca)',
-  statement: 'I design <em>loud</em> identities {img1} experimental type {img2} &amp; things that <em>move</em>. Graphic design with the volume turned up.',
+  statement: 'I design <em>loud</em> identities {img1} experimental type {img2} &amp; things that <em>move</em>. Design, but with the volume turned up.',
   statementButton: 'More about me',
 
   // footer (every page)
