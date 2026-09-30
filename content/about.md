@@ -37,6 +37,7 @@ I’m Luca, a digital *designer* and creative *developer* from Belgium. I design
 - After Effects | Motion
 - TouchDesigner (learning) | Real-time
 - MadMapper | Projection mapping
+- Blender (learning) | 3D
 
 ## Code
 
