@@ -2,12 +2,17 @@
   "name": "luca-hauspie-portfolio",
   "version": "1.0.0",
   "private": true,
-  "description": "Portfolio of Luca Hauspie \u2014 digital designer & art direction",
+  "description": "Portfolio of Luca Hauspie, digital designer and creative developer",
   "scripts": {
     "start": "live-server --port=8000 --no-css-inject",
-    "optimize": "node scripts/optimize.mjs"
+    "optimize": "node scripts/optimize.mjs",
+    "build": "node scripts/build.mjs",
+    "preview": "live-server dist --port=8001",
+    "deploy": "npm run build && gh-pages -d dist --dotfiles"
   },
   "devDependencies": {
+    "esbuild": "^0.25.0",
+    "gh-pages": "^6.3.0",
     "live-server": "^1.2.2",
     "sharp": "^0.34.5"
   }
