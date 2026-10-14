@@ -13,7 +13,7 @@ const DIST = path.join(ROOT, 'dist');
 
 // what the site needs: pages, styles, scripts, texts, assets and the favicon
 const INCLUDE = [
-  'index.html', 'about.html', 'archive.html', 'contact.html', 'project.html',
+  'index.html', 'about.html', 'archive.html', 'contact.html', 'project.html', 'wip.html',
   'favicon.svg', '.nojekyll',
   'css', 'js', 'content', 'assets',
 ];

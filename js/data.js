@@ -24,7 +24,7 @@ window.TEXT = {
   heroLeft: '(Portfolio)<br>Selected works ©2025-2026',
   heroRight: '(Hover a project)',
   scroll: 'Scroll ↓',
-  nameCursor: 'Click me', // cursor label on the big name in the hero
+  titleCursor: 'Click me', // cursor label on every big title (they glitch when clicked)
   nameEgg: '(Okay okay) you found the button', // shows for a moment after every 5th click on the name
 
   // home: works list
@@ -66,6 +66,12 @@ window.TEXT = {
   readLess: 'Read less',
   switcherLabel: 'Projects',
 
+  // work in progress page
+  wipTitle: 'In progress',
+  wipLabel: '(Now)',
+  wipStatus: 'In progress',
+  wipButton: 'see what I’m making', // button on highlighted skills on the About page
+
   // archive page
   archiveTitle: 'Archive',
   archiveIntro: 'Older graphic design work: posters and cover art I made before I started studying, self-taught and mostly for bands and for fun. My school projects are under Work.',
@@ -75,6 +81,15 @@ window.TEXT = {
   // contact page title
   contactTitle: 'Say hi!',
 };
+
+/* Work in progress ---------------------------------------------------------
+   Shown on wip.html. The text for each item is in content/wip.md (heading = title).
+   - img: a still, or video + poster: a looping muted clip
+   ------------------------------------------------------------------------- */
+window.WIP = [
+  { title: 'TWOJEYS', kind: 'First 3D project', tags: ['Blender', '3D', 'Rigging & animation'], img: 'assets/projects/work-in-progress/twojeys.webp' },
+  { title: 'Sunday Session', kind: 'Skateboarding in the browser', tags: ['WebGPU (learning)', 'Three.js (learning)', 'Shaders'], video: 'assets/projects/work-in-progress/sunday-session.mp4', poster: 'assets/projects/work-in-progress/sunday-session-poster.webp' },
+];
 
 /* Archive -----------------------------------------------------------------
    Work from before school, shown on archive.html (no detail pages).

@@ -21,6 +21,8 @@ Personal portfolio site. Plain HTML/CSS/JS with no build step, animated with [GS
 | Project structure: title, subtitle, tags, colours, images, captions | `js/data.js`, `window.PROJECTS` |
 | About page: facts, intro, disciplines, tools, code, education, tone of voice | `content/about.md` |
 | About portrait | `assets/about/portrait.jpg` |
+| Work in progress page: intro + text per project | `content/wip.md` |
+| Work in progress: images, videos, tags | `js/data.js`, `window.WIP` |
 | Contact page form labels | `contact.html` |
 | Text inside the animated project heroes | `assets/projects/<project>/fold/index.html` |
 

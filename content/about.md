@@ -6,6 +6,8 @@
   ## Intro: the big intro text. Put a word between *stars* to make it red.
   Every other "## Heading" with a list becomes a numbered chapter, in this order.
   List items are "- Big text | small text on the right".
+  End an item with " *" to highlight it with a button to the Work in progress page.
+  Text above a list (not starting with "- ") is shown as a short intro for that chapter.
   ## Education and ## Experience are shown side by side as a CV:
   "- Place | role or programme | period".
   This file only loads through a server (npm start or the live site).
@@ -37,7 +39,7 @@ I’m Luca, a digital *designer* and creative *developer* from Belgium. I design
 - After Effects | Motion
 - TouchDesigner (learning) | Real-time
 - MadMapper | Projection mapping
-- Blender (learning) | 3D
+- Blender (learning) | 3D *
 
 ## Code
 
@@ -47,6 +49,7 @@ I’m Luca, a digital *designer* and creative *developer* from Belgium. I design
 - React (Native) | Web & apps
 - GSAP | Animation
 - ML5 | Machine learning
+- WebGPU / Three.js (learning) | 3D on the web *
 
 ## Education
 
@@ -58,3 +61,12 @@ I’m Luca, a digital *designer* and creative *developer* from Belgium. I design
 - Frituur De Maretak | Student job | 4 years
 - Municipality | Events department | 1 year
 - Student council | Head, high school | 
+
+## Next
+
+Getting closer to the music industry has always been a dream of mine. Next, I want to master TouchDesigner and learn to make visuals that move with the music, live.
+
+- Resolume | VJ software
+- TouchDesigner | Mastering it
+- Live visuals | For shows & clubs
+- Music industry | The dream

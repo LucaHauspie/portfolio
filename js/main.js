@@ -179,6 +179,40 @@
     });
   }
 
+  // Click a big title: its letters flicker through a few random glyphs, left to right,
+  // with a small squash and stretch, then settle. Calm on purpose: no flashes.
+  const GLITCH_TITLES = '.hero__title, .page-hero__title, .wip-hero__title, .archive-hero__title, .contact-hero__title, .works__title, .process__title';
+  function glitch(el) {
+    if (reduce || el.dataset.glitching || el.hasAttribute('data-glitch-off')) return;
+    const chars = $$('.ch', el);
+    if (!chars.length) return;
+    el.dataset.glitching = '1';
+    el.classList.add('is-glitch');
+    el.dispatchEvent(new CustomEvent('glitch'));
+    const glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#&?';
+    const r = gsap.utils.random;
+    chars.forEach((c, k) => {
+      const real = c.textContent;
+      const tl = gsap.timeline({ delay: k * 0.045 });
+      const flicks = 3 + Math.floor(r(0, 2));
+      for (let f = 0; f < flicks; f += 1) {
+        tl.call(() => { c.textContent = glyphs[(Math.random() * glyphs.length) | 0]; })
+          .to(c, { scaleY: r(0.85, 1.15), skewX: r(-6, 6), duration: 0.09, ease: 'none' });
+      }
+      tl.call(() => { c.textContent = real; })
+        .to(c, { scaleY: 1, skewX: 0, duration: 0.35, ease: 'back.out(2)' });
+      if (k === chars.length - 1) tl.call(() => { delete el.dataset.glitching; el.classList.remove('is-glitch'); });
+    });
+  }
+  function initGlitch() {
+    $$(GLITCH_TITLES).forEach((el) => {
+      if (el.closest('a') || el.classList.contains('sr-only')) return;
+      el.classList.add('can-glitch');
+      if (!el.dataset.cursor) el.dataset.cursor = TEXT.titleCursor || 'Click me';
+      el.addEventListener('click', () => glitch(el));
+    });
+  }
+
   /* ------------------------------------------------------- header & footer */
 
   const path = location.pathname.split('/').pop() || 'index.html';
@@ -192,6 +226,7 @@
   const NAV = () => [
     { href: 'index.html#works', label: 'Work', count: PROJECTS.length, active: path === 'index.html' || page === 'project' },
     { href: 'archive.html', label: 'Archive', count: (window.ARCHIVE || []).length, active: path === 'archive.html' },
+    { href: 'wip.html', label: 'Now', active: path === 'wip.html' },
     { href: 'about.html', label: 'About', active: path === 'about.html' },
   ];
   function renderHeader() {
@@ -265,6 +300,7 @@
           <div>
             <a class="u-link" href="index.html#works" data-label="Work">Work</a>
             <a class="u-link" href="archive.html">Archive</a>
+            <a class="u-link" href="wip.html">Now</a>
             <a class="u-link" href="about.html">About</a>
             <a class="u-link" href="contact.html">Contact</a>
           </div>
@@ -526,6 +562,7 @@
 
     prepareReveals();
     initHooks.forEach((fn) => fn());
+    initGlitch();
     headerTheme(header);
     magnetic();
 
@@ -563,6 +600,7 @@
   window.Site = {
     $, $$, reduce, touch, splitChars, splitWords, fit, fitAll, stretchy, scramble, scrollTo,
     get lenis() { return lenis; },
+    glitch,
     t,
     // Subtitle line in the project's own style (.live-sub--<slug>).
     subTag(p, cls = '') {

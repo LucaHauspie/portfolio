@@ -88,13 +88,22 @@
       <div class="voice display" data-reveal="stagger">${words.map((w) => `<span>${esc(w)}</span>`).join('')}</div>
     </section>`;
         }
+        // text above the list = short chapter intro
+        const intro = s.body.split('\n').filter((l) => l.trim() && !/^\s*-\s+/.test(l)).join(' ');
         return `
     <section class="chapter" data-header="dark">${head}
+      <div>
+      ${intro ? `<p class="chapter__intro" data-reveal="fade">${esc(intro)}</p>` : ''}
       <div class="rows" data-reveal="stagger">
         ${items(s.body).map((it) => {
-          const [big, small = ''] = it.split('|').map((x) => x.trim());
-          return `<div class="rows__item"><span class="display rows__big" data-split>${esc(big)}</span><span class="mono">${esc(small)}</span></div>`;
+          // "… *" at the end = highlighted skill, with a button to the work-in-progress page
+          const hot = /\s\*$/.test(it);
+          const [big, small = ''] = it.replace(/\s\*$/, '').split('|').map((x) => x.trim());
+          return hot
+            ? `<div class="rows__item rows__item--hot"><span class="display rows__big" data-split>${esc(big)}</span><a class="pill mono rows__btn" href="wip.html" data-label="${Site.t('wipTitle')}">${esc(small)}, ${Site.t('wipButton')} <span>→</span></a></div>`
+            : `<div class="rows__item"><span class="display rows__big" data-split>${esc(big)}</span><span class="mono">${esc(small)}</span></div>`;
         }).join('\n        ')}
+      </div>
       </div>
     </section>`;
       }).join('\n');
