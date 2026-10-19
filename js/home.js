@@ -1,5 +1,5 @@
 /* =========================================================================
-   HOME — hero project swap, marquee, works list/grid, statement
+   HOME — the pile of TVs in the hero, marquee, works list/grid, statement
    ========================================================================= */
 
 (() => {
@@ -59,170 +59,172 @@
   };
 
   /* ------------------------------------------------------------------ HERO */
+  // A hill of old TVs (js/pile.js). Five screens show the projects, some show a line of text, the
+  // rest glow blank. Hover a project TV: a big screen appears next to it, linked by a thin line, with the live preview.
 
   const hero = $('.hero');
-  const title = $('.hero__title');
-  const media = $('.hero__media');
-  const mediaImg = $('img', media);
-  const strip = $('.hero__strip');
-  const NAME = ['Luca', 'Hauspie'];
-
-  const setLines = (lines) => {
-    title.innerHTML = lines.map((l) => `<span class="line"><span class="line__in">${l}</span></span>`).join('');
-    $$('.line__in', title).forEach(splitChars);
-  };
-  setLines(NAME);
-  const heroType = stretchy(title, { listen: hero, radius: 0.2 });
-
-  strip.innerHTML =
-    P.map((p, i) => `
-      <a class="thumb" href="${href(p)}" data-i="${i}" data-label="${p.title}" data-cursor="${Site.t('viewCase')}">
-        <div class="thumb__img"><img src="${p.cover}" alt="${p.title}, cover"></div>
-        <div class="thumb__label"><span>(${pad(i + 1)}) ${p.title}</span><span>${p.year}</span></div>
-      </a>`).join('') + `<span class="hero__scroll">${Site.t('scroll')}</span>`;
-  const thumbs = $$('.thumb', strip);
-  strip.style.setProperty('--n', P.length); // number of thumbnails (css: .hero__strip)
+  const canvas = $('.pile');
+  const pop = $('.pile-pop');
+  const popScreen = $('.pile-pop__screen', pop);
+  const strip = $('.pile-list');
   const words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
   $$('[data-count]').forEach((el) => (el.textContent = el.dataset.count === 'word' ? words[P.length] || P.length : pad(P.length)));
 
-  // Projects with a live preview take over the whole hero with their own fold / clip.
-  const takeovers = P.map((p, i) => {
-    if (!hasLive(p)) return null;
-    const layer = document.createElement('div');
-    layer.className = 'hero__takeover';
-    const f = layer.appendChild(liveEl(p));
-    if (p.video) layer.appendChild(Site.liveTitle(p));
-    if (f.tagName === 'IFRAME') {
-      f.addEventListener('load', () => {
-        if (!f.getAttribute('src')) return; // the empty iframe fires 'load' before its real src is set
-        tell(f, { corners: false }); // the project strip sits where the fold's corner texts would be
-        if (current === i) tell(f, 'play');
-      });
-    }
-    hero.appendChild(layer);
-    return layer;
-  });
-  const meta = $('.hero__meta');
-  const stage = $('.hero__stage');
-  let sub = null;
-  function showSub(p) {
-    if (sub) { const old = sub; gsap.to(old, { opacity: 0, y: 10, duration: 0.25, onComplete: () => old.remove() }); sub = null; }
-    if (!p || !p.subtitle || p.preview || p.video) return; // folds + video titles carry their own subtitle
-    sub = stage.appendChild(Site.subTag(p, 'hero__sub'));
-    gsap.fromTo(sub, { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: 'expo.out', delay: 0.25 });
-  }
-  // During a takeover the other projects step back a little (scaled from the bottom, so the strip keeps its layout).
-  function setMini(on, active) {
-    thumbs.forEach((t, k) => gsap.to(t, {
-      scale: on && k !== active ? 0.8 : 1,
-      transformOrigin: '50% 100%', duration: reduce ? 0 : 0.6, ease: 'expo.out', overwrite: 'auto',
-    }));
-  }
-  // clip-path that matches a thumbnail, so the takeover grows out of it (and shrinks back into it)
-  const thumbClip = (i) => {
-    const h = hero.getBoundingClientRect();
-    const r = $('.thumb__img', thumbs[i]).getBoundingClientRect();
-    return `inset(${r.top - h.top}px ${h.right - r.right}px ${h.bottom - r.bottom}px ${r.left - h.left}px)`;
+  // what's on each TV, in the order of the pile in js/pile.js (bottom row first)
+  const lines = (key) => Site.t(key).split('<br>');
+  // what's on the named TVs of the pile (slots in js/pile.js); every other TV glows blank
+  const SCREENS = {
+    name: { type: 'text', lines: lines('tvName') },
+    role: { type: 'text', lines: lines('tvRole') },
+    dev: { type: 'text', lines: lines('tvDev') },
+    live: { type: 'text', lines: lines('tvLive'), tone: 'red' },
   };
+  P.forEach((p, i) => { SCREENS[`p${i}`] = { type: 'project', index: i, image: p.cover }; });
+  const slotOf = (i) => `p${i}`;
 
-  gsap.set(hero, { '--hero-bg': '#f2efe9', '--hero-fg': '#0e0e0e' });
+  // project list under the pile: for keyboards, touch and as a fallback without WebGL
+  strip.innerHTML = P.map((p, i) => `
+    <a class="pile-list__item" href="${href(p)}" data-i="${i}" data-label="${p.title}">
+      <img src="${p.cover}" alt="" loading="lazy"><span>(${pad(i + 1)}) ${p.title}</span>
+    </a>`).join('');
+  const items = $$('.pile-list__item', strip);
 
-  // the big name glitches on click (shared, see glitch() in main.js); every 5th click shows a message
-  let kicks = 0;
-  title.addEventListener('glitch', () => {
-    kicks += 1;
-    if (kicks % 5 !== 0) return;
-    const el = $('.hero__meta p');
-    const html = el.innerHTML;
-    Site.scramble(el, Site.t('nameEgg'), 0.8);
-    setTimeout(() => (el.innerHTML = html), 3200);
-  });
-
-  let current = -1;
-  function show(i) {
-    if (i === current) return;
-    current = i;
-    title.toggleAttribute('data-glitch-off', i !== -1);
+  // the big preview: one element per project, made the first time it's needed
+  const previews = [];
+  const previewOf = (i) => {
+    if (previews[i]) return previews[i];
     const p = P[i];
-    setLines(p ? p.lines : NAME);
-    heroType.refresh();
-    fit(title);
-    if (!reduce) {
-      gsap.fromTo($$('.ch', title), { yPercent: 110 }, { yPercent: 0, duration: 0.8, ease: 'expo.out', stagger: 0.018 });
+    let el;
+    if (p.preview) {
+      el = document.createElement('div');
+      el.className = 'preview-scaled';
+      const f = el.appendChild(frame(p, ''));
+      f.addEventListener('load', () => { if (f.getAttribute('src') && showing === i) tell(f, 'play'); });
+    } else el = liveEl(p);
+    popScreen.appendChild(el);
+    previews[i] = el;
+    wake();
+    return el;
+  };
+  const sizePop = () => popScreen.style.setProperty('--s', popScreen.offsetWidth / 1600); // folds render at 1600 × 900
+
+  // the line from the TV to its big screen: redrawn every frame, the TV moves a little with the camera
+  const line = $('.pile-line line');
+  const dot = $('.pile-line circle');
+  let lineSlot = null, side = 1;
+  const drawLine = () => {
+    if (!lineSlot || !pile) return;
+    const h = hero.getBoundingClientRect();
+    const r = pile.rectOf(lineSlot);
+    const pr = popScreen.getBoundingClientRect();
+    if (!r) return;
+    const x1 = (side > 0 ? r.right : r.left) - h.left, y1 = r.top + r.height / 2 - h.top;
+    const x2 = (side > 0 ? pr.left : pr.right) - h.left, y2 = pr.top + pr.height / 2 - h.top;
+    line.setAttribute('x1', x1); line.setAttribute('y1', y1); line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+    dot.setAttribute('cx', x1); dot.setAttribute('cy', y1);
+  };
+  gsap.ticker.add(drawLine);
+
+  // a small label above every project TV, so you can tell which ones play something
+  const tagsEl = $('.pile-tags');
+  tagsEl.innerHTML = P.map((p, i) => `<span class="pile-tag"><i></i>${pad(i + 1)}<span>${p.title}</span></span>`).join('');
+  const tags = $$('.pile-tag', tagsEl);
+  const placeTags = () => {
+    if (!pile || !hero.classList.contains('tags-on')) return;
+    const h = hero.getBoundingClientRect();
+    if (h.bottom < 0) return;
+    tags.forEach((tag, i) => {
+      const r = pile.rectOf(slotOf(i));
+      if (r) tag.style.transform = `translate(${r.left - h.left}px, ${r.top - h.top - 22}px)`;
+      tag.classList.toggle('is-active', showing === i);
+    });
+  };
+  gsap.ticker.add(placeTags);
+
+  let showing = -1;
+  let pile = null;
+  function showPop(i, slot) {
+    if (i === showing) return;
+    if (showing >= 0 && previews[showing]) control(previews[showing], 'pause');
+    showing = i;
+    if (i < 0) {
+      gsap.to([pop, '.pile-line'], { opacity: 0, duration: 0.2, ease: 'power2.in', overwrite: true, onComplete: () => { lineSlot = null; } });
+      Site.cursorLabel && Site.cursorLabel(null);
+      return;
     }
-    gsap.to(hero, {
-      '--hero-bg': p ? p.color : '#f2efe9',
-      '--hero-fg': p ? p.ink : '#0e0e0e',
-      duration: 0.6,
-      ease: 'power2.out',
-    });
-    // a video can be light or dark from frame to frame → light UI text with a shadow on top of it
-    const video = !!(p && p.video);
-    document.body.classList.toggle('is-video-hero', video);
-    Site.setHeader(video || (p && isLight(p.ink)) ? 'light' : 'dark');
-    const live = hasLive(p);
-    gsap.to(thumbs, { opacity: (k) => (i < 0 || k === i ? 1 : live ? 0.7 : 0.35), duration: 0.4 });
-    gsap.to([title, meta], { opacity: live ? 0 : 1, duration: 0.4 });
-    setMini(live, i);
-    showSub(p);
-
-    takeovers.forEach((layer, k) => {
-      if (!layer) return;
-      const f = layer.firstElementChild;
-      if (k === i) {
-        layer.classList.add('is-on');
-        control(f, 'play');
-        const lines = $$('.live-title .line__in', layer);
-        if (lines.length && !reduce) {
-          gsap.fromTo(lines, { yPercent: 110 }, { yPercent: 0, duration: 1.1, ease: 'expo.out', stagger: 0.08, delay: 0.35 });
-          gsap.fromTo($$('.live-title__kicker', layer), { opacity: 0 }, { opacity: 1, duration: 0.6, delay: 0.6 });
-        }
-        gsap.fromTo(layer, { clipPath: thumbClip(k) },
-          { clipPath: 'inset(0px 0px 0px 0px)', duration: reduce ? 0 : 0.9, ease: 'expo.inOut', overwrite: true });
-      } else if (layer.classList.contains('is-on')) {
-        gsap.to(layer, {
-          clipPath: thumbClip(k), duration: reduce ? 0 : 0.6, ease: 'expo.inOut', overwrite: true,
-          onComplete: () => { layer.classList.remove('is-on'); control(f, 'pause'); },
-        });
-      }
-    });
-
-    if (p && !live) {
-      mediaImg.src = p.cover;
-      gsap.to(media, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.9, ease: 'expo.out', overwrite: true });
-      gsap.fromTo(mediaImg, { scale: 1.4 }, { scale: 1, duration: 1.2, ease: 'expo.out' });
+    const p = P[i];
+    const el = previewOf(i);
+    previews.forEach((x) => x && (x.style.display = x === el ? '' : 'none'));
+    $('.pile-pop__num', pop).textContent = pad(i + 1);
+    $('.pile-pop__title', pop).textContent = p.title;
+    $('.pile-pop__sub', pop).textContent = `${p.subtitle || p.tags.join(', ')} · ${p.year}`;
+    $('.pile-pop__meta', pop).textContent = touch ? 'Tap to open' : 'Click to open';
+    sizePop();
+    // next to the TV, far enough for the line to show: right if there's room, else left; under the pile on phones
+    const h = hero.getBoundingClientRect();
+    const r = pile && slot ? pile.rectOf(slot) : null;
+    const w = pop.offsetWidth, ph = pop.offsetHeight;
+    let x, y;
+    if (!r || innerWidth < 720) {
+      x = (h.width - w) / 2; y = Math.max(84, h.height - ph - strip.offsetHeight - 44); side = 0;
     } else {
-      gsap.to(media, { clipPath: 'inset(50% 50% 50% 50%)', duration: 0.6, ease: 'expo.inOut', overwrite: true });
+      const gap = Math.min(120, innerWidth * 0.06);
+      // open towards the side the TV is on (outwards, over the empty room), kept inside the window
+      side = r.left + r.width / 2 > innerWidth / 2 ? 1 : -1;
+      x = side > 0 ? Math.min(r.right + gap, innerWidth - 24 - w) : Math.max(r.left - gap - w, 24);
+      // no room on that side without covering the TV: open on the other side
+      if (side > 0 && x < r.right + 16) { side = -1; x = Math.max(r.left - gap - w, 24); }
+      else if (side < 0 && x + w > r.left - 16) { side = 1; x = Math.min(r.right + gap, innerWidth - 24 - w); }
+      x -= h.left;
+      y = Math.min(Math.max(r.top + r.height / 2 - popScreen.offsetHeight / 2 - h.top, 84), h.height - ph - 72); // clear of the list
     }
+    gsap.set(pop, { x, y });
+    lineSlot = side ? slot : null;
+    gsap.fromTo(pop, { opacity: 0, y: y + 10 }, { opacity: 1, y, duration: 0.45, ease: 'expo.out', overwrite: true });
+    if (!reduce) gsap.fromTo(popScreen, { scaleY: 0.02, filter: 'brightness(3)' }, { scaleY: 1, filter: 'brightness(1)', duration: 0.45, ease: 'expo.out', delay: 0.12 });
+    // the line draws itself from the TV to the screen
+    drawLine();
+    const len = line.getTotalLength ? line.getTotalLength() : 300;
+    gsap.set('.pile-line', { opacity: lineSlot ? 1 : 0 });
+    if (lineSlot) gsap.fromTo(line, { strokeDasharray: len, strokeDashoffset: len }, { strokeDashoffset: 0, duration: reduce ? 0 : 0.35, ease: 'power2.out', clearProps: 'strokeDasharray,strokeDashoffset' });
+    control(el, 'play');
+    Site.cursorLabel && Site.cursorLabel(touch ? null : Site.t('viewCase'));
   }
 
-  if (!touch) {
-    thumbs.forEach((t, i) => {
-      t.addEventListener('pointerenter', () => show(i));
-      t.addEventListener('focus', () => show(i));
-    });
-    strip.addEventListener('pointerleave', () => show(-1));
-    strip.addEventListener('focusout', (e) => !strip.contains(e.relatedTarget) && show(-1));
+  // open a project with the site's page transition (main.js handles clicks on links)
+  const open = (i) => { const a = items[i]; if (a) a.click(); };
 
-    // media card drifts with the pointer
-    const mx = gsap.quickTo(media, 'x', { duration: 1, ease: 'power3' });
-    const my = gsap.quickTo(media, 'y', { duration: 1, ease: 'power3' });
-    const mr = gsap.quickTo(media, 'rotation', { duration: 1, ease: 'power3' });
-    hero.addEventListener('pointermove', (e) => {
-      const live = takeovers[current];
-      if (live && $('iframe', live)) tell($('iframe', live), { pointer: [e.clientX / innerWidth, e.clientY / innerHeight] });
-      const nx = e.clientX / innerWidth - 0.5;
-      const ny = e.clientY / innerHeight - 0.5;
-      mx(nx * innerWidth * 0.25);
-      my(ny * innerHeight * 0.2);
-      mr(nx * 8);
-    });
+  function startPile() {
+    // (the path is relative to this script, not the page)
+    import('./pile.js').then(({ createPile }) => createPile(canvas, {
+      screens: SCREENS,
+      onHover: (hit) => {
+        if (touch) return;
+        showPop(hit && hit.type === 'project' ? hit.index : -1, hit ? hit.slot : null);
+        items.forEach((a, k) => a.classList.toggle('is-active', hit && hit.type === 'project' && hit.index === k));
+      },
+      onClick: (hit) => {
+        if (hit.type !== 'project') return;
+        // on touch screens the first tap shows the preview, the second opens the case
+        if (touch && showing !== hit.index) showPop(hit.index, hit.slot);
+        else open(hit.index);
+      },
+    })).then((p) => {
+      pile = p;
+      hero.classList.add('has-pile');
+      p.ready.then(() => hero.classList.add('tags-on'));
+    }).catch(() => hero.classList.add('no-pile'));
   }
 
-  if (!reduce) {
-    gsap.set($$('.ch', title), { yPercent: 110 });
-    gsap.set(thumbs, { yPercent: 30, opacity: 0 });
-  }
+  // the project list drives the pile too
+  items.forEach((a, i) => {
+    a.addEventListener('pointerenter', () => { pile && pile.setActive(slotOf(i)); showPop(i, slotOf(i)); });
+    a.addEventListener('focus', () => { pile && pile.setActive(slotOf(i)); showPop(i, slotOf(i)); });
+    a.addEventListener('pointerleave', () => { pile && pile.setActive(null); showPop(-1); });
+    a.addEventListener('blur', () => { pile && pile.setActive(null); showPop(-1); });
+  });
+  hero.addEventListener('pointerleave', () => showPop(-1));
+  addEventListener('resize', sizePop);
 
   /* --------------------------------------------------------------- MARQUEE */
 
@@ -262,10 +264,10 @@
   /* ---------------------------------------------------------------- init */
 
   Site.onInit(() => {
-    // hero drifts away as you scroll
+    // the pile sinks away a little as you scroll
     if (!reduce) {
-      gsap.to(title, {
-        yPercent: 35, scale: 0.85, ease: 'none',
+      gsap.to(canvas, {
+        yPercent: 18, opacity: 0.35, ease: 'none',
         scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
       });
     }
@@ -358,17 +360,14 @@
 
   /* ----------------------------------------------------------------- ready */
 
-  const fitScaled = () => preview.style.setProperty('--s', preview.offsetWidth / 1440);
+  const fitScaled = () => preview.style.setProperty('--s', preview.offsetWidth / 1600); // folds render at 1600 × 900 (16:9, like the card)
   fitScaled();
   addEventListener('resize', fitScaled);
   strip.addEventListener('pointerenter', wake, { once: true });
   list.addEventListener('pointerenter', wake, { once: true });
 
   Site.onReady(() => {
+    startPile();
     setTimeout(wake, 2500);
-    if (reduce) return;
-    gsap.timeline()
-      .to($$('.ch', title), { yPercent: 0, duration: 1.3, ease: 'expo.out', stagger: 0.04 })
-      .to(thumbs, { yPercent: 0, opacity: 1, duration: 1, ease: 'expo.out', stagger: 0.08 }, 0.3);
   });
 })();

@@ -23,7 +23,7 @@
 
 I’m Luca, a digital *designer* and creative *developer* from Belgium. I design identities, websites and motion, and I (sometimes) code them too! from HTML and CSS to GSAP animation and projection mapping. Currently studying at Howest.
 
-What I want to do most is *live* visuals: visuals for music, played live. In January 2027 I’m giving it five full weeks, in Resolume and TouchDesigner.
+What I want to do most is *live* visuals: visuals for music, played live. In January 2027 I’m giving it five full weeks to learn Resolume and TouchDesigner.
 
 ## Disciplines
 
@@ -39,8 +39,6 @@ What I want to do most is *live* visuals: visuals for music, played live. In Jan
 - Photoshop | Image
 - Illustrator | Vector
 - After Effects | Motion
-- Resolume | Live visuals *
-- TouchDesigner (learning) | Real-time *
 - MadMapper | Projection mapping
 - Blender (learning) | 3D *
 
@@ -67,9 +65,9 @@ What I want to do most is *live* visuals: visuals for music, played live. In Jan
 
 ## Next
 
-Getting closer to the music industry has always been a dream of mine. Next, I want to master TouchDesigner and learn to make visuals that move with the music, live.
+Getting closer to the music industry has always been a dream of mine. Next, I want to learn TouchDesigner and Resolume and make visuals that move with the music, live.
 
-- Resolume | VJ software
-- TouchDesigner | Mastering it
+- Resolume | To learn, Jan 2027
+- TouchDesigner | To learn, Jan 2027
 - Live visuals | For shows & clubs
 - Music industry | The dream

@@ -232,7 +232,7 @@
   function renderHeader() {
     const h = document.createElement('header');
     h.className = 'header';
-    h.dataset.theme = 'dark';
+    h.dataset.theme = 'light';
     const links = NAV().map((l) => `
           <a class="nav-link${l.active ? ' is-active' : ''}" href="${l.href}" data-label="${l.label}"${l.active ? ' aria-current="page"' : ''}>
             <span class="nav-link__text">${l.label}</span>${l.count ? `<sup class="nav-link__count">${String(l.count).padStart(2, '0')}</sup>` : ''}
@@ -366,6 +366,7 @@
 
   /* --------------------------------------------------------------- cursor */
 
+  let cursorLabel = null;
   function cursor() {
     if (touch || reduce) return;
     const dot = document.createElement('div');
@@ -380,6 +381,11 @@
     const ly = gsap.quickTo(label, 'y', { duration: 0.5, ease: 'power3' });
     addEventListener('pointermove', (e) => { dx(e.clientX); dy(e.clientY); lx(e.clientX); ly(e.clientY); });
 
+    // for things that aren't elements (the TVs in the hero canvas): show or hide a label by hand
+    cursorLabel = (text) => {
+      if (text) { label.textContent = text; gsap.to(label, { scale: 1, duration: 0.4, ease: 'back.out(2)' }); gsap.to(dot, { scale: 0, duration: 0.3 }); }
+      else { gsap.to(label, { scale: 0, duration: 0.3 }); gsap.to(dot, { scale: 1, duration: 0.3 }); }
+    };
     document.addEventListener('pointerover', (e) => {
       const withLabel = e.target.closest('[data-cursor]');
       const link = e.target.closest('a, button, label');
@@ -622,6 +628,7 @@
         ${p.subtitle ? `<p class="live-title__sub"><span class="line"><span class="line__in">${p.subtitle}</span></span></p>` : ''}`;
       return el;
     },
+    cursorLabel: (text) => cursorLabel && cursorLabel(text),
     setHeader: (theme) => { const h = $('.header'); if (h) h.dataset.theme = theme; },
     onInit: (fn) => initHooks.push(fn),
     wait: (promise) => waits.push(promise),

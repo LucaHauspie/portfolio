@@ -22,7 +22,13 @@ window.SITE = {
 window.TEXT = {
   // home: small texts at the top of the hero
   heroLeft: '(Portfolio)<br>Selected works ©2025-2026',
-  heroRight: '(Hover a project)<br>Next up: live visuals, Jan 2027',
+  heroRight: '(Hover a TV)<br>Next up: live visuals, Jan 2027',
+  // the pile of TVs in the hero: text on some of the screens (<br> = new line)
+  tvName: 'Luca<br>Hauspie',
+  tvRole: 'Digital<br>designer',
+  tvDev: 'Creative<br>developer',
+  tvLive: 'Live visuals<br>Jan 2027',
+  tvOpen: 'Click the TV to open the case', // under the big preview
   scroll: 'Scroll ↓',
   titleCursor: 'Click me', // cursor label on every big title (they glitch when clicked)
   nameEgg: '(Okay okay) you found the button', // shows for a moment after every 5th click on the name
@@ -42,7 +48,7 @@ window.TEXT = {
   liveTitle: 'Live visuals',
   liveText: 'My dream is to create live visuals for a living. In January, I will get the opportunity to work on a five week passion project, in which I will take a deepdive into Resolume/touchdesigner. So more skills are coming soon :)',
   liveFacts: '(5 weeks)<br>January 2027', // small facts next to the text
-  liveTools: '(Tools)<br>Resolume, TouchDesigner',
+  liveTools: '(To learn)<br>Resolume, TouchDesigner',
   liveButton: 'Follow it on the Now page',
 
   // footer (every page)

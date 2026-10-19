@@ -67,11 +67,14 @@
   const theme = (proj) => (isLight(proj.ink) ? 'light' : 'dark'); // header text matches the project's text colour
 
   document.title = `${p.title} | ${window.SITE.name}`;
-  document.body.style.setProperty('--p-bg', p.color);
-  document.body.style.setProperty('--p-fg', p.ink);
+  // dark theme: project pages are dark; only the hero (the project's own start screen) and the
+  // "next project" block keep the project's colours
   // accent colour (numbers, underlines, buttons) from the project's own design; default is the site orange
   if (p.accent) document.body.style.setProperty('--red', p.accent);
-  const setHeaderThemes = () => $$('main > section').forEach((s) => (s.dataset.header = theme(p)));
+  const setHeaderThemes = () => {
+    $$('main > section').forEach((s) => (s.dataset.header = 'light'));
+    $('.project-hero').dataset.header = isLight(p.color) ? 'dark' : 'light';
+  };
 
   // hero
   $('.project-hero__kicker').textContent = `(${pad(i + 1)}/${pad(P.length)}) ${p.context}`;

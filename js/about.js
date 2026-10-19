@@ -42,7 +42,7 @@
     const cvNames = ['education', 'experience'];
     const cv = sections.filter((s) => cvNames.includes(s.head.toLowerCase()));
     const cvHtml = (num) => `
-    <section class="chapter chapter--cv" data-header="dark">
+    <section class="chapter chapter--cv" data-header="light">
       <div class="chapter__head">
         <div class="display chapter__num"><span data-split>${pad(num)}</span></div>
         <p class="mono">${cv.map((s) => esc(s.head)).join(' &amp; ')}</p>
@@ -84,14 +84,14 @@
         if (s.head.toLowerCase() === 'tone of voice') {
           const words = s.body.split(/[,\n]/).map((w) => w.trim()).filter(Boolean);
           return `
-    <section class="chapter" data-header="dark">${head}
+    <section class="chapter" data-header="light">${head}
       <div class="voice display" data-reveal="stagger">${words.map((w) => `<span>${esc(w)}</span>`).join('')}</div>
     </section>`;
         }
         // text above the list = short chapter intro
         const intro = s.body.split('\n').filter((l) => l.trim() && !/^\s*-\s+/.test(l)).join(' ');
         return `
-    <section class="chapter" data-header="dark">${head}
+    <section class="chapter" data-header="light">${head}
       <div>
       ${intro ? `<p class="chapter__intro" data-reveal="fade">${esc(intro)}</p>` : ''}
       <div class="rows" data-reveal="stagger">

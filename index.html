@@ -13,6 +13,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.css">
   <link rel="stylesheet" href="css/style.css">
+  <!-- Three.js for the pile of TVs (loaded as a module by js/home.js) -->
+  <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }</script>
   <script>setTimeout(function(){if(!window.__siteBooted){var t=document.querySelector('.transition');t&&t.remove();}},5000);</script>
 </head>
 <body data-page="home">
@@ -22,18 +24,26 @@
   <script>try{var l=sessionStorage.getItem('lh-label');if(l){var e=document.querySelector('.transition__label');e.textContent=l;e.style.opacity=1;}}catch(_){}</script>
 
   <main>
-    <!-- HERO — hover a project thumbnail to preview it -->
-    <section class="hero" data-header="dark">
+    <!-- HERO: a pile of old TVs (js/pile.js). Hover a TV: a bigger screen pops up next to it with the preview -->
+    <section class="hero hero--pile" data-header="light">
+      <canvas class="pile" aria-hidden="true"></canvas>
+      <h1 class="sr-only">Luca Hauspie, digital designer and creative developer</h1>
       <div class="hero__meta mono" data-reveal="stagger">
         <!-- texts come from window.TEXT in js/data.js -->
         <p data-t="heroLeft"></p>
         <p data-t="heroRight"></p>
       </div>
-      <div class="hero__stage">
-        <div class="hero__media"><img src="" alt=""></div>
-        <h1 class="display hero__title" data-fit="0.86" data-fit-max-h=".hero__stage"></h1>
+      <svg class="pile-line" aria-hidden="true"><line></line><circle r="3"></circle></svg>
+      <div class="pile-pop" aria-hidden="true">
+        <div class="pile-pop__screen"></div>
+        <div class="pile-pop__caption">
+          <span class="pile-pop__num mono"></span>
+          <span class="pile-pop__text"><span class="pile-pop__title"></span><span class="pile-pop__sub"></span></span>
+          <span class="pile-pop__meta mono"></span>
+        </div>
       </div>
-      <nav class="hero__strip mono" aria-label="Projects"></nav>
+      <div class="pile-tags mono" aria-hidden="true"></div>
+      <nav class="pile-list mono" aria-label="Projects"></nav>
     </section>
 
     <!-- MARQUEE -->
@@ -42,7 +52,7 @@
     </section>
 
     <!-- WORKS — list / grid toggle -->
-    <section class="works" id="works" data-header="dark">
+    <section class="works" id="works" data-header="light">
       <div class="works__head">
         <h2 class="display works__title">
           <span class="line"><span class="line__in" data-split data-t="worksTitle"></span></span>
@@ -81,7 +91,7 @@
     </section>
   </main>
 
-  <div class="work-preview" aria-hidden="true"><div class="work-preview__inner"></div></div>
+  <div class="work-preview screen" aria-hidden="true"><div class="work-preview__inner"></div></div>
 
   <div data-footer></div>
 

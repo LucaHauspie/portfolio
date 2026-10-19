@@ -6,6 +6,7 @@
   "scripts": {
     "start": "live-server --port=8000 --no-css-inject",
     "optimize": "node scripts/optimize.mjs",
+    "textures": "node scripts/textures.mjs",
     "build": "node scripts/build.mjs",
     "preview": "live-server dist --port=8001",
     "deploy": "npm run build && gh-pages -d dist --dotfiles"
