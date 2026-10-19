@@ -244,10 +244,6 @@
       </a>
       <nav class="header__nav" aria-label="Main">${links}</nav>
       <div class="header__end">
-        <button class="beat-toggle mono" type="button" data-beat aria-pressed="false" data-cursor="${t('beatCursor')}">
-          <span class="beat-toggle__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-          <span class="beat-toggle__label">${t('beatOff')}</span>
-        </button>
         <a class="header__cta${path === 'contact.html' ? ' is-active' : ''}" href="contact.html" data-label="Contact">Contact</a>
         <button class="header__menu" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
       </div>`;
@@ -283,21 +279,6 @@
     addEventListener('keydown', (e) => { if (e.key === 'Escape' && document.documentElement.classList.contains('menu-open')) toggle(false); });
     document.body.prepend(h);
     return h;
-  }
-
-  // beat toggle in the header: label + 4 bars that bounce on the beat
-  function initBeatToggle() {
-    const btn = $('[data-beat]');
-    if (!btn || !window.Beat) return;
-    btn.style.setProperty('--beat', `${60 / Beat.bpm}s`);
-    const sync = (on) => {
-      btn.setAttribute('aria-pressed', on);
-      btn.classList.toggle('is-on', on);
-      $('.beat-toggle__label', btn).textContent = on ? t('beatOn') : t('beatOff');
-    };
-    sync(Beat.wanted);
-    btn.addEventListener('click', () => Beat.toggle());
-    Beat.onChange(sync);
   }
 
   function renderFooter() {
@@ -433,7 +414,6 @@
 
   function leave(href, label) {
     lenis && lenis.stop();
-    window.Beat && Beat.fadeOut();
     overlayLabel.textContent = label || '';
     try { sessionStorage.setItem('lh-label', label || ''); } catch (_) {}
     gsap.timeline({ onComplete: () => (location.href = href) })
@@ -563,7 +543,6 @@
 
   async function boot() {
     const header = renderHeader();
-    initBeatToggle();
     renderFooter();
     fillText();
     fillSiteData();

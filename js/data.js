@@ -24,9 +24,6 @@ window.TEXT = {
   heroLeft: '(Portfolio)<br>Selected works ©2025-2026',
   heroRight: '(Hover a project)<br>Next up: live visuals, Jan 2027',
   scroll: 'Scroll ↓',
-  beatOn: 'Beat on', // header toggle for the background beat (js/beat.js)
-  beatOff: 'Beat off',
-  beatCursor: 'Boom bap',
   titleCursor: 'Click me', // cursor label on every big title (they glitch when clicked)
   nameEgg: '(Okay okay) you found the button', // shows for a moment after every 5th click on the name
 
