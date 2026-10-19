@@ -29,12 +29,12 @@
           <div class="display wip-item__num"><span data-split>${pad(i + 1)}</span></div>
           <h2 class="wip-item__title">${esc(w.title)}</h2>
           <p class="mono wip-item__kind">(${esc(w.kind)})</p>
-          <span class="mono wip-item__status">${Site.t('wipStatus')}</span>
+          <span class="mono wip-item__status">${esc(w.status || Site.t('wipStatus'))}</span>
           <div class="wip-item__text" data-reveal="fade">${paras(sections[w.title.toLowerCase()])}</div>
           <ul class="mono wip-item__tags">${(w.tags || []).map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
         </div>
-        <div class="wip-item__media" data-reveal="clip">
-          ${w.video
+        <div class="wip-item__media${w.soon ? ' wip-item__media--soon display' : ''}" data-reveal="clip">
+          ${w.soon ? w.soon.map((l) => `<span>${esc(l)}</span>`).join('') : w.video
             ? `<video src="${w.video}" poster="${w.poster || ''}" muted loop autoplay playsinline aria-label="${esc(w.title)}"></video>`
             : `<img src="${w.img}" alt="${esc(w.title)}" loading="lazy">`}
         </div>

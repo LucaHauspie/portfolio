@@ -23,6 +23,8 @@
 
 I’m Luca, a digital *designer* and creative *developer* from Belgium. I design identities, websites and motion, and I (sometimes) code them too! from HTML and CSS to GSAP animation and projection mapping. Currently studying at Howest.
 
+What I want to do most is *live* visuals: visuals for music, played live. In January 2027 I’m giving it five full weeks, in Resolume and TouchDesigner.
+
 ## Disciplines
 
 - Motion design | Animation & video
@@ -37,7 +39,8 @@ I’m Luca, a digital *designer* and creative *developer* from Belgium. I design
 - Photoshop | Image
 - Illustrator | Vector
 - After Effects | Motion
-- TouchDesigner (learning) | Real-time
+- Resolume | Live visuals *
+- TouchDesigner (learning) | Real-time *
 - MadMapper | Projection mapping
 - Blender (learning) | 3D *
 

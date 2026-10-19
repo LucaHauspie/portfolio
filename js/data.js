@@ -22,8 +22,11 @@ window.SITE = {
 window.TEXT = {
   // home: small texts at the top of the hero
   heroLeft: '(Portfolio)<br>Selected works ©2025-2026',
-  heroRight: '(Hover a project)',
+  heroRight: '(Hover a project)<br>Next up: live visuals, Jan 2027',
   scroll: 'Scroll ↓',
+  beatOn: 'Beat on', // header toggle for the background beat (js/beat.js)
+  beatOff: 'Beat off',
+  beatCursor: 'Boom bap',
   titleCursor: 'Click me', // cursor label on every big title (they glitch when clicked)
   nameEgg: '(Okay okay) you found the button', // shows for a moment after every 5th click on the name
 
@@ -34,8 +37,16 @@ window.TEXT = {
 
   // home: the statement block
   statementLabel: '(Hi, I’m Luca)',
-  statement: 'I design <em>loud</em> identities {img1} experimental type {img2} &amp; things that <em>move</em>. Design, but with the volume turned up.',
+  statement: 'I like to design <em>loud</em> identities {img1} experimental type {img2} &amp; things that <em>move</em>. (Please hire me).',
   statementButton: 'More about me',
+
+  // home: the live visuals block (between the works and the statement)
+  liveLabel: '(Coming January 2027)',
+  liveTitle: 'Live visuals',
+  liveText: 'My dream is to create live visuals for a living. In January, I will get the opportunity to work on a five week passion project, in which I will take a deepdive into Resolume/touchdesigner. So more skills are coming soon :)',
+  liveFacts: '(5 weeks)<br>January 2027', // small facts next to the text
+  liveTools: '(Tools)<br>Resolume, TouchDesigner',
+  liveButton: 'Follow it on the Now page',
 
   // footer (every page)
   footerKickerLeft: '(Got a project?)',
@@ -87,6 +98,8 @@ window.TEXT = {
    - img: a still, or video + poster: a looping muted clip
    ------------------------------------------------------------------------- */
 window.WIP = [
+  // no media yet: soon shows a big date instead, status replaces the "In progress" label
+  { title: 'Live visuals', kind: '5-week passion project', tags: ['Resolume', 'TouchDesigner', 'Live visuals', 'VJing'], soon: ['Jan', '2027'], status: 'Starts January 2027' },
   { title: 'TWOJEYS', kind: 'First 3D project', tags: ['Blender', '3D', 'Rigging & animation'], img: 'assets/projects/work-in-progress/twojeys.webp' },
   { title: 'Sunday Session', kind: 'Skateboarding in the browser', tags: ['WebGPU (learning)', 'Three.js (learning)', 'Shaders'], video: 'assets/projects/work-in-progress/sunday-session.mp4', poster: 'assets/projects/work-in-progress/sunday-session-poster.webp' },
 ];

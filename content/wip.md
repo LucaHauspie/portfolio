@@ -10,7 +10,13 @@
 
 ## Intro
 
-What I’m building right now: my first steps into 3D, in Blender and in the browser.
+What I’m building right now, and what’s next: five weeks of live visuals in January, plus my first steps into 3D, in Blender and in the browser.
+
+## Live visuals
+
+In January 2027 I’m spending five weeks on one thing: live visuals. Visuals that react to the music and that I play live, like a VJ, built in Resolume and TouchDesigner.
+
+This is where I want to end up: making visuals for artists, clubs and festivals. Five weeks to go deep, test it in front of music and come out with a first live set.
 
 ## TWOJEYS
 

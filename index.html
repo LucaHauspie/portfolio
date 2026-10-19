@@ -59,6 +59,20 @@
       <div class="works__list"></div>
     </section>
 
+    <!-- LIVE VISUALS: the passion project in January (texts in js/data.js) -->
+    <section class="live" data-header="dark">
+      <p class="live__label mono" data-t="liveLabel"></p>
+      <h2 class="display live__title" data-fit="1">
+        <span class="line"><span class="line__in" data-split data-t="liveTitle"></span></span>
+      </h2>
+      <div class="live__row">
+        <p class="live__text" data-t="liveText" data-reveal="fade"></p>
+        <p class="mono" data-t="liveFacts"></p>
+        <p class="mono" data-t="liveTools"></p>
+      </div>
+      <a class="pill mono live__cta" href="wip.html" data-magnetic><span data-t="liveButton"></span> <span>→</span></a>
+    </section>
+
     <!-- STATEMENT -->
     <section class="statement" data-header="light">
       <p class="statement__label mono" data-t="statementLabel"></p>
@@ -76,6 +90,7 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Flip.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js" defer></script>
   <script src="js/data.js" defer></script>
+  <script src="js/beat.js" defer></script>
   <script src="js/main.js" defer></script>
   <script src="js/home.js" defer></script>
 </body>
