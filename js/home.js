@@ -147,6 +147,7 @@
     if (i === showing) return;
     if (showing >= 0 && previews[showing]) control(previews[showing], 'pause');
     showing = i;
+    pop.classList.toggle('is-shown', i >= 0);
     if (i < 0) {
       gsap.to([pop, '.pile-line'], { opacity: 0, duration: 0.2, ease: 'power2.in', overwrite: true, onComplete: () => { lineSlot = null; } });
       Site.cursorLabel && Site.cursorLabel(null);
@@ -204,7 +205,7 @@
         items.forEach((a, k) => a.classList.toggle('is-active', hit && hit.type === 'project' && hit.index === k));
       },
       onClick: (hit) => {
-        if (hit.type !== 'project') return;
+        if (!hit) { if (touch) showPop(-1); return; } // tapped next to the TVs: close the preview
         // on touch screens the first tap shows the preview, the second opens the case
         if (touch && showing !== hit.index) showPop(hit.index, hit.slot);
         else open(hit.index);
@@ -224,6 +225,7 @@
     a.addEventListener('blur', () => { pile && pile.setActive(null); showPop(-1); });
   });
   hero.addEventListener('pointerleave', () => showPop(-1));
+  pop.addEventListener('click', () => { if (showing >= 0) open(showing); });
   addEventListener('resize', sizePop);
 
   /* --------------------------------------------------------------- MARQUEE */

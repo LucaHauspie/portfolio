@@ -1880,3 +1880,6 @@ img.project-hero__live { object-fit: cover; }
 .vhs-screen__osd--time { left: 4%; bottom: 6%; }
 .vhs-screen__osd--sp { right: 4%; top: 6%; }
 @media (prefers-reduced-motion: reduce) { .vhs-screen__in > img, .vhs-screen__in > video, .vhs-screen__track, .vhs-screen__noise { animation: none; } }
+
+/* phones: the preview can be tapped to open the case */
+@media (hover: none) { .pile-pop.is-shown { pointer-events: auto; cursor: pointer; } }

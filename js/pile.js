@@ -40,7 +40,18 @@ const LAYOUT = [
   // the top
   [-0.2, -0.1, 'M', 'name', 'silver'],
 ];
-const CAM = { y: 0.55, dist: 8.1, target: [0, 2.3, 0] }; // low, looking up at the pile
+const CAM = { y: 0.55, dist: 8.1, target: [0, 2.3, 0] };
+
+// phones (portrait): a tower, two TVs wide, the project TVs big at the front and a few blank ones behind
+const TOWER = [
+  [-0.84, 0.6, 'L', 'p0', 'gunmetal'], [0.84, 0.55, 'L', 'p1', 'silver'],
+  [-0.9, -0.9, 'M', null, 'silver'], [0.95, -0.95, 'M', null, 'gunmetal'],
+  [-0.72, 0.5, 'M', 'p2', 'silver'], [0.74, 0.45, 'M', 'role', 'gunmetal'],
+  [-0.7, 0.4, 'M', 'dev', 'gunmetal'], [0.72, 0.35, 'M', 'p3', 'silver'],
+  [-0.62, 0.3, 'M', 'p4', 'silver'], [0.68, 0.25, 'S', 'live', 'gunmetal'],
+  [0.0, 0.2, 'M', 'name', 'gunmetal'],
+];
+const CAM_TOWER = { y: 0.9, target: [0, 2.85, 0] }; // low, looking up at the pile
 
 const VERT = `
 varying vec2 vUv;
@@ -71,6 +82,11 @@ void main() {
 
 export async function createPile(canvas, { screens = [], onHover = () => {}, onClick = () => {} } = {}) {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // portrait screens get the tower (chosen once, when the pile is made)
+  const tall = canvas.clientWidth / canvas.clientHeight < 0.8;
+  const layout = tall ? TOWER : LAYOUT;
+  const curve = tall ? 0.04 : CURVE;
+  const cam = tall ? { ...CAM, ...CAM_TOWER } : CAM;
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -80,7 +96,7 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
   scene.background = new THREE.Color(0x060607);
   scene.fog = new THREE.Fog(0x060607, 10, 22);
   const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 60);
-  const target = new THREE.Vector3(...CAM.target);
+  const target = new THREE.Vector3(...cam.target);
 
   /* ------------------------------------------------------------ textures */
   const loader = new THREE.TextureLoader();
@@ -167,9 +183,9 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
   const tvs = [];
   const pickables = [];
   const placed = [];
-  LAYOUT.forEach(([x, z0, size, slot, tint], i) => {
+  layout.forEach(([x, z0, size, slot, tint], i) => {
     const [w, h, d] = SIZES[size];
-    const z = z0 - CURVE * x * x; // a curved wall of TVs, not a flat one
+    const z = z0 - curve * x * x; // a curved wall of TVs, not a flat one
     // stack: rest on the highest TV underneath
     let base = 0;
     placed.forEach((p) => { if (Math.abs(p.x - x) < (p.w + w) * 0.42 && Math.abs(p.z - z) < (p.d + d) * 0.38) base = Math.max(base, p.top); });
@@ -179,7 +195,7 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
     const group = new THREE.Group();
     group.position.set(x, y, z);
     // face the camera, give or take a few degrees
-    const turn = Math.atan2(-x * 0.8, CAM.dist - z) + THREE.MathUtils.degToRad(((i * 37) % 19) - 9);
+    const turn = Math.atan2(-x * (tall ? 0.3 : 0.8), CAM.dist - z) + THREE.MathUtils.degToRad(((i * 37) % 19) - 9);
     group.rotation.y = turn;
     const bodyDepth = d * 0.6;
     const body = new THREE.Mesh(new RoundedBoxGeometry(w, h, bodyDepth, 3, w * 0.05), metal[tint]);
@@ -260,7 +276,11 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
     bloom.resolution.set(w / 2, h / 2);
     camera.aspect = w / h;
     // step back on narrow screens so the whole pile fits
-    camera.userData.dist = Math.max(CAM.dist, 12 / camera.aspect);
+    // far enough to fit the pile: its width (and for the tower, its height too)
+    const half = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+    camera.userData.dist = tall
+      ? Math.max(6.9 / (2 * half), 3.9 / (2 * half * camera.aspect))
+      : Math.max(CAM.dist, 12 / camera.aspect);
     // the fog follows the camera, so the pile never sinks into it
     scene.fog.near = camera.userData.dist - 2;
     scene.fog.far = camera.userData.dist + 12;
@@ -279,7 +299,18 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
     mx = ndc.x; my = ndc.y;
   });
   canvas.addEventListener('pointerleave', () => ndc.set(9, 9));
-  canvas.addEventListener('click', () => { if (active) onClick(active); });
+  // clicks and taps: find the TV right under the pointer (a tap has no hover before it)
+  const pick = (e) => {
+    const r = canvas.getBoundingClientRect();
+    ray.setFromCamera({ x: ((e.clientX - r.left) / r.width) * 2 - 1, y: -((e.clientY - r.top) / r.height) * 2 + 1 }, camera);
+    const tv = (ray.intersectObjects(pickables, false)[0] || {}).object?.userData.tv;
+    return tv && tv.type === 'project' ? tv : null;
+  };
+  canvas.addEventListener('click', (e) => {
+    const tv = pick(e);
+    if (matchMedia('(hover: none)').matches) forced = tv ? tv.slot : null; // keep the tapped TV lit
+    onClick(tv ? { type: tv.type, index: tv.project, slot: tv.slot } : null);
+  });
 
   const setActive = (tv) => {
     if (tv === active) return;
@@ -322,7 +353,7 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
       camY += ((Math.abs(my) < 2 ? my : 0) * 0.35 - camY) * 0.04;
     }
     const dist = camera.userData.dist || CAM.dist;
-    camera.position.set(0.3 + camX, CAM.y + camY, dist);
+    camera.position.set((tall ? 0 : 0.3) + camX, cam.y + camY, dist);
     camera.lookAt(target);
 
     if (forced === null) {
