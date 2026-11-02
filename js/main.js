@@ -110,22 +110,16 @@
       });
     };
     refresh();
-    if (reduce) return { refresh };
+    if (reduce || touch) return { refresh }; // the letters swell towards a pointer; touch screens have none
 
     listen.addEventListener('pointermove', (e) => { px = e.clientX; py = e.clientY; inside = true; settled = false; });
     listen.addEventListener('pointerleave', () => { inside = false; });
 
     const tick = (time) => {
-      if (!chars.length) return;
+      if (!chars.length || (!inside && settled)) return; // nothing to do: skip the measuring
       const box = target.getBoundingClientRect();
       if (box.bottom < 0 || box.top > innerHeight) return;
       let active = inside;
-      if (touch) {
-        // on touch screens a virtual pointer sweeps across the word
-        active = true;
-        px = box.left + (Math.sin(time * 0.8) * 0.5 + 0.5) * box.width;
-        py = box.top + box.height / 2;
-      }
       if (!active && settled) return;
       const R = innerWidth * radius;
       const rects = active ? chars.map((c) => c.getBoundingClientRect()) : null;
@@ -244,6 +238,10 @@
       </a>
       <nav class="header__nav" aria-label="Main">${links}</nav>
       <div class="header__end">
+        <button class="music-toggle mono" type="button" data-music aria-pressed="false" aria-label="${t('musicLabel')}">
+          <span class="music-toggle__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="music-toggle__label">${t('musicOff')}</span>
+        </button>
         <a class="header__cta${path === 'contact.html' ? ' is-active' : ''}" href="contact.html" data-label="Contact">Contact</a>
         <button class="header__menu" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
       </div>`;
@@ -281,13 +279,27 @@
     return h;
   }
 
+  // music toggle in the header: four bars that move while the music plays
+  function initMusicToggle() {
+    const btn = $('[data-music]');
+    if (!btn || !window.Music) return;
+    const sync = (on) => {
+      btn.setAttribute('aria-pressed', on);
+      btn.classList.toggle('is-on', on);
+      $('.music-toggle__label', btn).textContent = on ? t('musicOn') : t('musicOff');
+    };
+    sync(Music.on); // shows what you actually hear: off until the first click starts the music
+    btn.addEventListener('click', () => Music.toggle());
+    Music.onChange(sync);
+  }
+
   function renderFooter() {
     const slot = $('[data-footer]');
     if (!slot) return;
     const mini = slot.dataset.footer === 'mini';
     const year = new Date().getFullYear();
     slot.outerHTML = `
-      <footer class="footer${mini ? ' footer--mini' : ''}" data-header="dark">
+      <footer class="footer${mini ? ' footer--mini' : ''}" data-header="light">
         ${mini ? '' : `
         <div class="footer__kicker mono"><span>${t('footerKickerLeft')}</span><span>${t('footerKickerRight')}</span></div>
         <a href="contact.html" class="footer__big display" data-fit="1" data-cursor="Say hi" data-label="Contact">
@@ -420,6 +432,7 @@
 
   function leave(href, label) {
     lenis && lenis.stop();
+    window.Music && Music.fadeOut();
     overlayLabel.textContent = label || '';
     try { sessionStorage.setItem('lh-label', label || ''); } catch (_) {}
     gsap.timeline({ onComplete: () => (location.href = href) })
@@ -502,9 +515,9 @@
     if (reduce) return;
     $$('[data-reveal="lines"]').forEach((el) => gsap.set($$('.line__in', el), { yPercent: 110 }));
     $$('[data-reveal="chars"]').forEach((el) => gsap.set($$('.ch', el), { yPercent: 110 }));
-    $$('[data-reveal="fade"]').forEach((el) => gsap.set(el, { y: 40, opacity: 0 }));
-    $$('[data-reveal="stagger"]').forEach((el) => gsap.set(el.children, { y: 30, opacity: 0 }));
-    $$('[data-reveal="clip"]').forEach((el) => gsap.set(el, { clipPath: 'inset(100% 0% 0% 0%)' }));
+    $$('[data-reveal="fade"]').forEach((el) => gsap.set(el, { y: 16, opacity: 0 }));
+    $$('[data-reveal="stagger"]').forEach((el) => gsap.set(el.children, { y: 12, opacity: 0 }));
+    $$('[data-reveal="clip"]').forEach((el) => gsap.set(el, { opacity: 0 }));
   }
 
   function playReveals() {
@@ -513,15 +526,15 @@
       ScrollTrigger.create({ trigger: el, start: 'top 97%', once: true, onEnter: fn });
 
     $$('[data-reveal="lines"]').forEach((el) =>
-      on(el, () => gsap.to($$('.line__in', el), { yPercent: 0, duration: 1.2, ease: 'expo.out', stagger: 0.08 })));
+      on(el, () => gsap.to($$('.line__in', el), { yPercent: 0, duration: 1.8, ease: 'power3.out', stagger: 0.12 })));
     $$('[data-reveal="chars"]').forEach((el) =>
-      on(el, () => gsap.to($$('.ch', el), { yPercent: 0, duration: 1.1, ease: 'expo.out', stagger: 0.025 })));
+      on(el, () => gsap.to($$('.ch', el), { yPercent: 0, duration: 1.6, ease: 'power3.out', stagger: 0.03 })));
     $$('[data-reveal="fade"]').forEach((el) =>
-      on(el, () => gsap.to(el, { y: 0, opacity: 1, duration: 1.1, ease: 'expo.out' })));
+      on(el, () => gsap.to(el, { y: 0, opacity: 1, duration: 1.8, ease: 'power2.out' })));
     $$('[data-reveal="stagger"]').forEach((el) =>
-      on(el, () => gsap.to(el.children, { y: 0, opacity: 1, duration: 1, ease: 'expo.out', stagger: 0.06 })));
+      on(el, () => gsap.to(el.children, { y: 0, opacity: 1, duration: 1.6, ease: 'power2.out', stagger: 0.1 })));
     $$('[data-reveal="clip"]').forEach((el) =>
-      on(el, () => gsap.to(el, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.4, ease: 'expo.inOut' })));
+      on(el, () => gsap.to(el, { opacity: 1, duration: 2, ease: 'power2.out' })));
 
     $$('[data-parallax]').forEach((img) => {
       gsap.fromTo(img, { yPercent: -15 }, {
@@ -534,12 +547,12 @@
   function magnetic() {
     if (touch || reduce) return;
     $$('[data-magnetic]').forEach((el) => {
-      const x = gsap.quickTo(el, 'x', { duration: 0.6, ease: 'elastic.out(1, 0.4)' });
-      const y = gsap.quickTo(el, 'y', { duration: 0.6, ease: 'elastic.out(1, 0.4)' });
+      const x = gsap.quickTo(el, 'x', { duration: 1.2, ease: 'power3.out' });
+      const y = gsap.quickTo(el, 'y', { duration: 1.2, ease: 'power3.out' });
       el.addEventListener('pointermove', (e) => {
         const r = el.getBoundingClientRect();
-        x((e.clientX - r.left - r.width / 2) * 0.35);
-        y((e.clientY - r.top - r.height / 2) * 0.35);
+        x((e.clientX - r.left - r.width / 2) * 0.15);
+        y((e.clientY - r.top - r.height / 2) * 0.15);
       });
       el.addEventListener('pointerleave', () => { x(0); y(0); });
     });
@@ -549,6 +562,15 @@
 
   async function boot() {
     const header = renderHeader();
+    // keyboard users can jump past the header straight to the page
+    const main = $('main');
+    if (main) {
+      main.id = main.id || 'content';
+      main.tabIndex = -1;
+      document.body.insertAdjacentHTML('afterbegin', `<a class="skip-link" href="#${main.id}">Skip to content</a>`);
+      $('.skip-link').addEventListener('click', (e) => { e.preventDefault(); main.focus(); scrollTo(main); });
+    }
+    initMusicToggle();
     renderFooter();
     fillText();
     fillSiteData();

@@ -30,6 +30,9 @@ window.TEXT = {
   tvLive: 'Live visuals<br>Jan 2027',
   tvOpen: 'Click the TV to open the case', // under the big preview
   scroll: 'Scroll ↓',
+  musicOn: 'Sound on', // header toggle for the background music (js/audio.js)
+  musicOff: 'Sound off',
+  musicLabel: 'Background music',
   titleCursor: 'Click me', // cursor label on every big title (they glitch when clicked)
   nameEgg: '(Okay okay) you found the button', // shows for a moment after every 5th click on the name
 
@@ -38,12 +41,8 @@ window.TEXT = {
   worksSide: '({count}) School projects<br>©2025-2026',
   viewCase: 'View case', // label that follows the cursor over a project
 
-  // home: the statement block
-  statementLabel: '(Hi, I’m Luca)',
-  statement: 'I like to design <em>loud</em> identities {img1} experimental type {img2} &amp; things that <em>move</em>. (Please hire me).',
-  statementButton: 'More about me',
 
-  // home: the live visuals block (between the works and the statement)
+  // home: the live visuals block (under the works)
   liveLabel: '(Coming January 2027)',
   liveTitle: 'Live visuals',
   liveText: 'My dream is to create live visuals for a living. In January, I will get the opportunity to work on a five week passion project, in which I will take a deepdive into Resolume/touchdesigner. So more skills are coming soon :)',
@@ -101,6 +100,22 @@ window.TEXT = {
    - img: a still, or video + poster: a looping muted clip
    ------------------------------------------------------------------------- */
 window.WIP = [
+  // feature: shown big at the top, with an animated scene instead of a still (wip.js)
+  {
+    title: 'AERATA',
+    kind: 'Bachelor thesis',
+    status: 'In development',
+    feature: 'aerata',
+    tags: ['Bachelor thesis', 'Installation', 'Interaction design', 'Mixed media', 'Transfo Zwevegem'],
+    // the five parts of the experience, shown under the scene
+    parts: [
+      ['I', 'Fire', 'Push the coal into the hole in the middle of the touchscreen. Old TVs whoosh on.'],
+      ['II', 'Steam', 'Your fingers gather the steam into one dense ball. The fog machines blast.'],
+      ['III', 'Generator', 'Crank a real lever until the energy lines connect. LEDs run through the room.'],
+      ['IV', 'Cooling', 'Lay your hand on a trembling image until it calms. The projection lights up.'],
+      ['V', 'The human', 'Lift your hand, put it back: every part wakes up, one after another.'],
+    ],
+  },
   // no media yet: soon shows a big date instead, status replaces the "In progress" label
   { title: 'Live visuals', kind: '5-week passion project', tags: ['Resolume', 'TouchDesigner', 'Live visuals', 'VJing'], soon: ['Jan', '2027'], status: 'Starts January 2027' },
   { title: 'TWOJEYS', kind: 'First 3D project', tags: ['Blender', '3D', 'Rigging & animation'], img: 'assets/projects/work-in-progress/twojeys.webp' },

@@ -88,7 +88,8 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
   const curve = tall ? 0.04 : CURVE;
   const cam = tall ? { ...CAM, ...CAM_TOWER } : CAM;
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+  // sharp on retina screens (capped at 2×; the 30 fps cap below keeps it light)
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 0.9;
 
@@ -100,7 +101,7 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
 
   /* ------------------------------------------------------------ textures */
   const loader = new THREE.TextureLoader();
-  const load = (url, srgb = true) => new Promise((res) => loader.load(url, (t) => { if (srgb) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; res(t); }, undefined, () => res(null)));
+  const load = (url, srgb = true) => new Promise((res) => loader.load(url, (t) => { if (srgb) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = renderer.capabilities.getMaxAnisotropy(); res(t); }, undefined, () => res(null)));
   const [metalTex, roughTex, frontTex, floorTex] = await Promise.all([
     load('assets/textures/tv-metal.webp'), load('assets/textures/tv-metal-rough.webp', false),
     load('assets/textures/tv-front.webp'), load('assets/textures/floor.webp'),
@@ -123,8 +124,9 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
   await document.fonts.ready;
   const textTexture = (lines, tone) => {
     const cv = document.createElement('canvas');
-    cv.width = 640; cv.height = 480;
+    cv.width = 1280; cv.height = 960; // drawn at 2×, so the text stays crisp
     const g = cv.getContext('2d');
+    g.scale(2, 2);
     // dark screens with quiet text: only the project screens are bright and colourful
     g.fillStyle = '#0c0d0f';
     g.fillRect(0, 0, 640, 480);
@@ -174,7 +176,7 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
 
   // light from the screens, faked with a few lights in front of the pile
   scene.add(new THREE.HemisphereLight(0x9aa6b4, 0x050505, 0.1));
-  [[-3, 2.2, 3.6, 4], [0.4, 4.2, 3.8, 6], [3, 2.2, 3.6, 3.6], [0, 1.2, 4.2, 2.5]].forEach(([x, y, z, i]) => {
+  [[-2.4, 2.4, 3.8, 5.5], [2.6, 3, 3.8, 6]].forEach(([x, y, z, i]) => {
     const l = new THREE.PointLight(0xdfe8f5, i, 9, 1.6); l.position.set(x, y, z); scene.add(l);
   });
   const rim = new THREE.DirectionalLight(0x8fa0b5, 0.35); rim.position.set(-4, 6, -3); scene.add(rim);
@@ -219,7 +221,7 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
     }
     const s = (slot && screens[slot]) || { type: 'blank' };
     const uniforms = {
-      map: { value: null }, uHas: { value: 0 }, uTime: { value: 0 }, uHover: { value: 0 }, uPower: { value: reduce ? 1 : 0 },
+      map: { value: null }, uHas: { value: 0 }, uTime: { value: 0 }, uHover: { value: 0 }, uPower: { value: 1 },
       uNoise: { value: s.type === 'blank' ? 0.28 : 0.04 }, uSeed: { value: Math.random() * 10 }, uDim: { value: 1 },
       uRepeat: { value: new THREE.Vector2(1, 1) }, uOffset: { value: new THREE.Vector2(0, 0) },
       uTint: { value: new THREE.Color(s.type === 'blank' ? 0xb9c4cc : 0xffffff) },
@@ -297,8 +299,9 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
     const r = canvas.getBoundingClientRect();
     ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
     mx = ndc.x; my = ndc.y;
+    pointerMoved = true;
   });
-  canvas.addEventListener('pointerleave', () => ndc.set(9, 9));
+  canvas.addEventListener('pointerleave', () => { ndc.set(9, 9); pointerMoved = true; });
   // clicks and taps: find the TV right under the pointer (a tap has no hover before it)
   const pick = (e) => {
     const r = canvas.getBoundingClientRect();
@@ -343,9 +346,13 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
   new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(canvas);
   const clock = new THREE.Clock();
   let camX = 0, camY = 0;
-  const frame = () => {
+  let pointerMoved = false, lastPick = 0, lastFrame = 0;
+  const frame = (now) => {
     requestAnimationFrame(frame);
     if (!visible || document.hidden) return;
+    // 30 frames a second is plenty for slow drift and static (and halves the work on laptops and phones)
+    if (now - lastFrame < 31) return;
+    lastFrame = now;
     const t = clock.getElapsedTime();
     // camera: a slow drift plus a little parallax with the pointer
     if (!reduce) {
@@ -356,11 +363,16 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
     camera.position.set((tall ? 0 : 0.3) + camX, cam.y + camY, dist);
     camera.lookAt(target);
 
+    // which TV is under the pointer: only checked a few times a second, and only when the pointer moved
     if (forced === null) {
-      ray.setFromCamera(ndc, camera);
-      const hit = Math.abs(ndc.x) <= 1 ? ray.intersectObjects(pickables, false)[0] : null;
-      const tv = hit && hit.object.userData.tv;
-      setActive(tv && tv.type === 'project' ? tv : null); // only the project TVs react
+      if (pointerMoved && t - lastPick > 0.08) {
+        pointerMoved = false;
+        lastPick = t;
+        ray.setFromCamera(ndc, camera);
+        const hit = Math.abs(ndc.x) <= 1 ? ray.intersectObjects(pickables, false)[0] : null;
+        const tv = hit && hit.object.userData.tv;
+        setActive(tv && tv.type === 'project' ? tv : null); // only the project TVs react
+      }
     } else setActive(bySlot(forced));
 
     tvs.forEach((tv) => {
@@ -371,24 +383,12 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
       u.uHover.value = tv.hover;
       const base = tv.type === 'project' ? 1 : tv.type === 'text' ? 0.7 : 0.18; // the projects are the bright ones
       u.uDim.value += ((active && tv !== active ? base * 0.55 : base) - u.uDim.value) * 0.1;
-      // the hovered TV leans out of the pile a little
-      tv.group.position.copy(tv.home).addScaledVector(tv.facing, tv.hover * 0.22);
-      tv.group.position.y += tv.drop;
-      tv.group.scale.setScalar(1 + tv.hover * 0.025);
     });
     composer.render();
   };
 
-  // entrance: the TVs drop onto the pile one by one, then their screens switch on
-  const ready = new Promise((res) => {
-    if (reduce || !window.gsap) { res(); return; }
-    tvs.forEach((tv, k) => {
-      gsap.fromTo(tv, { drop: 7 }, { drop: 0, duration: 0.9, ease: 'bounce.out', delay: 0.15 + k * 0.05 });
-      gsap.to(tv.uniforms.uPower, { value: 1, duration: 0.5, delay: 0.9 + k * 0.05, ease: 'steps(4)', onComplete: k === tvs.length - 1 ? res : undefined });
-      if (tv.reflection) gsap.from(tv.reflection.material, { opacity: 0, duration: 0.6, delay: 1 + k * 0.05 });
-    });
-  });
-  frame();
+  const ready = Promise.resolve(); // the screens are on from the start
+  requestAnimationFrame(frame);
 
   return {
     // highlight a TV by its slot from outside (e.g. the project list under the pile); null gives control back to the pointer

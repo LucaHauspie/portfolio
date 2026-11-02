@@ -479,7 +479,7 @@
   const nextTitle = $('.next__title .line__in');
   nextTitle.textContent = next.title;
   nextTitle.dataset.split = '';
-  $('.next__title').dataset.fit = '1';
+  $('.next__title').dataset.fit = '0.88'; // room for the letters to swell (stretchy) without being cut off
 
   Site.onInit(() => {
     if (!fold) stretchy($('.project-hero__title'), { listen: hero, radius: 0.2 });

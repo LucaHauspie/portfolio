@@ -1,5 +1,5 @@
 /* =========================================================================
-   HOME — the pile of TVs in the hero, marquee, works list/grid, statement
+   HOME — the pile of TVs in the hero, marquee, works list/grid, live visuals
    ========================================================================= */
 
 (() => {
@@ -7,15 +7,13 @@
   const P = Site.projects;
   const pad = (n) => String(n).padStart(2, '0');
   const href = (p) => `project.html?p=${p.slug}`;
-  // Iframes only start loading once someone hovers the projects (or shortly after the page is ready),
-  // so the live previews don't weigh down the first load of the home page.
-  const lazyFrames = [];
-  const wake = () => lazyFrames.forEach((f) => { if (!f.src) f.src = f.dataset.src; });
+  // A live preview (iframe) only loads the first time it's played, so the home page stays light:
+  // nothing heavy runs until you hover a project. It plays as soon as it's loaded.
   const frame = (p, cls = 'preview-frame') => {
     const f = document.createElement('iframe');
     f.className = cls;
     f.dataset.src = `${p.preview}?embed`;
-    lazyFrames.push(f);
+    f.addEventListener('load', () => { if (f.getAttribute('src') && f.dataset.want === 'play') f.contentWindow.postMessage('play', '*'); });
     f.title = `${p.title}, live preview`;
     f.tabIndex = -1;
     f.setAttribute('aria-hidden', 'true');
@@ -41,7 +39,7 @@
     v.setAttribute('muted', '');
     v.loop = true;
     v.playsInline = true;
-    v.preload = 'auto';
+    v.preload = 'none'; // loads when it's first played
     v.setAttribute('aria-hidden', 'true');
     return v;
   };
@@ -49,7 +47,12 @@
   const control = (el, msg) => {
     if (el && el.classList.contains('preview-scaled')) el = el.firstElementChild;
     if (!el) return;
-    if (el.tagName !== 'VIDEO') return tell(el, msg);
+    if (el.tagName === 'IFRAME') {
+      el.dataset.want = msg;
+      if (msg === 'play' && !el.getAttribute('src')) { el.src = el.dataset.src; return; } // plays on load
+      return tell(el, msg);
+    }
+    if (el.tagName !== 'VIDEO') return;
     if (msg === 'play') { el.currentTime = 0; el.play().catch(() => {}); }
     if (msg === 'pause') el.pause();
   };
@@ -98,12 +101,10 @@
     if (p.preview) {
       el = document.createElement('div');
       el.className = 'preview-scaled';
-      const f = el.appendChild(frame(p, ''));
-      f.addEventListener('load', () => { if (f.getAttribute('src') && showing === i) tell(f, 'play'); });
+      el.appendChild(frame(p, ''));
     } else el = liveEl(p);
     popScreen.appendChild(el);
     previews[i] = el;
-    wake();
     return el;
   };
   const sizePop = () => popScreen.style.setProperty('--s', popScreen.offsetWidth / 1600); // folds render at 1600 × 900
@@ -201,6 +202,7 @@
       screens: SCREENS,
       onHover: (hit) => {
         if (touch) return;
+        if (hit && hit.type === 'project' && window.Music) Music.tick(1.2); // the canvas isn't an element to hover, so tick by hand
         showPop(hit && hit.type === 'project' ? hit.index : -1, hit ? hit.slot : null);
         items.forEach((a, k) => a.classList.toggle('is-active', hit && hit.type === 'project' && hit.index === k));
       },
@@ -276,28 +278,14 @@
 
     // marquee: loops forever, speeds up + flips with scroll direction
     if (!reduce) {
-      const loop = gsap.to(track, { xPercent: -50, ease: 'none', duration: 22, repeat: -1 });
-      loop.totalTime(loop.duration() * 50); // room to play in reverse
-      const skew = gsap.quickTo($$('.marquee__item', track), 'skewX', { duration: 0.4, ease: 'power3' });
-      let dir = 1;
+      // slow and steady; scrolling only nudges it a little
+      const loop = gsap.to(track, { xPercent: -50, ease: 'none', duration: 60, repeat: -1 });
       ScrollTrigger.create({
         onUpdate(self) {
-          const v = self.getVelocity();
-          dir = self.direction;
-          gsap.to(loop, { timeScale: dir * Math.min(5, 1 + Math.abs(v) / 400), duration: 0.2, overwrite: true });
-          gsap.to(loop, { timeScale: dir, duration: 1.2, delay: 0.25 });
-          skew(gsap.utils.clamp(-12, 12, v / -150));
+          gsap.to(loop, { timeScale: Math.min(1.8, 1 + Math.abs(self.getVelocity()) / 2500), duration: 0.8, overwrite: true });
+          gsap.to(loop, { timeScale: 1, duration: 2.5, delay: 0.6 });
         },
       });
-    }
-
-    // statement: words light up as you scroll, inline images open up
-    const statement = $('.statement__text');
-    const units = splitWords(statement);
-    if (!reduce) {
-      const st = { trigger: statement, start: 'top 80%', end: 'bottom 50%', scrub: true };
-      gsap.fromTo(units, { opacity: 0.12 }, { opacity: 1, stagger: 0.1, ease: 'none', scrollTrigger: st });
-      gsap.fromTo($$('.inline-img', statement), { width: 0 }, { width: '1.8em', ease: 'none', scrollTrigger: st });
     }
 
     // list / grid toggle with GSAP Flip
@@ -343,7 +331,7 @@
       list.addEventListener('pointermove', (e) => {
         qx(e.clientX);
         qy(e.clientY);
-        qr(gsap.utils.clamp(-14, 14, (e.clientX - lastX) * 0.6));
+        qr(gsap.utils.clamp(-3, 3, (e.clientX - lastX) * 0.15));
         lastX = e.clientX;
       });
       $$('.work', list).forEach((row, i) => {
@@ -365,11 +353,43 @@
   const fitScaled = () => preview.style.setProperty('--s', preview.offsetWidth / 1600); // folds render at 1600 × 900 (16:9, like the card)
   fitScaled();
   addEventListener('resize', fitScaled);
-  strip.addEventListener('pointerenter', wake, { once: true });
-  list.addEventListener('pointerenter', wake, { once: true });
+
+  const phone = matchMedia('(max-width: 720px)').matches;
+  function mobileHero() {
+    // Phones: the composition from before the TVs. "Luca Hauspie" big in the middle, the projects as
+    // a row of thumbnails along the bottom you swipe through. Each thumbnail is a link to its case.
+    hero.classList.add('hero--mobile');
+    canvas.remove();
+    hero.insertAdjacentHTML('beforeend', `
+      <div class="hero__stage">
+        <div class="display hero__title" aria-hidden="true" data-fit="0.92">
+          <span class="line"><span class="line__in">Luca</span></span>
+          <span class="line"><span class="line__in">Hauspie</span></span>
+        </div>
+      </div>
+      <nav class="hero__strip mono" aria-label="Projects">
+        ${P.map((p, i) => `
+        <a class="thumb" href="${href(p)}" data-label="${p.title}">
+          <span class="thumb__img screen"><img src="${p.cover}" alt="${p.title}, cover" ${i > 1 ? 'loading="lazy"' : ''}></span>
+          <span class="thumb__label"><span>(${pad(i + 1)}) ${p.title}</span><span>${p.year}</span></span>
+        </a>`).join('')}
+      </nav>`);
+    const title = $('.hero__title', hero);
+    $$('.line__in', title).forEach(splitChars);
+    fit(title);
+    document.fonts && document.fonts.ready.then(() => fit(title));
+    addEventListener('resize', () => fit(title));
+    if (!reduce) {
+      gsap.set($$('.ch', title), { yPercent: 110 });
+      gsap.set($$('.thumb', hero), { opacity: 0, y: 16 });
+      Site.onReady(() => gsap.timeline()
+        .to($$('.ch', title), { yPercent: 0, duration: 1.6, ease: 'power3.out', stagger: 0.04 })
+        .to($$('.thumb', hero), { opacity: 1, y: 0, duration: 1.4, ease: 'power2.out', stagger: 0.08 }, 0.5));
+    }
+  }
+  if (phone) mobileHero();
 
   Site.onReady(() => {
-    startPile();
-    setTimeout(wake, 2500);
+    if (!phone) startPile();
   });
 })();

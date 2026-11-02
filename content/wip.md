@@ -10,7 +10,13 @@
 
 ## Intro
 
-What I’m building right now, and what’s next: five weeks of live visuals in January, plus my first steps into 3D, in Blender and in the browser.
+What I’m building right now, and what’s next: my bachelor thesis AERATA, my first steps into 3D, in Blender and in the browser and an upcoming five weeks of live visuals in January,
+
+## AERATA
+
+My bachelor thesis, in the making with Margot Lievens and Leon Nolf: an immersive, abstract installation in one small room in the Pompenzaal of Transfo Zwevegem, for Transfo Intiem 2026. The theme is breath.
+
+ Coal, steam, generators and canal water once kept Transfo alive, but only while people worked it. In AERATA visitors take over the workers’ shift: through one large touchscreen and a physical lever they wake four machines, while old TVs, fog machines, LED lines and projection on piles of industrial junk will answer all around them.
 
 ## Live visuals
 

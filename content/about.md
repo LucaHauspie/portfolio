@@ -40,7 +40,7 @@ What I want to do most is *live* visuals: visuals for music, played live. In Jan
 - Illustrator | Vector
 - After Effects | Motion
 - MadMapper | Projection mapping
-- Blender (learning) | 3D *
+- Blender | 3D *
 
 ## Code
 
@@ -50,6 +50,7 @@ What I want to do most is *live* visuals: visuals for music, played live. In Jan
 - React (Native) | Web & apps
 - GSAP | Animation
 - ML5 | Machine learning
+- Arduino (basics) | Electronics
 - WebGPU / Three.js (learning) | 3D on the web *
 
 ## Education
@@ -69,5 +70,5 @@ Getting closer to the music industry has always been a dream of mine. Next, I wa
 
 - Resolume | To learn, Jan 2027
 - TouchDesigner | To learn, Jan 2027
-- Live visuals | For shows & clubs
+- Live visuals | For shows & concerts
 - Music industry | The dream

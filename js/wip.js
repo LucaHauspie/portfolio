@@ -23,7 +23,37 @@
     const paras = (t) => String(t || '').split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean).map((x) => `<p>${esc(x)}</p>`).join('');
 
     $('.wip-hero__intro').innerHTML = esc(sections.intro || '');
-    $('.wip-list').innerHTML = W.map((w, i) => `
+    // the featured project (the bachelor thesis): full width, an animated scene, the five parts under it
+    const feature = (w, i) => `
+      <article class="wip-item wip-feature">
+        <div class="wip-feature__head">
+          <div class="display wip-item__num"><span data-split>${pad(i + 1)}</span></div>
+          <div>
+            <h2 class="wip-item__title">${esc(w.title)}</h2>
+            <p class="mono wip-item__kind">(${esc(w.kind)})</p>
+          </div>
+          <span class="mono tag wip-item__status"><i></i>${esc(w.status || Site.t('wipStatus'))}</span>
+        </div>
+        <div class="aerata" data-reveal="clip" role="img" aria-label="AERATA, the design: a breathing sun between two rising arms">
+          <span class="aerata__bloom"></span>
+          <img class="aerata__arm aerata__arm--l" src="assets/projects/aerata/tendril.svg" alt="">
+          <img class="aerata__arm aerata__arm--r" src="assets/projects/aerata/tendril.svg" alt="">
+          <span class="aerata__sun"><img src="assets/projects/aerata/ball.svg" alt=""></span>
+          <h3 class="aerata__word">AERATA</h3>
+          <p class="aerata__line">An immersive experience that<br>lets you bring Transfo’s breath back<br><b>By Transfo Intiem</b></p>
+          <p class="aerata__credits">All credits to:<br><b>Luca &nbsp; Margot &nbsp; Leon</b></p>
+          <span class="aerata__grain"></span>
+        </div>
+        <div class="wip-feature__body">
+          <div class="wip-item__text" data-reveal="fade">${paras(sections[w.title.toLowerCase()])}</div>
+          <ol class="wip-feature__parts" data-reveal="stagger">
+            ${(w.parts || []).map(([n, name, text]) => `<li><span class="mono">${esc(n)}</span><b>${esc(name)}</b><p>${esc(text)}</p></li>`).join('')}
+          </ol>
+          <ul class="mono wip-item__tags">${(w.tags || []).map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
+        </div>
+      </article>`;
+
+    $('.wip-list').innerHTML = W.map((w, i) => w.feature ? feature(w, i) : `
       <article class="wip-item">
         <div class="wip-item__head">
           <div class="display wip-item__num"><span data-split>${pad(i + 1)}</span></div>
