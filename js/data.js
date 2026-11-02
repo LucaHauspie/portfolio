@@ -107,14 +107,6 @@ window.WIP = [
     status: 'In development',
     feature: 'aerata',
     tags: ['Bachelor thesis', 'Installation', 'Interaction design', 'Mixed media', 'Transfo Zwevegem'],
-    // the five parts of the experience, shown under the scene
-    parts: [
-      ['I', 'Fire', 'Push the coal into the hole in the middle of the touchscreen. Old TVs whoosh on.'],
-      ['II', 'Steam', 'Your fingers gather the steam into one dense ball. The fog machines blast.'],
-      ['III', 'Generator', 'Crank a real lever until the energy lines connect. LEDs run through the room.'],
-      ['IV', 'Cooling', 'Lay your hand on a trembling image until it calms. The projection lights up.'],
-      ['V', 'The human', 'Lift your hand, put it back: every part wakes up, one after another.'],
-    ],
   },
   // no media yet: soon shows a big date instead, status replaces the "In progress" label
   { title: 'Live visuals', kind: '5-week passion project', tags: ['Resolume', 'TouchDesigner', 'Live visuals', 'VJing'], soon: ['Jan', '2027'], status: 'Starts January 2027' },
