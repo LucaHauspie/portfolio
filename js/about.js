@@ -33,10 +33,19 @@
       }).join('');
     }
 
-    // intro: blank line = new paragraph, *word* = red highlight
+    // intro: the paragraphs side by side.
+    // **word** = bold, *word* = italic; a blank line starts a new paragraph
     const intro = sections.find((s) => s.head.toLowerCase() === 'intro');
-    $('.about-intro__text').innerHTML = (intro ? intro.body : '')
-      .split(/\n\s*\n/).map((p) => esc(p.trim()).replace(/\*(.+?)\*/g, '<strong>$1</strong>')).join('<br><br>');
+    const inline = (t) => esc(t.trim()).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\*(.+?)\*/g, '<em>$1</em>');
+    const introParas = (intro ? intro.body : '').split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean);
+    // two paragraphs side by side; every paragraph after the first gets a small subtitle (js/data.js: aboutSubtitles)
+    const subs = (window.TEXT && TEXT.aboutSubtitles) || [];
+    $('.about-intro__text').style.setProperty('--cols', Math.min(introParas.length, 3));
+    $('.about-intro__text').innerHTML = introParas.map((x, k) => `
+      <div class="about-intro__col">
+        ${k && subs[k - 1] ? `<p class="about-intro__sub mono">(${esc(subs[k - 1])})</p>` : ''}
+        <p>${inline(x)}</p>
+      </div>`).join('');
 
     // Education + Experience: one chapter, two columns ("- Place | role | period")
     const cvNames = ['education', 'experience'];
@@ -65,7 +74,7 @@
     let n = 0;
     let cvDone = false;
     const html = sections
-      .filter((s) => !['hero', 'intro'].includes(s.head.toLowerCase()))
+      .filter((s) => !['hero', 'intro', 'my take on ai'].includes(s.head.toLowerCase()))
       .filter((s) => {
         if (!cvNames.includes(s.head.toLowerCase())) return true;
         if (cvDone) return false;
@@ -107,7 +116,19 @@
       </div>
     </section>`;
       }).join('\n');
-    $('[data-chapters]').outerHTML = html;
+    // "My take on AI": its own article at the end of the page, right before the footer
+    const ai = sections.find((s) => s.head.toLowerCase() === 'my take on ai');
+    const aiHtml = ai ? `
+    <section class="ai-take" data-header="light">
+      <p class="ai-take__label mono">(Opinion)</p>
+      <div>
+        <h2 class="display ai-take__title" data-reveal="fade">${esc(ai.head)}</h2>
+        <div class="ai-take__text" data-reveal="fade">
+          ${ai.body.split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean).map((x) => `<p>${inline(x)}</p>`).join('')}
+        </div>
+      </div>
+    </section>` : '';
+    $('[data-chapters]').outerHTML = html + aiHtml;
   };
 
   Site.wait(load());

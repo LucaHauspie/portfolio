@@ -67,13 +67,17 @@
   const theme = (proj) => (isLight(proj.ink) ? 'light' : 'dark'); // header text matches the project's text colour
 
   document.title = `${p.title} | ${window.SITE.name}`;
-  // dark theme: project pages are dark; only the hero (the project's own start screen) and the
-  // "next project" block keep the project's colours
+  // project pages keep the project's own colours: its background and text colour (color / ink in
+  // js/data.js), with the hairlines in a see-through version of the text colour
+  const rgb = (hex) => { const n = parseInt(hex.replace('#', ''), 16); return `${n >> 16}, ${(n >> 8) & 255}, ${n & 255}`; };
+  document.body.style.setProperty('--p-bg', p.color);
+  document.body.style.setProperty('--p-fg', p.ink);
+  document.body.style.setProperty('--line', `rgba(${rgb(p.ink)}, 0.2)`);
   // accent colour (numbers, underlines, buttons) from the project's own design; default is the site orange
   if (p.accent) document.body.style.setProperty('--red', p.accent);
   const setHeaderThemes = () => {
-    $$('main > section').forEach((s) => (s.dataset.header = 'light'));
-    $('.project-hero').dataset.header = isLight(p.color) ? 'dark' : 'light';
+    // header type in the project's text colour ('dark' = light type, 'light' = dark type)
+    $$('main > section').forEach((s) => (s.dataset.header = isLight(p.ink) ? 'dark' : 'light'));
   };
 
   // hero
@@ -447,7 +451,7 @@
     if (p.still) hero.appendChild(Site.subTag(p, 'project-sub project-sub--over'));
     else $('.page-hero__row', hero).before(Site.subTag(p, 'project-sub'));
   }
-  if (p.video) hero.dataset.header = 'light'; // light header on top of the dimmed clip
+  if (p.video) hero.dataset.header = 'dark'; // light type on top of the dimmed clip
 
   // quick switcher: fixed bar at the bottom with every project, shown once you scroll past the hero
   document.body.insertAdjacentHTML('beforeend', `
@@ -473,7 +477,7 @@
   const nextEl = $('.next');
   nextEl.href = `project.html?p=${next.slug}`;
   nextEl.dataset.label = next.title;
-  nextEl.dataset.header = theme(next);
+  nextEl.dataset.header = isLight(next.ink) ? 'dark' : 'light';
   nextEl.style.setProperty('--n-bg', next.color);
   nextEl.style.setProperty('--n-fg', next.ink);
   const nextTitle = $('.next__title .line__in');

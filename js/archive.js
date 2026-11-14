@@ -1,5 +1,5 @@
 /* =========================================================================
-   ARCHIVE: the posters as CD jewel cases, from window.ARCHIVE (js/data.js) + full-size lightbox
+   ARCHIVE: the posters in a full grid, from window.ARCHIVE (js/data.js) + full-size lightbox
    ========================================================================= */
 
 (() => {
@@ -8,16 +8,16 @@
   const esc = (t) => String(t || '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
   const pad = (n) => String(n).padStart(2, '0');
 
-  // every poster sits in a CD jewel case (overlay baked by scripts/textures.mjs)
+  // a full grid: every poster in its own cell, thin lines in between
   const card = (a, i) => `
-    <button class="jewel" type="button" data-i="${i}" data-cursor="View" data-reveal="fade">
-      <span class="jewel__case"><img src="assets/archive/thumbs/${a.file}" alt="${esc(a.title)}" loading="lazy"></span>
-      <span class="jewel__label mono"><span class="tag"><i></i>${pad(i + 1)}</span><span class="jewel__title">${esc(a.title)}</span><span class="jewel__note">${esc(a.note)}</span></span>
+    <button class="cell" type="button" data-i="${i}" data-cursor="View">
+      <span class="cell__img"><img src="assets/archive/thumbs/${a.file}" alt="${esc(a.title)}" loading="lazy"></span>
+      <span class="cell__label"><span>/ ${pad(i + 1)}</span><span class="cell__title">${esc(a.title)}</span></span>
     </button>`;
   const grid = $('.archive-grid');
   const layout = () => {
     grid.innerHTML = A.map(card).join('');
-    grid.querySelectorAll('.jewel').forEach((b) => b.addEventListener('click', () => open(+b.dataset.i)));
+    grid.querySelectorAll('.cell').forEach((b) => b.addEventListener('click', () => open(+b.dataset.i)));
   };
 
   const box = $('.lightbox');
@@ -47,7 +47,7 @@
       onComplete: () => { box.classList.remove('is-open'); box.setAttribute('aria-hidden', 'true'); },
     });
     Site.lenis && Site.lenis.start();
-    const btn = $(`.jewel[data-i="${current}"]`);
+    const btn = $(`.cell[data-i="${current}"]`);
     btn && btn.focus();
   };
 

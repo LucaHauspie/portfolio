@@ -1,5 +1,5 @@
 /* =========================================================================
-   HOME — the pile of TVs in the hero, marquee, works list/grid, live visuals
+   HOME — the pile of TVs in the hero, works list/grid, live visuals
    ========================================================================= */
 
 (() => {
@@ -232,9 +232,6 @@
 
   /* --------------------------------------------------------------- MARQUEE */
 
-  const track = $('.marquee__track');
-  const item = `<div class="marquee__item display">${P.map((p) => `<span>${p.title}</span><i class="marquee__sep" aria-hidden="true"></i>`).join('')}</div>`;
-  track.innerHTML = item + item;
 
   /* ----------------------------------------------------------------- WORKS */
 
@@ -244,7 +241,7 @@
       <span class="work__num mono">(${i + 1})</span>
       <span class="work__media"><img src="${p.cover}" alt="${p.title}, cover" loading="lazy"></span>
       <h3 class="work__title display"><span class="work__name" data-split>${p.title}</span></h3>
-      <span class="work__meta mono">${p.tags.join(', ')}<br>${p.year} <span class="work__arrow">→</span></span>
+      <span class="work__meta mono" data-year="${p.year}">${p.tags.join(', ')}<br>${p.year} <span class="work__arrow">→</span></span>
     </a>`).join('');
   list.dataset.reveal = 'stagger';
 
@@ -273,18 +270,6 @@
       gsap.to(canvas, {
         yPercent: 18, opacity: 0.35, ease: 'none',
         scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
-      });
-    }
-
-    // marquee: loops forever, speeds up + flips with scroll direction
-    if (!reduce) {
-      // slow and steady; scrolling only nudges it a little
-      const loop = gsap.to(track, { xPercent: -50, ease: 'none', duration: 60, repeat: -1 });
-      ScrollTrigger.create({
-        onUpdate(self) {
-          gsap.to(loop, { timeScale: Math.min(1.8, 1 + Math.abs(self.getVelocity()) / 2500), duration: 0.8, overwrite: true });
-          gsap.to(loop, { timeScale: 1, duration: 2.5, delay: 0.6 });
-        },
       });
     }
 

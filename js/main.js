@@ -94,7 +94,7 @@
   // Letters swell (wider + heavier) as the pointer gets close — variable font magic.
   function stretchy(target, opts = {}) {
     const listen = opts.listen || target;
-    const rest = opts.rest || { wd: 62, wg: 800 };
+    const rest = opts.rest || { wd: 82, wg: 800 };
     const peak = opts.peak || { wd: 125, wg: 900 };
     const radius = opts.radius || 0.22; // fraction of viewport width
     let chars = [];
@@ -485,11 +485,12 @@
 
     const el = document.createElement('div');
     el.className = 'preloader';
+    // calm: the name, a thin line that fills slowly, a quiet counter; then it fades away
     el.innerHTML = `
-      <div class="preloader__top mono"><span>${SITE.name}</span><span>Portfolio ©${new Date().getFullYear()}</span><span>Loading selected works</span></div>
-      <div>
+      <div class="preloader__mid">
+        <p class="preloader__name">${SITE.name}</p>
         <div class="preloader__bar"><span></span></div>
-        <div class="preloader__count display">000</div>
+        <p class="preloader__meta mono"><span>${SITE.role.join(' ')}</span><span class="preloader__count">000</span></p>
       </div>`;
     document.body.appendChild(el);
     gsap.set(cols, { scaleY: 0 });
@@ -500,12 +501,12 @@
     const o = { v: 0 };
     return gsap.timeline()
       .to(o, {
-        v: 100, duration: 2, ease: 'power3.inOut',
+        v: 100, duration: 2.4, ease: 'sine.inOut',
         onUpdate: () => (count.textContent = String(Math.round(o.v)).padStart(3, '0')),
       })
-      .to($('.preloader__bar span', el), { scaleX: 1, duration: 2, ease: 'power3.inOut' }, 0)
-      .to(count, { yPercent: -30, opacity: 0, duration: 0.5, ease: 'power2.in' })
-      .to(el, { clipPath: 'inset(0 0 100% 0)', duration: 1, ease: 'expo.inOut' }, '-=0.2')
+      .to($('.preloader__bar span', el), { scaleX: 1, duration: 2.4, ease: 'sine.inOut' }, 0)
+      .to($('.preloader__mid', el), { opacity: 0, duration: 0.8, ease: 'power2.inOut' }, '+=0.2')
+      .to(el, { opacity: 0, duration: 1.1, ease: 'power2.inOut' }, '-=0.3')
       .add(() => { el.remove(); lenis && lenis.start(); });
   }
 
@@ -586,7 +587,7 @@
     fitAll();
 
     const footerBig = $('.footer__big');
-    if (footerBig) stretchy(footerBig, { listen: $('.footer'), rest: { wd: 62, wg: 800 }, radius: 0.18 });
+    if (footerBig) stretchy(footerBig, { listen: $('.footer'), radius: 0.18 });
 
     prepareReveals();
     initHooks.forEach((fn) => fn());

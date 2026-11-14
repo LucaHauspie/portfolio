@@ -23,44 +23,42 @@
     const paras = (t) => String(t || '').split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean).map((x) => `<p>${esc(x)}</p>`).join('');
 
     $('.wip-hero__intro').innerHTML = esc(sections.intro || '');
-    // the featured project (the bachelor thesis): the animated scene, with the title and text next to it
-    const feature = (w, i) => `
-      <article class="wip-item wip-feature">
-        <div class="wip-feature__grid">
-          <div class="aerata" data-reveal="clip" role="img" aria-label="AERATA, the design: a breathing sun between two rising arms">
-            <span class="aerata__bloom"></span>
-            <img class="aerata__arm aerata__arm--l" src="assets/projects/aerata/tendril.svg" alt="">
-            <img class="aerata__arm aerata__arm--r" src="assets/projects/aerata/tendril.svg" alt="">
-            <span class="aerata__sun"><img src="assets/projects/aerata/ball.svg" alt=""></span>
-            <span class="aerata__word" aria-hidden="true">AERATA</span>
-            <p class="aerata__line">An immersive experience that<br>lets you bring Transfo’s breath back<br><b>By Transfo Intiem</b></p>
-            <p class="aerata__credits">All credits to:<br><b>Luca &nbsp; Margot &nbsp; Leon</b></p>
-            <span class="aerata__grain"></span>
-          </div>
-          <div class="wip-feature__side">
-            <div class="wip-feature__title">
-              <div class="display wip-item__num"><span data-split>${pad(i + 1)}</span></div>
-              <h2 class="wip-item__title">${esc(w.title)}</h2>
-              <p class="mono wip-feature__kind">(${esc(w.kind)}) <span class="tag"><i></i>${esc(w.status || Site.t('wipStatus'))}</span></p>
-            </div>
-            <div class="wip-item__text" data-reveal="fade">${paras(sections[w.title.toLowerCase()])}</div>
-            <ul class="mono wip-item__tags">${(w.tags || []).map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
-          </div>
-        </div>
-      </article>`;
+    const slug = (w) => `now-${w.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
-    $('.wip-list').innerHTML = W.map((w, i) => w.feature ? feature(w, i) : `
-      <article class="wip-item">
-        <div class="wip-item__head">
-          <div class="display wip-item__num"><span data-split>${pad(i + 1)}</span></div>
-          <h2 class="wip-item__title">${esc(w.title)}</h2>
-          <p class="mono wip-item__kind">(${esc(w.kind)})</p>
-          <span class="mono tag wip-item__status"><i></i>${esc(w.status || Site.t('wipStatus'))}</span>
-          <div class="wip-item__text" data-reveal="fade">${paras(sections[w.title.toLowerCase()])}</div>
-          <ul class="mono wip-item__tags">${(w.tags || []).map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
-        </div>
-        <div class="wip-item__media${w.soon ? ' wip-item__media--soon display' : ' screen vhs-screen'}" data-reveal="clip">
-          ${w.soon ? w.soon.map((l) => `<span>${esc(l)}</span>`).join('') : `
+    // index under the title: everything on one hairline table, each line jumps to its item
+    $('.wip-hero').insertAdjacentHTML('beforeend', `
+      <ol class="wip-index" data-reveal="stagger">
+        ${W.map((w, i) => `
+        <li><a class="wip-index__row" href="#${slug(w)}">
+          <span class="wip-index__num">${pad(i + 1)}</span>
+          <span class="wip-index__title">${esc(w.title)}</span>
+          <span class="wip-index__kind">${esc(w.kind)}</span>
+          <span class="wip-index__status"><i></i>${esc(w.status || Site.t('wipStatus'))}</span>
+        </a></li>`).join('')}
+      </ol>`);
+
+    // what each item shows on the left
+    const media = (w) => {
+      if (w.feature === 'aerata') return `
+        <div class="aerata" role="img" aria-label="AERATA, the design: a breathing sun between two rising arms">
+          <span class="aerata__bloom"></span>
+          <img class="aerata__arm aerata__arm--l" src="assets/projects/aerata/tendril.svg" alt="">
+          <img class="aerata__arm aerata__arm--r" src="assets/projects/aerata/tendril.svg" alt="">
+          <span class="aerata__sun"><img src="assets/projects/aerata/ball.svg" alt=""></span>
+          <span class="aerata__word" aria-hidden="true">AERATA</span>
+          <p class="aerata__line">An immersive experience that<br>lets you bring Transfo’s breath back<br><b>By Transfo Intiem</b></p>
+          <p class="aerata__credits">All credits to:<br><b>Luca &nbsp; Margot &nbsp; Leon</b></p>
+          <span class="aerata__grain"></span>
+        </div>`;
+      // not started yet: a quiet countdown instead of a picture
+      if (w.soon) return `
+        <div class="wip-soon">
+          <p class="wip-soon__label mono">(Starts)</p>
+          <p class="wip-soon__date display">${w.soon.map(esc).join(' ')}</p>
+          <p class="wip-soon__count mono" data-countdown="${esc(w.starts || '')}"></p>
+        </div>`;
+      return `
+        <div class="screen vhs-screen">
           <div class="vhs-screen__in">
             ${w.video
               ? `<video src="${w.video}" poster="${w.poster || ''}" muted loop autoplay playsinline aria-label="${esc(w.title)}"></video>`
@@ -69,9 +67,35 @@
             <span class="vhs-screen__osd vhs-screen__osd--play">▶ Play</span>
             <span class="vhs-screen__osd vhs-screen__osd--sp">SP</span>
             <span class="vhs-screen__osd vhs-screen__osd--time">0:00:00</span>
-          </div>`}
+          </div>
+        </div>`;
+    };
+
+    // every item the same: a title row in hairline cells, the picture large on the left, the text on the right
+    $('.wip-list').innerHTML = W.map((w, i) => `
+      <article class="wip-entry${w.feature ? ' wip-entry--feature' : ''}" id="${slug(w)}">
+        <header class="wip-entry__head">
+          <span class="wip-entry__num mono">${pad(i + 1)}</span>
+          <h2 class="wip-entry__title">${esc(w.title)}</h2>
+          <span class="wip-entry__kind mono">${esc(w.kind)}</span>
+          <span class="wip-entry__status mono"><i></i>${esc(w.status || Site.t('wipStatus'))}</span>
+        </header>
+        <div class="wip-entry__body">
+          <div class="wip-entry__media" data-reveal="clip">${media(w)}</div>
+          <div class="wip-entry__side">
+            <div class="wip-entry__text" data-reveal="fade">${paras(sections[w.title.toLowerCase()])}</div>
+            <ul class="wip-entry__tags mono">${(w.tags || []).map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
+          </div>
         </div>
       </article>`).join('');
+
+    // countdown: "in 48 days"
+    document.querySelectorAll('[data-countdown]').forEach((el) => {
+      const d = new Date(el.dataset.countdown);
+      if (isNaN(d)) return;
+      const days = Math.ceil((d - Date.now()) / 864e5);
+      el.textContent = days > 1 ? `In ${days} days` : days === 1 ? 'Tomorrow' : 'Started';
+    });
   };
 
   // the clips play like a VHS tape: a running counter, and the screen tilts towards the pointer in 3D

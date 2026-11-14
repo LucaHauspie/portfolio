@@ -13,15 +13,15 @@ import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 // where the glass sits on tv-front.webp (fractions, measured from the top left)
 const SCREEN = { x0: 0.07, x1: 0.78, y0: 0.09, y1: 0.84 };
 // cabinet sizes: width, height, depth (all keep the 1.3 ratio of the front texture)
 const SIZES = { S: [1.0, 0.77, 0.95], M: [1.3, 1.0, 1.15], L: [1.62, 1.25, 1.35] };
-const TINTS = { silver: 0x2b2d31, gunmetal: 0x17181b }; // dark, glossy metal
+const TINTS = { silver: 0x1d1e21, gunmetal: 0x101113 }; // almost black, glossy metal
 // the pile curves around the viewer: the further a TV is from the middle, the further back it stands
 const CURVE = 0.16;
 // the hill, ring by ring from the ground up: [x, z, size, slot, metal]. Heights stack up by themselves,
@@ -91,11 +91,12 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
   // sharp on retina screens (capped at 2×; the 30 fps cap below keeps it light)
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.9;
+  renderer.toneMappingExposure = 1;
+  // soft daylight shadows on the studio floor
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.VSMShadowMap; // soft, blurred shadow edges
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x060607);
-  scene.fog = new THREE.Fog(0x060607, 10, 22);
   const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 60);
   const target = new THREE.Vector3(...cam.target);
 
@@ -110,12 +111,12 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
   // brushed metal: the baked texture for colour and roughness, a dim room reflected in it
   // dark metal under a glossy clearcoat: the brushed texture shows faintly, the room reflects in it
   const metal = Object.fromEntries(Object.entries(TINTS).map(([k, c]) => [k, new THREE.MeshPhysicalMaterial({
-    map: metalTex, roughnessMap: roughTex, color: c, roughness: 0.55, metalness: 0.92, envMapIntensity: 1.1, clearcoat: 1, clearcoatRoughness: 0.12,
+    map: metalTex, roughnessMap: roughTex, color: c, roughness: 0.5, metalness: 0.9, envMapIntensity: 0.32, clearcoat: 1, clearcoatRoughness: 0.15,
   })]));
   const fronts = Object.fromEntries(Object.entries(TINTS).map(([k, c]) => [k, new THREE.MeshPhysicalMaterial({
-    map: frontTex, roughnessMap: roughTex, color: c, roughness: 0.6, metalness: 0.88, envMapIntensity: 0.9, clearcoat: 0.8, clearcoatRoughness: 0.18,
+    map: frontTex, roughnessMap: roughTex, color: c, roughness: 0.6, metalness: 0.88, envMapIntensity: 0.28, clearcoat: 0.8, clearcoatRoughness: 0.18,
   })]));
-  // only the TVs reflect a (dim) room; the floor and wall get no reflections and stay dark
+  // only the TVs reflect the (dim) studio, which gives the dark metal its highlights
   const room = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.02).texture;
   [...Object.values(metal), ...Object.values(fronts)].forEach((m) => { m.envMap = room; });
 
@@ -130,7 +131,7 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
     // dark screens with quiet text: only the project screens are bright and colourful
     g.fillStyle = '#0c0d0f';
     g.fillRect(0, 0, 640, 480);
-    g.fillStyle = tone === 'red' ? '#4a74ff' : '#7d838b';
+    g.fillStyle = tone === 'red' ? '#c9c5bd' : '#7d838b'; // the highlighted screen in off-white, not blue
     g.textAlign = 'center';
     g.textBaseline = 'middle';
     let size = 150;
@@ -144,44 +145,61 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
   };
 
   /* --------------------------------------------------------------- room */
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.MeshStandardMaterial({ map: floorTex, color: 0x111113, roughness: 0.55, metalness: 0.05 }));
+  // a photo studio, kept subtle: a seamless paper backdrop drawn as the background (a touch darker up the
+  // wall and in the corners, a lighter floor that ends in the page colour at the bottom), so it reads as a
+  // room without any visible edge. Unlit, so the lights below only shape the TVs and their shadows.
+  scene.background = (() => {
+    const cv = document.createElement('canvas'); cv.width = 64; cv.height = 512;
+    const g = cv.getContext('2d');
+    const lg = g.createLinearGradient(0, 0, 0, 512);
+    lg.addColorStop(0, '#d8d4cd');    // the wall, up high
+    lg.addColorStop(0.62, '#e2dfd8');
+    lg.addColorStop(0.8, '#dcd8d1');  // where the wall turns into the floor: a faint band of shade
+    lg.addColorStop(0.9, '#e8e5df');
+    lg.addColorStop(1, '#efede8');    // the floor, at the bottom exactly the page colour
+    g.fillStyle = lg; g.fillRect(0, 0, 64, 512);
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  })();
+  scene.fog = null;
+  // the floor only shows the shadows
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), new THREE.ShadowMaterial({ color: 0x1a1612, opacity: 0.3 }));
   floor.rotation.x = -Math.PI / 2;
+  floor.receiveShadow = true;
   scene.add(floor);
-  const wall = new THREE.Mesh(new THREE.PlaneGeometry(60, 20), new THREE.MeshStandardMaterial({ map: floorTex, color: 0x18181a, roughness: 0.9 }));
-  wall.position.set(0, 10, -4.5);
-  scene.add(wall);
-  // soft light painted on the floor and wall: a pool in front of the pile, faint squares on the wall
-  const glowTexture = (draw, w = 512, h = 512) => {
-    const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
-    draw(cv.getContext('2d'), w, h);
-    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t;
-  };
-  const additive = (map, opacity) => new THREE.MeshBasicMaterial({ map, transparent: true, opacity, blending: THREE.AdditiveBlending, depthWrite: false });
-  const pool = new THREE.Mesh(new THREE.PlaneGeometry(14, 7), additive(glowTexture((g, w, h) => {
-    const r = g.createRadialGradient(w / 2, h * 0.3, 0, w / 2, h * 0.3, w * 0.55);
-    r.addColorStop(0, 'rgba(210,225,240,0.9)'); r.addColorStop(0.5, 'rgba(120,135,150,0.25)'); r.addColorStop(1, 'rgba(0,0,0,0)');
-    g.fillStyle = r; g.fillRect(0, 0, w, h);
-  }), 0.16));
-  pool.rotation.x = -Math.PI / 2;
-  pool.position.set(0.1, 0.01, 3.4);
-  scene.add(pool);
-  const squares = new THREE.Mesh(new THREE.PlaneGeometry(4, 3.4), additive(glowTexture((g) => {
-    g.filter = 'blur(10px)';
-    [[40, 40], [200, 30], [60, 190], [230, 200], [90, 350], [250, 360]].forEach(([x, y], k) => {
-      g.fillStyle = `rgba(200,215,230,${0.16 + (k % 3) * 0.06})`; g.fillRect(x, y, 120, 110);
-    });
-  }), 0.22));
-  squares.position.set(5.6, 2.2, -4.45);
-  scene.add(squares);
+  // a soft, dark contact shadow right under the pile
+  const contact = (() => {
+    const cv = document.createElement('canvas'); cv.width = cv.height = 256;
+    const g = cv.getContext('2d');
+    const r = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+    r.addColorStop(0, 'rgba(20,16,12,0.6)'); r.addColorStop(0.5, 'rgba(20,16,12,0.28)'); r.addColorStop(1, 'rgba(20,16,12,0)');
+    g.fillStyle = r; g.fillRect(0, 0, 256, 256);
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false }));
+    m.rotation.x = -Math.PI / 2;
+    m.position.y = 0.005;
+    return m;
+  })();
+  scene.add(contact);
 
-  // light from the screens, faked with a few lights in front of the pile
-  scene.add(new THREE.HemisphereLight(0x9aa6b4, 0x050505, 0.1));
-  [[-2.4, 2.4, 3.8, 5.5], [2.6, 3, 3.8, 6]].forEach(([x, y, z, i]) => {
-    const l = new THREE.PointLight(0xdfe8f5, i, 9, 1.6); l.position.set(x, y, z); scene.add(l);
-  });
-  const rim = new THREE.DirectionalLight(0x8fa0b5, 0.35); rim.position.set(-4, 6, -3); scene.add(rim);
+  // low light, like the photo: a dim fill, a key from high behind-left that throws the shadows forward
+  // (towards you, onto the bit of floor you see), and a soft front light that just catches the edges
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8a847a, 0.35));
+  const key = new THREE.DirectionalLight(0xfff4e6, 1.6);
+  key.position.set(-3, 9, -5);
+  key.castShadow = true;
+  key.shadow.mapSize.set(2048, 2048);
+  key.shadow.radius = 28;
+  key.shadow.blurSamples = 24;
+  key.shadow.mapSize.set(1024, 1024); // a coarser map blurs further and costs less
+  key.shadow.bias = -0.0005;
+  Object.assign(key.shadow.camera, { left: -9, right: 9, top: 9, bottom: -9, near: 1, far: 30 });
+  scene.add(key);
+  const front = new THREE.DirectionalLight(0xffffff, 0.45); front.position.set(2, 3, 8); scene.add(front);
 
   /* ----------------------------------------------------------------- TVs */
+  const knobGeo = new THREE.CylinderGeometry(0.035, 0.04, 0.03, 24);
+  const knobMat = new THREE.MeshPhysicalMaterial({ color: 0x111111, roughness: 0.35, metalness: 0.6, clearcoat: 1 });
   const tvs = [];
   const pickables = [];
   const placed = [];
@@ -201,13 +219,22 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
     group.rotation.y = turn;
     const bodyDepth = d * 0.6;
     const body = new THREE.Mesh(new RoundedBoxGeometry(w, h, bodyDepth, 3, w * 0.05), metal[tint]);
+    body.castShadow = true;
+    body.receiveShadow = true;
     body.position.z = -bodyDepth / 2;
-    const front = new THREE.Mesh(new THREE.PlaneGeometry(w * 0.97, h * 0.97), fronts[tint]);
-    front.position.z = 0.003;
+    // two knobs beside the screen (no separate front plate: the screen sits straight in the metal)
+    const knobs = [0.26, 0.05].map((ky) => {
+      const k = new THREE.Mesh(knobGeo, knobMat);
+      k.rotation.x = Math.PI / 2;
+      k.scale.setScalar(w);
+      k.position.set(w * 0.39, h * ky, 0.012 * w);
+      return k;
+    });
     // the tube's back: a square frustum, narrower at the end
     const tube = new THREE.Mesh(new THREE.CylinderGeometry(w * 0.22, w * 0.5, d * 0.45, 4, 1), metal[tint]);
     tube.rotation.set(-Math.PI / 2, Math.PI / 4, 0);
     tube.scale.set(1, 1, h / w);
+    tube.castShadow = true;
     tube.position.set(0, h * 0.02, -bodyDepth - d * 0.2);
 
     // the glass: a plane bulging slightly outwards
@@ -242,40 +269,67 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
       const tex = textTexture(s.lines, s.tone); cover(tex); uniforms.map.value = tex; uniforms.uHas.value = 1;
     }
 
-    group.add(body, front, tube, screen);
+    group.add(body, ...knobs, tube, screen);
     scene.add(group);
     const tv = { i, slot, group, screen, uniforms, type: s.type, project: s.index, home: group.position.clone(), drop: 0, facing: new THREE.Vector3(Math.sin(turn), 0, Math.cos(turn)), hover: 0, w, h };
-    [body, front, screen].forEach((m) => { m.userData.tv = tv; pickables.push(m); });
+    [body, screen].forEach((m) => { m.userData.tv = tv; pickables.push(m); });
     tvs.push(tv);
 
-    // a reflection of the screen on the floor in front of the bottom row
-    if (base === 0 && z > 0.5) {
-      const refl = new THREE.Mesh(new THREE.PlaneGeometry(sw * 1.05, 2.6), additive(glowTexture((g, cw, ch) => {
-        const lg = g.createLinearGradient(0, 0, 0, ch);
-        lg.addColorStop(0, 'rgba(220,232,245,0.85)'); lg.addColorStop(0.35, 'rgba(160,175,190,0.25)'); lg.addColorStop(1, 'rgba(0,0,0,0)');
-        g.filter = 'blur(6px)'; g.fillStyle = lg; g.fillRect(12, 0, cw - 24, ch);
-      }, 128, 256), 0.1));
-      refl.rotation.x = -Math.PI / 2;
-      refl.position.set(screen.position.x, 0.012, 1.3 + 0.02);
-      group.add(refl);
-      refl.position.y = -y + 0.012;
-      tv.reflection = refl;
-    }
   });
 
-  /* ----------------------------------------------------- render + bloom */
-  const composer = new EffectComposer(renderer);
+  // the contact shadow covers the pile's footprint on the floor
+  {
+    const xs = placed.map((q) => [q.x - q.w / 2, q.x + q.w / 2]).flat(), zs = placed.map((q) => [q.z - q.d / 2, q.z + q.d / 2]).flat();
+    const [x0, x1, z0, z1] = [Math.min(...xs), Math.max(...xs), Math.min(...zs), Math.max(...zs)];
+    contact.position.set((x0 + x1) / 2, 0.005, (z0 + z1) / 2 + 0.3);
+    contact.scale.set((x1 - x0) * 1.35, (z1 - z0) * 1.6, 1);
+  }
+
+  /* ------------------------------------------------------------- render */
+  // the composer renders into its own buffer, which isn't anti-aliased by default: give it 4× MSAA,
+  // so the edges of the TVs stay as clean as a plain render (cheap on a 30 fps cap)
+  const buffer = new THREE.WebGLRenderTarget(1, 1, { samples: 4, type: THREE.HalfFloatType });
+  const composer = new EffectComposer(renderer, buffer);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.55, 0.45, 0.8);
-  composer.addPass(bloom);
   composer.addPass(new OutputPass());
+  // ink: the picture as if it were printed. Edges wobble a hair like ink on paper, the blacks get a
+  // little bleed, a coarse grain moves over it, and the corners fall away into black.
+  const ink = new ShaderPass({
+    uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) } },
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: `
+      uniform sampler2D tDiffuse; uniform float uTime; uniform vec2 uRes; varying vec2 vUv;
+      float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+      float noise(vec2 p) { vec2 i = floor(p), f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);
+        return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y); }
+      void main() {
+        vec2 px = 1.0 / uRes;
+        // ink wobble: a slow, low displacement of a pixel or two
+        vec2 w = vec2(noise(vUv * 90.0 + uTime * 0.05), noise(vUv * 90.0 - 7.3)) - 0.5;
+        vec2 uv = vUv + w * px * 1.6;
+        vec3 c = texture2D(tDiffuse, uv).rgb;
+        // bleed: dark areas creep a little into the light around them
+        vec3 n = min(min(texture2D(tDiffuse, uv + vec2(px.x, 0.0)).rgb, texture2D(tDiffuse, uv - vec2(px.x, 0.0)).rgb),
+                     min(texture2D(tDiffuse, uv + vec2(0.0, px.y)).rgb, texture2D(tDiffuse, uv - vec2(0.0, px.y)).rgb));
+        c = mix(c, n, 0.35);
+        // a print's tone: slightly crushed blacks, a touch less saturation
+        float l = dot(c, vec3(0.299, 0.587, 0.114));
+        c = mix(vec3(l), c, 0.94);
+        // grain (coarse, like a print), and a soft vignette
+        float g = hash(floor(vUv * uRes / 1.5) + floor(uTime * 12.0)) - 0.5;
+        c += g * 0.045;
+
+        gl_FragColor = vec4(c, 1.0);
+      }`,
+  });
+  composer.addPass(ink);
 
   const resize = () => {
     const w = canvas.clientWidth, h = canvas.clientHeight;
     if (!w || !h) return;
     renderer.setSize(w, h, false);
     composer.setSize(w, h);
-    bloom.resolution.set(w / 2, h / 2);
+    ink.uniforms.uRes.value.set(w * renderer.getPixelRatio(), h * renderer.getPixelRatio());
     camera.aspect = w / h;
     // step back on narrow screens so the whole pile fits
     // far enough to fit the pile: its width (and for the tower, its height too)
@@ -284,8 +338,6 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
       ? Math.max(6.9 / (2 * half), 3.9 / (2 * half * camera.aspect))
       : Math.max(CAM.dist, 12 / camera.aspect);
     // the fog follows the camera, so the pile never sinks into it
-    scene.fog.near = camera.userData.dist - 2;
-    scene.fog.far = camera.userData.dist + 12;
     camera.updateProjectionMatrix();
   };
   resize();
@@ -384,6 +436,7 @@ export async function createPile(canvas, { screens = [], onHover = () => {}, onC
       const base = tv.type === 'project' ? 1 : tv.type === 'text' ? 0.7 : 0.18; // the projects are the bright ones
       u.uDim.value += ((active && tv !== active ? base * 0.55 : base) - u.uDim.value) * 0.1;
     });
+    ink.uniforms.uTime.value = t;
     composer.render();
   };
 

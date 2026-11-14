@@ -91,6 +91,9 @@ window.TEXT = {
   archiveCount: '({archive}) Older graphic design projects, before school',
   archiveClose: 'Close',
 
+  // about page: small subtitles above the intro paragraphs after the first one
+  aboutSubtitles: ['What drives me'],
+
   // contact page title
   contactTitle: 'Say hi!',
 };
@@ -109,7 +112,7 @@ window.WIP = [
     tags: ['Bachelor thesis', 'Installation', 'Interaction design', 'Mixed media', 'Transfo Zwevegem'],
   },
   // no media yet: soon shows a big date instead, status replaces the "In progress" label
-  { title: 'Live visuals', kind: '5-week passion project', tags: ['Resolume', 'TouchDesigner', 'Live visuals', 'VJing'], soon: ['Jan', '2027'], status: 'Starts January 2027' },
+  { title: 'Live visuals', kind: '5-week passion project', tags: ['Resolume', 'TouchDesigner', 'Live visuals', 'VJing'], soon: ['Jan', '2027'], starts: '2027-01-04', status: 'Starts January 2027' },
   { title: 'TWOJEYS', kind: 'First 3D project', tags: ['Blender', '3D', 'Rigging & animation'], img: 'assets/projects/work-in-progress/twojeys.webp' },
   { title: 'Sunday Session', kind: 'Skateboarding in the browser', tags: ['WebGPU (learning)', 'Three.js (learning)', 'Shaders'], video: 'assets/projects/work-in-progress/sunday-session.mp4', poster: 'assets/projects/work-in-progress/sunday-session-poster.webp' },
 ];

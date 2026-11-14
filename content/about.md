@@ -3,7 +3,9 @@
 <!--
   Text of the About page. Edit it here, keep the "## " headings.
   ## Hero: the four small facts under the big title ("Label: text").
-  ## Intro: the big intro text. Put a word between *stars* to make it red.
+  ## Intro: the intro paragraphs, side by side (up to three). **word** = bold, *word* = italic.
+  The subtitle above the 2nd paragraph is aboutSubtitles in js/data.js.
+  ## My take on AI: a separate article at the bottom of the page. Plain paragraphs, a blank line between them.
   Every other "## Heading" with a list becomes a numbered chapter, in this order.
   List items are "- Big text | small text on the right".
   End an item with " *" to highlight it with a button to the Work in progress page.
@@ -21,9 +23,10 @@
 
 ## Intro
 
-I’m Luca, a digital *designer* and creative *developer* from Belgium. I design identities, websites and motion, and I (sometimes) code them too! from HTML and CSS to GSAP animation and projection mapping. Currently studying at Howest.
+I’m Luca, a digital **designer** and creative **developer** from Belgium. I create identities, websites, motion and interactive experiences and sometimes code them too! I’m interested in pretty much everything digital and love exploring different ways to bring ideas to life. Currently studying at DEVINE, Howest.
 
-What I want to do most is *live* visuals: visuals for music, played live. In January 2027 I’m giving it five full weeks to learn Resolume and TouchDesigner.
+I’ve always been drawn to things that feel young and full of energy. Think of skateboarding, street culture, bold visuals and anything that moves fast. I love designs that have some sort of attitude or personality to them. Whether it's an animation, an interaction or a visual identity, I enjoy pushing things a little further, experimenting and creating something that makes people stop, look and hopefully go *“this is sick.”*
+
 
 ## Disciplines
 
@@ -71,4 +74,11 @@ Getting closer to the music industry has always been a dream of mine. Next, I wa
 - Resolume | To learn, Jan 2027
 - TouchDesigner | To learn, Jan 2027
 - Live visuals | For shows & concerts
-- Music industry | The dream
+
+## My take on AI
+
+There are a lot of things I dont like about AI. It's generic, has no personality and is terrible for the environment. However, It's a world we live in and I would be lying if I said I was able to create all of my work without using any AI. 
+
+Design wise, I barely use AI. I use it to find inspiration (mainly concept wise) and UI patterns. Otherwise I haven't really seen any AI-generated design that's good and not extremely curated by a professional designer. 
+
+Coding wise, I use it often. Of all the projects that I've created, I have a certain bit of understanding, but I wouldnt have been able to push my projects to the level that they are right now without AI, unfortunately. This doesnt mean I am not critical on the output that it gives me, I've learned to always check, learn, reflect and see if the code could be enhanced to the most optimalized version. 
