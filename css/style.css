@@ -2411,3 +2411,40 @@ body.project, .project main, .project .footer { background: var(--p-bg) !importa
 .project .pill::before { background: var(--p-bg) !important; }
 .project .pill:hover, .project .project-link:hover { color: var(--p-fg) !important; background: var(--p-bg) !important; }
 .project .header__cta { background: var(--header-fg) !important; color: var(--header-bg) !important; border-color: var(--header-fg) !important; }
+
+/* text starts at the left edge: no small label in a column before it */
+.about-intro, .project-intro { grid-template-columns: minmax(0, 1fr) !important; }
+.project-intro::before { display: none; }
+.project-intro__lead { max-width: 30ch; }
+.project-intro__body { margin-top: 48px; }
+
+/* live visuals: the text on the left, the facts on the right */
+.live__text { grid-column: 1 / span 7 !important; grid-row: 1; max-width: 40ch !important; }
+.live__cta { grid-column: 1 / span 7 !important; }
+.live__facts { grid-column: 10 / span 3 !important; grid-row: 1 !important; }
+@media (max-width: 720px) {
+  .live__text, .live__cta, .live__facts { grid-column: 1 !important; grid-row: auto !important; }
+}
+
+/* archive: the intro in normal type on the left, the count on the right */
+.archive-hero__row { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); padding-top: 18px; }
+.archive-hero__row p { font-family: var(--f-display); font-variation-settings: 'wdth' 100, 'wght' 400; font-size: 17px; line-height: 1.5; text-transform: none; letter-spacing: normal; max-width: 46ch; }
+.archive-hero__row span { justify-self: end; text-align: right; font-size: 11px; text-transform: uppercase; }
+@media (max-width: 600px) { .archive-hero__row span { justify-self: start; text-align: left; } }
+
+/* page transition: the off-white page with hairlines between the columns, a small label in the middle */
+.transition__col { background: var(--ink) !important; border-right: 1px solid var(--line); }
+.transition__col:last-of-type { border-right: 0; }
+.transition__label {
+  left: 50% !important; top: 50%; bottom: auto !important;
+  transform: translate(-50%, -50%);
+  font-size: clamp(18px, 1.6vw, 24px) !important;
+  font-variation-settings: 'wdth' 82, 'wght' 750 !important;
+  letter-spacing: -0.01em; text-transform: uppercase; white-space: nowrap;
+  color: var(--paper) !important;
+}
+.transition__label::after {
+  content: ''; display: block; height: 1px; margin-top: 12px;
+  background: currentColor; transform-origin: left; animation: tline 1.2s cubic-bezier(.65,0,.35,1) both;
+}
+@keyframes tline { from { transform: scaleX(0); } to { transform: scaleX(1); } }

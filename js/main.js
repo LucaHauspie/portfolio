@@ -202,7 +202,6 @@
     $$(GLITCH_TITLES).forEach((el) => {
       if (el.closest('a') || el.classList.contains('sr-only')) return;
       el.classList.add('can-glitch');
-      if (!el.dataset.cursor) el.dataset.cursor = TEXT.titleCursor || 'Click me';
       el.addEventListener('click', () => glitch(el));
     });
   }
@@ -437,16 +436,16 @@
     try { sessionStorage.setItem('lh-label', label || ''); } catch (_) {}
     gsap.timeline({ onComplete: () => (location.href = href) })
       .set(cols, { transformOrigin: 'bottom' })
-      .fromTo(cols, { scaleY: 0 }, { scaleY: 1, duration: 0.7, ease: 'expo.inOut', stagger: 0.05 })
-      .fromTo(overlayLabel, { opacity: 0, yPercent: 40 }, { opacity: 1, yPercent: 0, duration: 0.5, ease: 'expo.out' }, 0.35);
+      .fromTo(cols, { scaleY: 0 }, { scaleY: 1, duration: 0.8, ease: 'power3.inOut', stagger: 0.06 })
+      .fromTo(overlayLabel, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'power2.out' }, 0.45);
   }
 
   function enter() {
     try { sessionStorage.removeItem('lh-label'); } catch (_) {}
     return gsap.timeline()
-      .to(overlayLabel, { opacity: 0, yPercent: -30, duration: 0.4, ease: 'power2.in' }, 0)
+      .to(overlayLabel, { opacity: 0, duration: 0.4, ease: 'power2.in' }, 0)
       .set(cols, { transformOrigin: 'top' }, 0)
-      .to(cols, { scaleY: 0, duration: 0.9, ease: 'expo.inOut', stagger: 0.05 }, 0.1);
+      .to(cols, { scaleY: 0, duration: 1, ease: 'power3.inOut', stagger: 0.06 }, 0.15);
   }
 
   document.addEventListener('click', (e) => {

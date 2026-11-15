@@ -319,7 +319,6 @@
           ${pr.weeks.map((w, k) => `
           <li class="process__week">
             <div class="process__side">
-              <span class="mono">(${pr.step || 'Week'})</span>
               <span class="display process__num"><span data-split>${pad(k + 1)}</span></span>
             </div>
             <div class="process__body">

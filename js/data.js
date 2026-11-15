@@ -22,7 +22,7 @@ window.SITE = {
 window.TEXT = {
   // home: small texts at the top of the hero
   heroLeft: '(Portfolio)<br>Selected works ©2025-2026',
-  heroRight: '(Hover a TV)<br>Next up: live visuals, Jan 2027',
+  heroRight: '(Hover a TV)',
   // the pile of TVs in the hero: text on some of the screens (<br> = new line)
   tvName: 'Luca<br>Hauspie',
   tvRole: 'Digital<br>designer',
@@ -46,13 +46,13 @@ window.TEXT = {
   liveLabel: '(Coming January 2027)',
   liveTitle: 'Live visuals',
   liveText: 'My dream is to create live visuals for a living. In January, I will get the opportunity to work on a five week passion project, in which I will take a deepdive into Resolume/touchdesigner. So more skills are coming soon :)',
-  liveFacts: '(5 weeks)<br>January 2027', // small facts next to the text
+  liveFacts: '(Duration)<br>5 weeks', // small facts next to the text
   liveTools: '(To learn)<br>Resolume, TouchDesigner',
   liveButton: 'Follow it on the Now page',
 
   // footer (every page)
   footerKickerLeft: '(Got a project?)',
-  footerKickerRight: '(Let’s make it loud)',
+  footerKickerRight: '(Open for internships, 2026/2027)',
   footerBig: 'Let’s talk',
   footerRights: 'All rights reserved',
   footerTime: 'Local time',
@@ -88,7 +88,7 @@ window.TEXT = {
   // archive page
   archiveTitle: 'Archive',
   archiveIntro: 'Older graphic design work: posters and cover art I made before I started studying, self-taught and mostly for bands and for fun. My school projects are under Work.',
-  archiveCount: '({archive}) Older graphic design projects, before school',
+  archiveCount: '({archive}) Posters & cover art',
   archiveClose: 'Close',
 
   // about page: small subtitles above the intro paragraphs after the first one
