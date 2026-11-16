@@ -23,6 +23,12 @@
     const paras = (t) => String(t || '').split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean).map((x) => `<p>${esc(x)}</p>`).join('');
 
     $('.wip-hero__intro').innerHTML = esc(sections.intro || '');
+    // status icon: three small blocks, two filled while it's being made, all empty before it starts
+    const meter = (w) => {
+      const n = w.soon ? 0 : 2;
+      return `<svg class="ico ico--meter" viewBox="0 0 17 7" aria-hidden="true">${[0, 1, 2].map((k) =>
+        `<rect x="${k * 6 + 0.5}" y="0.5" width="4" height="6" ${k < n ? 'fill="currentColor"' : 'fill="none"'} stroke="currentColor"/>`).join('')}</svg>`;
+    };
     const slug = (w) => `now-${w.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
     // index under the title: everything on one hairline table, each line jumps to its item
@@ -33,7 +39,7 @@
           <span class="wip-index__num">${pad(i + 1)}</span>
           <span class="wip-index__title">${esc(w.title)}</span>
           <span class="wip-index__kind">${esc(w.kind)}</span>
-          <span class="wip-index__status"><i></i>${esc(w.status || Site.t('wipStatus'))}</span>
+          <span class="wip-index__status">${meter(w)}${esc(w.status || Site.t('wipStatus'))}</span>
         </a></li>`).join('')}
       </ol>`);
 
@@ -78,7 +84,7 @@
           <span class="wip-entry__num mono">${pad(i + 1)}</span>
           <h2 class="wip-entry__title">${esc(w.title)}</h2>
           <span class="wip-entry__kind mono">${esc(w.kind)}</span>
-          <span class="wip-entry__status mono"><i></i>${esc(w.status || Site.t('wipStatus'))}</span>
+          <span class="wip-entry__status mono">${meter(w)}${esc(w.status || Site.t('wipStatus'))}</span>
         </header>
         <div class="wip-entry__body">
           <div class="wip-entry__media" data-reveal="clip">${media(w)}</div>

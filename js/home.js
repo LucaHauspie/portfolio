@@ -128,7 +128,7 @@
 
   // a small label above every project TV, so you can tell which ones play something
   const tagsEl = $('.pile-tags');
-  tagsEl.innerHTML = P.map((p, i) => `<span class="pile-tag"><i></i>${pad(i + 1)}<span>${p.title}</span></span>`).join('');
+  tagsEl.innerHTML = P.map((p, i) => `<span class="pile-tag"><svg class="ico" viewBox="0 0 8 8" aria-hidden="true"><path d="M1.5 1 L7 4 L1.5 7 Z" fill="currentColor"/></svg>${pad(i + 1)}<span>${p.title}</span></span>`).join('');
   const tags = $$('.pile-tag', tagsEl);
   const placeTags = () => {
     if (!pile || !hero.classList.contains('tags-on')) return;

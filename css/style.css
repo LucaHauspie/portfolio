@@ -17,7 +17,7 @@
   --fg: var(--paper);
 
   --f-display: 'Archivo', 'Arial Narrow', Arial, sans-serif;
-  --f-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  --f-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
 
   --gutter: clamp(16px, 2vw, 32px);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -2448,3 +2448,13 @@ body.project, .project main, .project .footer { background: var(--p-bg) !importa
   background: currentColor; transform-origin: left; animation: tline 1.2s cubic-bezier(.65,0,.35,1) both;
 }
 @keyframes tline { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* small icons instead of pulsing dots: ink colour, square, still */
+.ico { flex: none; display: inline-block; width: 8px; height: 8px; vertical-align: middle; overflow: visible; }
+.ico--meter { width: 17px; height: 7px; }
+.ico--tv { width: 14px; height: 13px; }
+.ico rect, .ico path { vector-effect: non-scaling-stroke; stroke-width: 1px; }
+.pile-tag { display: inline-flex; align-items: center; gap: 6px; }
+.status { display: inline-flex; align-items: center; gap: 10px; }
+.status__dot, .wip-index__status i, .wip-entry__status i, .tag i, .pile-tag i { display: none !important; }
+.wip-index__status, .wip-entry__status { gap: 10px !important; }
