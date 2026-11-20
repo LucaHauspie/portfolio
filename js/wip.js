@@ -22,7 +22,6 @@
     });
     const paras = (t) => String(t || '').split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean).map((x) => `<p>${esc(x)}</p>`).join('');
 
-    $('.wip-hero__intro').innerHTML = esc(sections.intro || '');
     // status icon: three small blocks, two filled while it's being made, all empty before it starts
     const meter = (w) => {
       const n = w.soon ? 0 : 2;

@@ -4,7 +4,6 @@
   Text of the About page. Edit it here, keep the "## " headings.
   ## Hero: the four small facts under the big title ("Label: text").
   ## Intro: the intro paragraphs, side by side (up to three). **word** = bold, *word* = italic.
-  The subtitle above the 2nd paragraph is aboutSubtitles in js/data.js.
   ## My take on AI: a separate article at the bottom of the page. Plain paragraphs, a blank line between them.
   Every other "## Heading" with a list becomes a numbered chapter, in this order.
   List items are "- Big text | small text on the right".
@@ -17,7 +16,6 @@
 
 ## Hero
 
-- Name: Luca Hauspie
 - Based in: Belgium
 - Studying at: Howest
 

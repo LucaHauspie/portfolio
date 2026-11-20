@@ -38,12 +38,10 @@
     const intro = sections.find((s) => s.head.toLowerCase() === 'intro');
     const inline = (t) => esc(t.trim()).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\*(.+?)\*/g, '<em>$1</em>');
     const introParas = (intro ? intro.body : '').split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean);
-    // two paragraphs side by side; every paragraph after the first gets a small subtitle (js/data.js: aboutSubtitles)
-    const subs = (window.TEXT && TEXT.aboutSubtitles) || [];
+    // the intro paragraphs side by side
     $('.about-intro__text').style.setProperty('--cols', Math.min(introParas.length, 3));
     $('.about-intro__text').innerHTML = introParas.map((x, k) => `
       <div class="about-intro__col">
-        ${k && subs[k - 1] ? `<p class="about-intro__sub mono">(${esc(subs[k - 1])})</p>` : ''}
         <p>${inline(x)}</p>
       </div>`).join('');
 

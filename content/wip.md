@@ -10,7 +10,7 @@
 
 ## Intro
 
-What I’m building right now, and what’s next: my bachelor thesis AERATA, my first steps into 3D, in Blender and in the browser and an upcoming five weeks of live visuals in January,
+What I’m building right now, and what’s next: my bachelor thesis AERATA, my first steps into 3D, in Blender and in the browser and an upcoming five weeks of live visuals in January.
 
 ## AERATA
 

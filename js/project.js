@@ -74,7 +74,8 @@
   document.body.style.setProperty('--p-fg', p.ink);
   document.body.style.setProperty('--line', `rgba(${rgb(p.ink)}, 0.2)`);
   // accent colour (numbers, underlines, buttons) from the project's own design; default is the site orange
-  if (p.accent) document.body.style.setProperty('--red', p.accent);
+  // one colour per project: highlights use the project's text colour, no second accent
+  document.body.style.setProperty('--red', p.ink);
   const setHeaderThemes = () => {
     // header type in the project's text colour ('dark' = light type, 'light' = dark type)
     $$('main > section').forEach((s) => (s.dataset.header = isLight(p.ink) ? 'dark' : 'light'));
@@ -319,7 +320,7 @@
           ${pr.weeks.map((w, k) => `
           <li class="process__week">
             <div class="process__side">
-              <span class="display process__num"><span data-split>${pad(k + 1)}</span></span>
+              <span class="process__num">${pad(k + 1)}</span>
             </div>
             <div class="process__body">
               <h3 class="process__wt" data-reveal="fade">${w.title}</h3>

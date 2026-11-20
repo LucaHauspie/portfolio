@@ -28,11 +28,6 @@
     <section class="hero hero--pile" data-header="light">
       <canvas class="pile" aria-hidden="true"></canvas>
       <h1 class="sr-only">Luca Hauspie, digital designer and creative developer</h1>
-      <div class="hero__meta mono" data-reveal="stagger">
-        <!-- texts come from window.TEXT in js/data.js -->
-        <p data-t="heroLeft"></p>
-        <p data-t="heroRight"></p>
-      </div>
       <svg class="pile-line" aria-hidden="true"><line></line><circle r="3"></circle></svg>
       <div class="pile-pop" aria-hidden="true">
         <div class="pile-pop__screen"></div>
@@ -53,7 +48,6 @@
           <span class="line"><span class="line__in" data-split data-t="worksTitle"></span></span>
         </h2>
         <div class="works__side mono">
-          <span data-t="worksSide"></span>
           <div class="toggle" role="group" aria-label="Layout">
             <span class="toggle__pill"></span>
             <button type="button" data-mode="list" aria-pressed="true">List</button>
@@ -62,25 +56,6 @@
         </div>
       </div>
       <div class="works__list"></div>
-    </section>
-
-    <!-- LIVE VISUALS: the passion project in January (texts in js/data.js) -->
-    <section class="live" data-header="light">
-      <span class="live__glow" aria-hidden="true"></span>
-      <div class="live__head">
-        <p class="live__label mono" data-t="liveLabel"></p>
-        <h2 class="display live__title" data-fit="1">
-          <span class="line"><span class="line__in" data-split data-t="liveTitle"></span></span>
-        </h2>
-      </div>
-      <div class="live__body">
-        <p class="live__text" data-t="liveText" data-reveal="fade"></p>
-        <div class="live__facts mono" data-reveal="stagger">
-          <p data-t="liveFacts"></p>
-          <p data-t="liveTools"></p>
-        </div>
-        <a class="pill mono live__cta" href="wip.html"><span data-t="liveButton"></span> <span>→</span></a>
-      </div>
     </section>
   </main>
 

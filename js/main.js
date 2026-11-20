@@ -228,7 +228,7 @@
     h.dataset.theme = 'light';
     const links = NAV().map((l) => `
           <a class="nav-link${l.active ? ' is-active' : ''}" href="${l.href}" data-label="${l.label}"${l.active ? ' aria-current="page"' : ''}>
-            <span class="nav-link__text">${l.label}</span>${l.count ? `<sup class="nav-link__count">${String(l.count).padStart(2, '0')}</sup>` : ''}
+            <span class="nav-link__text">${l.label}</span>
           </a>`).join('');
     h.innerHTML = `
       <a href="index.html" class="header__brand" data-label="Home">
@@ -300,7 +300,6 @@
     slot.outerHTML = `
       <footer class="footer${mini ? ' footer--mini' : ''}" data-header="light">
         ${mini ? '' : `
-        <div class="footer__kicker mono"><span>${t('footerKickerLeft')}</span><span>${t('footerKickerRight')}</span></div>
         <a href="contact.html" class="footer__big display" data-fit="1" data-cursor="Say hi" data-label="Contact">
           <span class="line"><span class="line__in" data-split>${t('footerBig')}</span></span>
         </a>
